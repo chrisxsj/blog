@@ -1,0 +1,109 @@
+请大家翻译出这个文档，在2016-04-01前 发到我和李松的邮箱
+
+Dataguard DB/LOG FILE NAME CONVERT has been set but files are created in a different directory (文档 ID 1348512.1)
+
+Physical and Logical Block Corruptions. All you wanted to know about it. (文档 ID 840978.1)
+
+==========================================================
+已经设置dataguard db/log 名称转换，但是文件仍然被创建在了不同的目录中
+在这篇文章中
+症状
+更改
+原因
+解决方案
+参考文章
+
+>适用于
+Oracle Database - Enterprise Edition - Version 11.2.0.2 and later
+Information in this document applies to any platform.
+***Checked for relevance on 02-Apr-2013*** 
+
+>症状
+在standby数据库，standby备端环境的数据文件被创建在错误的位置，尽管我们设置了正确的参数
+DB_FILE_NAME_CONVERT
+and
+LOG_FILE_NAME_CONVERT
+
+作为一个例子，我们在primary主数据库创建一个表空间在ASM磁盘组DATA_USERS:
+CREATE TABLESPACE TESTME DATAFILE
+'+DATA_USERS' SIZE 10M AUTOEXTEND ON NEXT 4096M MAXSIZE UNLIMITED
+LOGGING ONLINE PERMANENT
+EXTENT MANAGEMENT LOCAL AUTOALLOCATE
+BLOCKSIZE 8K FLASHBACK ON;
+
+这个数据文件如我们预料的被创建生成：
++DATA_USERS/orcl/datafile/testme.282.754566507
+
+在standby备端数据文件转换的位置设置：
+SQL> select name,value from v$parameter where upper(name) like '%CONVER%';
+
+NAME
+--------------------------------------------------------------------------------
+VALUE
+--------------------------------------------------------------------------------
+db_file_name_convert
++DATA_USERS/orcl, +DATA_USERS/stby
+
+log_file_name_convert
++DATA_USERS/orcl, +DATA_USERS/stby
+
+然而oracle创建数据文件在其他目录：
++DATA_USERS/orcl_stby/datafile/testme.386.754566507
+
+standby备端所有其他数据文件创建在正确的目录
++DATA_USERS/stby
+
+你肯定期望数据文件依据参数db_file_name_convert设置，被创建在正确的目录下
++DATA_USERS/stby instead of +DATA_USERS/orcl_stby
+
+>更改
+当前standby备端设置
+standby_file_management AUTO
+db_file_name_convert +DATA_USERS/orcl, +DATA_USERS/stby
+log_file_name_convert +DATA_USERS/orcl, +DATA_USERS/stby
+compatible 11.2.0.2.0
+db_create_file_dest +DATA_USERS
+db_name orcl
+db_unique_name orcl_stby
+dg_broker_start TRUE
+
+primary主端和standby备端都使用
+Oracle Managed Files (OMF)
+and
+Oracle Automatic Storage Management (Oracle ASM).
+
+standby_file_management参数设置为AUTO，db_create_file_dest参数设置为+DATA_USERS
+
+> 原因
+在这个案例中OMF特性被使用（db_create_file_dest），所以无论 DB_FILE_NAME_CONVERT设置成什么值，新创建的数据文件都会基于参数DB_CREATE_FILE_DEST和OMF文件名转换。
+ASM OMF文件名是唯一的，不能被用户或者DB_FILE_NAME_CONVERT参数指定。即，这个名字是ASM代码本身生成的。所以，文件名会和DB_FILE_NAME_CONVERT参数设置不同。在文件名转换的过程中只有 DB_CREATE_FILE_DEST参数被参考。
+记住 ASM OMF格式是<+ASM-DG>/<db_unique_name>/datafile/xxxx.xx.xxx，这正是新创建数据文件使用的格式。
+
+下面摘抄自DG参考手册
+-------------------------------------------------
+Oracle? Data Guard
+Concepts and Administration
+11g Release 2 (11.2)
+
+13.5 Creating a Standby Database That Uses OMF or Oracle ASM
+
+注意：如果在standby备端使用了OMF参数，那么备端新文件创建都遵循OMF方式，无论他们在primary主端是如何创建的。因此，如果DB_FILE_NAME_CONVERT 和DB_CREATE_FILE_DEST这两个参数同时使用，DB_CREATE_FILE_DEST参数具有优先权。
+-------------------------------------------------
+新创建文件的路径和名字依据上面的设置。
+
+数据文件创建的目录"+DATA_USERS/orcl_stby/datafile"是正确的，依据参数db_create_file_dest, db_unique_name and standby_file_management parameters.优先使用了ASM OMF DB_CREATE_FILE_DEST
+
+那么，现在，为什么其他数据文件都在正确的路径"+DATA_USERS/orcl_stby/datafile"呢？
+这个可能是因为我们执行rman restore还原时，db_unique_name和现在不同 或者standby_file_management 被设置为AUTO，这种情况下 *_convert参数优先起作用。
+
+>解决方案
+为了确保我们所期望的*_file_name_convert参数生效，我们需要做的就是禁用ASM OMF，（前提）通过重置standby_file_management为MANUAL
+
+以上的操作可以在重建standby备端控制文件后第一次启动数据库的时候做，否则DB_FILE_NAME_CONVERT and LOG_FILE_NAME_CONVERT参数将会失效。
+同样注意DB_FILE_NAME_CONVERT and DB_CREATE_FILE_DEST参数，仅基于他们的模式自动重命名数据文件，即仅影响参数设置之后的数据文件转换。如果在rman restore之后，已经有数据文件被创建在了不同的目录中，你需要手动重命名数据文件。
+
+如果你需要手动重命名数据文件，你一可以遵循下面的步骤：
+Doc ID 564993.1 : How to rename/move a datafile in the same ASM diskgroup 
+
+>参考文档
+NOTE:564993.1 - How to rename/move a datafile in the same ASM diskgroup

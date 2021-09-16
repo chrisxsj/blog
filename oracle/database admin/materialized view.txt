@@ -1,0 +1,61 @@
+创建物化视图
+
+ 类型
+ 只读
+ CREATE MATERIALIZED VIEW hr.employees AS SELECT * FROM
+ hr.employees@orc1.world;
+
+ 可更新
+ CREATE MATERIALIZED VIEW hr.departments FOR UPDATE AS
+ SELECT * FROM hr.departments@orc1.world;
+
+ 物化视图可用性
+
+ 主键物化视图（主键物化视图是默认的物化视图）
+
+
+
+ CREATE MATERIALIZED VIEW NAME
+ REFRESH FAST  START WITH SYSDATE NEXT SYSDATE + 1/48  ---半小时更新
+ WITH PRIMARY KEY
+ AS SELECT * FROM  USER.OBJECTS@DB_LINK;
+
+ CREATE MATERIALIZED VIEW NAME
+ REFRESH FAST  START WITH SYSDATE NEXT SYSDATE + 1/48  ---半小时更新
+ WITH PRIMARY KEY
+ AS SELECT * FROM  USER.OBJECTS@DB_LINK;
+
+ 创建用户
+ create user whst identified whst;
+ grant connect,resource to whst
+
+
+ 赋予权限
+
+ GRANT
+   CREATE SESSION,
+   CREATE TABLE,
+   CREATE PROCEDURE,
+   CREATE SEQUENCE,
+   CREATE TRIGGER,
+   CREATE VIEW,
+   CREATE SYNONYM,
+   ALTER SESSION,
+   CREATE MATERIALIZED VIEW,
+   ALTER ANY MATERIALIZED VIEW,
+   CREATE DATABASE LINK
+ TO whst;
+
+ 要使用有物化视图的用户！！！
+
+ 检查
+
+ mv job运转状态
+ select job,log_user,to_char(next_date,'DD-MON-YYYY HH24:MI:SS') next_date, interval,what from user_jobs;
+
+ 最后一次刷新
+ select name, last_refresh from user_mview_refresh_times;
+
+
+
+ create materialized view whst.m_test refresh fast start with sysdate next sysdate + 1/48 with primary key as select * from hr.test@ttt; 

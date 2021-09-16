@@ -1,0 +1,122 @@
+
+
+
+++ Please upload OS Watcher data FROM ALL NODES, which covering the time of the issue. Or, any OS resource monitor output...
+We need the output of the OSWatcher to monitor the OS resources and network statistics.
+
+Please refer the following note to download and install this tool:
+
+Note:301137.1 OS Watcher Black Box User Guide
+For example:
+
+--. To start the the OSW:
+
+nohup ./startOSWbb.sh 15 96 &
+
+==>It will collect data at 15 second intervals, and remain the last 96 hours of data to archive files.
+
+==>Make sure you have enough space to store the OSW output files.
+
+--. Please manually configure the private Network statistics collection for OSWatcher by referring to file –Exampleprivate.net in the OSW folder.
+
+oswbb invokes these distinct operating system utilities
+?ps
+?top
+?mpstat
+?iostat
+?netstat
+?traceroute
+?vmstat
+
+Supported Platforms
+oswbb is certified to run on the following platforms:
+?AIX
+?Tru64
+?Solaris
+?HP-UX
+?Linux
+
+Installing oswbb
+oswbb needs to be installed on each node,
+tar xvf oswbb.tar
+/opt/osw
+
+Uninstalling oswbb
+To de-install oswbb issue the following command on the oswbb directory.
+rm -rf oswbb
+
+Setting up oswbb
+When oswbb is started for the first time it creates the archive subdirectory, 
+either in the default location under the oswbb directory or in an alternate location as specified above. 
+The archive directory contains 7 subdirectories, one for each data collector. Data collectors exist for top, vmstat, iostat, mpstat, netstat, ps and an optional collector for tracing private networks. 
+To turn on data collection for private networks the user must create an executable file in the oswbb directory named private.net. An example of what this file should look like is named Exampleprivate.net with samples for each operating system: solaris, linux, aix, hp,  
+
+Exampleprivate.net entry on Solaris: 
+traceroute -r -F node1  
+traceroute -r -F node2
+
+Starting oswbb
+To start the oswbb utility execute the startoswbb.sh shell script from the directory where oswbb was installed. This script has 2 arguments 
+which control the frequency that data is collected and the number of hour's worth of data to archive 
+If you do not enter any arguments the script runs with default values of 30 and 48 
+meaning collect data every 30 seconds and store the last 48 hours of data in archive files.
+
+Example 3: This would start the tool and collect data at 60 second intervals and log the last 10 hours of data to archive files, 
+compress the files and set the archive directory to a non-default location.
+./startoswbb.sh 60 10 gzip /u02/tools/oswbb/archive
+
+Stopping oswbb
+./stoposwbb.sh
+
+Diagnostic Data Output
+ One file per hour will be generated in each of the 7 OS utility subdirectories with the exception of oswprvtnet which is dependent on having private networks tracing configured
+
+The file will be in the following format:
+<node_name>_<OS_utility>_YY.MM.DD.HH24.dat
+ 
+
+For example:
+1. To start the the OSW:
+
+nohup ./startOSW.sh 30 96 &
+
+==>It will collect data at 30 second intervals, and remain the last 96 hours of data to archive files.
+==>Make sure you have enough space to store the OSW output files.
+
+2. Please manually configure the private Network statistics collection for OSWatcher by referring to file –Exampleprivate.net in the OSW folder.
+
+1) Copy the Exampleprivate.net to private.net in the same directory.
+2). Replace the node1 with private IP of node1, replace node2 with private IP of node2.
+traceroute -r -F private_nodename1
+traceroute -r -F private_nodename2
+
+3). Remove the lines for other OS platforms.
+4). Please make sure you DO NOT DELETE THE FOLLOWING LINE
+
+rm locks/lock.file
+
+An example of the private.net :
+
+######################################################################
+#HP Example
+######################################################################
+echo "zzz ***"`date`
+traceroute -r -F sales1-priv
+traceroute -r -F sales2-priv
+######################################################################
+rm locks/lock.file
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+

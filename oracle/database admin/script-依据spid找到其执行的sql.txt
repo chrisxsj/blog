@@ -1,0 +1,24 @@
+V$PROCESS 被认为是从操作系统到数据库的入口
+
+SELECT /*+ ORDERED */
+sql_text
+FROM v$sqltext a
+WHERE (a.hash_value, a.address) IN (
+SELECT DECODE (sql_hash_value,
+0, prev_hash_value,
+sql_hash_value
+),
+DECODE (sql_hash_value, 0, prev_sql_addr, sql_address)
+FROM v$session b
+WHERE b.paddr = (SELECT addr
+FROM v$process c
+WHERE c.spid = '&pid'))
+ORDER BY piece ASC
+/
+
+注意这里我们涉及了 3 个视图,并应用其关联进行数据获取，
+核心逻辑分解如下： 
+1.首先输入一个 pid,这个 pid 即 Process id,也就是在 Top 或 ps 中看到的 PID。 
+2.通过 pid 和 v$process.spid 相关联我们可以获得 Process 的相关信息。 
+3.通过 v$process.addr 和 v$session.paddr 相关联,可以获得和 session 相关的所有信息。 
+4.再结合 v$sqltext,即可获得当前 session 正在执行的 SQL 语句。 可见通过 v$process 视图，我们得以把操作系统和数据库关联了起来。

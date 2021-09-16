@@ -1,0 +1,78 @@
+
+Oracle ASM提供了一种镜像冗余的方法，用以保护可能出现的磁盘故障而导致的数据丢失。
+ ASM提供了3种冗余方法：
+ external redundancy Oracle不帮你管理镜像，功能由外部存储系统实现，比如通过RAID技术。
+ normal redundancy Oracle提供2路镜像来保护数据。
+ high redundancy Oracle提供3路镜像来保护数据。
+
+ Oracle通过failure group来提供数据的高可用性。ASM使用的镜像算法是在extent级做的镜像。
+ 在非external redundancy系统中，比如在normal redundancy模式下，ASM环境中每分配一个extent都会有一个primary copy和一个second copy，
+ ASM的算法保证了second copy和primary copy一定是在不同的failure group中，这就是failure group的意义。
+
+ 而在您的系统中，您使用的external redundancy，说明您是通过外部存储来实现镜像。
+ 您可以使用下面命令来增加ASM disk
+ ALTER DISKGROUP DGDATA1 ADD DISK
+ '/dev/rhdisk/rhdisk38',
+ '/dev/rhdisk/rhdisk39',
+ '/dev/rhdisk/rhdisk40',
+ '/dev/rhdisk/rhdisk41',
+ '/dev/rhdisk/rhdisk42',
+ '/dev/rhdisk/rhdisk43';
+
+ ALTER DISKGROUP DGDAGTA2 ADD DISK
+ '/dev/rhdisk/rhdisk44',
+ '/dev/rhdisk/rhdisk45',
+ '/dev/rhdisk/rhdisk46',
+ '/dev/rhdisk/rhdisk47';
+
+
+
+
+
+
+
+
+
+
+SQL> select group_number,operation,state,power,actual,sofar,est_work,est_minutes from v$asm_operation;
+
+
+GROUP_NUMBER OPERATION  STATE         POWER     ACTUAL      SOFAR   EST_WORK EST_MINUTES
+------------ ---------- -------- ---------- ---------- ---------- ---------- -----------
+           1 REBAL      RUN               1          1       8560    1656846        1194
+           2 REBAL      WAIT              1          0          0          0        1194
+
+
+
+
+
+
+
+
+
+
+
+show parameter asm_power
+alter system set asm_power_limit=6;
+
+
+alter diskgroup DGDATA1 REBALANCE POWER 3;
+alter diskgroup DGDATA2 REBALANCE POWER 3;
+注意：两个磁盘组的power和是6.
+
+
+此外
+当您采用的是normal 或者high REDUNDANCY 的时候才会出现您说的情况。 
+
+您的DG是external 的， ASM不做镜像，不会出现您说的情况。
+
+
+SQL> CREATE DISKGROUP dgywdata External REDUNDANCY DISK 
+'/dev/raw/raw12' SIZE 381467M , 
+'/dev/raw/raw13' SIZE 572204M , 
+'/dev/raw/raw14' SIZE 381469M , 
+'/dev/raw/raw15' SIZE 664710M 
+
+这里asm磁盘的大小不一致，那再使用的时候（RBAL自动平衡），每块盘的空间只能使用最小盘大小的空。即raw15 只能使用381469M，对吗？是否，这也是原因之一？
+
+

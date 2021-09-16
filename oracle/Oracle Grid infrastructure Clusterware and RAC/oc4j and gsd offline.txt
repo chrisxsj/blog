@@ -1,0 +1,8 @@
+oc4j和gsd offline的问题，用
+srvctl enable oc4j
+srvctl start oc4j
+和srvctl enable nodeapps便可启用，估计是有人执行这过些命令了。
+如果不需要这些resourece，可以用
+crsctl delete resource ora.oc4j
+crsctl delete resource ora.gsd
+直接删了

@@ -1,0 +1,45 @@
+oracle 10G: COMPRESSION只压缩元数据
+
+
+COMPRESSION
+ Default: METADATA_ONLY
+
+ Purpose
+ Specifies whether to compress metadata before writing to the dump file set.
+
+ Syntax and Description
+ COMPRESSION=(METADATA_ONLY | NONE)
+
+ •METADATA_ONLY results in all metadata being written to the dump file in compressed format. This is the default.
+ •NONE disables compression for the entire unload.
+
+
+ Example
+
+ The following is an example of using the COMPRESSION parameter:
+ > expdp hr/hr DIRECTORY=dpump_dir1 DUMPFILE=hr_comp.dmp COMPRESSION=METADATA_ONLY
+
+
+
+ This command will execute a schema-mode export that will compress all metadata before writing it out to the dump file, hr_comp.dmp. It defaults to a schema-mode export because no export mode is specified.
+
+
+oracle 11G：
+CONTENT
+Default: ALL
+Purpose
+Enables you to filter what Export unloads: data only, metadata only, or both.
+Syntax and Description
+
+CONTENT={ALL | DATA_ONLY | METADATA_ONLY}
+
+
+	• ALL unloads both data and metadata. This is the default.
+	• DATA_ONLY unloads only table row data; no database object definitions are unloaded.
+	• METADATA_ONLY unloads only database object definitions; no table row data is unloaded.
+Restrictions
+
+The CONTENT=METADATA_ONLY parameter cannot be used in conjunction with the parameter TRANSPORT_TABLESPACES (transportable-tablespace-mode).
+
+
+expdp hr/hr directory=my_dir dumpfile=hr_metadata%U.dmp logfile=hr_metadata.log content=metadata_only compression=metadata_only

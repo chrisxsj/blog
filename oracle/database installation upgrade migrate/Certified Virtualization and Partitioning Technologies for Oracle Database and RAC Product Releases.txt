@@ -1,0 +1,8 @@
+受到Oracle database 和RAC database 支持的 虚拟化技术和分区技术（partitioning Technologies ）
+原文见如下的链接：
+http://www.oracle.com/technetwork/database/virtualizationmatrix-172995.html
+ 
+值得注意的是,Microsoft Hyper-V Server 2012 和Microsoft Hyper-V Server 2012 R2 是受到oracle database 和RAC database 支持的 虚拟化技术。
+这个支持是有限定的：特定版本的guest os  、 特定版本的Oracle database 、特定版本的Oracle RAC database。
+因此，工程师在Microsoft Hyper-V环境中部署Oracle database 和RAC database 之前，请务必提前查看本链接，以避免在Oracle 不支持的环境中安装Oracle database 和RAC database 。
+具体信息请看如上链接中的Microsoft Windows x86-64部分。

@@ -1,0 +1,38 @@
+ 
+listener_20170720.log的内容如下:
+19-7月 -2017 08:42:47 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defB.exe)(HOST=WIN-a)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57525)) * establish * orcl * 0
+19-7月 -2017 08:42:47 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defM.exe)(HOST=WIN-b)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58830)) * establish * orcl * 0
+19-7月 -2017 08:42:48 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defS.EXE)(HOST=WIN-b)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58831)) * establish * orcl * 0
+19-7月 -2017 08:42:48 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defS.EXE)(HOST=WIN-b)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58832)) * establish * orcl * 0
+19-7月 -2017 08:42:48 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defS.EXE)(HOST=WIN-b)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58833)) * establish * orcl * 0
+19-7月 -2017 08:42:48 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57528)) * establish * orcl * 0
+19-7月 -2017 08:42:49 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57529)) * establish * orcl * 0
+19-7月 -2017 08:42:49 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57531)) * establish * orcl * 0
+19-7月 -2017 08:42:49 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57532)) * establish * orcl * 0
+19-7月 -2017 08:42:49 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57533)) * establish * orcl * 0
+19-7月 -2017 08:42:50 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defS.EXE)(HOST=WIN-b)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58834)) * establish * orcl * 0
+19-7月 -2017 08:42:50 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57535)) * establish * orcl * 0
+19-7月 -2017 08:42:50 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-a)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57538)) * establish * orcl * 0
+Wed Jul 19 08:42:50 2017
+19-7月 -2017 08:42:50 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defB.exe)(HOST=WIN-a)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57539)) * establish * orcl * 0
+19-7月 -2017 08:42:50 * service_update * orcl * 0
+19-7月 -2017 08:42:51 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defS.EXE)(HOST=WIN-a)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57540)) * establish * orcl * 0
+19-7月 -2017 08:42:51 * service_update * orcl * 0
+19-7月 -2017 08:42:51 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58835)) * establish * orcl * 0
+19-7月 -2017 08:42:51 * service_update * orcl * 0
+19-7月 -2017 08:42:51 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58836)) * establish * orcl * 0
+19-7月 -2017 08:42:51 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58837)) * establish * orcl * 0
+19-7月 -2017 08:42:52 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defB.exe)(HOST=WIN-a)(USER=SYSTEM))) * (ADDRESS=(PROTOCOL=tcp)(HOST=121.122.111.22)(PORT=57545)) * establish * orcl * 0
+19-7月 -2017 08:42:52 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58838)) * establish * orcl * 0
+19-7月 -2017 08:42:52 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58839)) * establish * orcl * 0
+19-7月 -2017 08:42:52 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=C:\abc\def\defC.EXE)(HOST=WIN-b)(USER=abcpdf))) * (ADDRESS=(PROTOCOL=tcp)(HOST=122.135.9.23)(PORT=58840)) * establish * orcl * 0
+19-7月 -2017 08:42:52 * (CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=D:\abc\mm.exe)(HOST=HPS-001JKLGFSDF)(USER=Administrator))) * (ADDRESS=(PROTOCOL=tcp)(HOST=123.122.24.86)(PORT=3895)) * establish * orcl * 0
+ 
+ 
+查看监听日志中每分钟连接情况的shell脚本
+前提:"20-7月-2017 08"自行用UE批量修改为"20-07-2017 08",然后再上传到Linux中:
+fgrep "20-07-2017 08" listener_20170720.log|fgrep "establish" |awk '{print $1 " " $2}' |awk -F: '{print $1 ":" $2 }' |sort |uniq -c
+ 
+ 
+查看监听日志中每秒钟连接情况的shell脚本
+fgrep "20-07-2017 08" listener_20170720.log|fgrep "establish" |awk '{print $1 " " $2}' |awk -F: '{print $1 ":" $2 ":" $3 }' |sort |uniq -c

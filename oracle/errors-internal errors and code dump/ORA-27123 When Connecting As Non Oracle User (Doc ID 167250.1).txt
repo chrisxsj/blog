@@ -1,0 +1,21 @@
+ORA-27123 When Connecting As Non Oracle User (Doc ID 167250.1)
+
+To Bottom
+
+
+
+
+• fact: UNIX based systems
+• fact: Oracle Server - Enterprise Edition 8.1
+• fact: User is not the oracle software owner
+• symptom: ORA-27123: unable to attach to shared memory segment
+• cause: SEMMNS and SEMMSL are set correct but the user is not allowed to attach the shared memory because of insufficient privileges. Perhaps during installation root.sh has not been executed. Permissions of oracle binary have not set with sticky bit.
+
+
+fix:
+
+Set sticky bit for oracle binary.
+Do the following as owner of the oracle software:
+chmod 6755 $ORACLE_HOME/bin/oracle
+
+

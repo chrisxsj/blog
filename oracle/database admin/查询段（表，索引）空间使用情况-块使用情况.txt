@@ -1,0 +1,220 @@
+SR 3-15211795131 : 索引过大
+
+瀚高DBA的问题:
+我们有一个表，名称是DOCS_EVAL_REPORT_DETAIL_REC，这个表上有一个索引，名称是INDEX_EVAL_REPORT_DETAIL_REC
+我们用下面的SQL查出这个表DOCS_EVAL_REPORT_DETAIL_REC的大小是17.9G。
+
+col "TOTAL TABLE SIZE" format 99999999999999
+SELECT
+(SELECT NVL(SUM(S.BYTES),0)
+FROM DBA_SEGMENTS S
+WHERE S.OWNER = UPPER('KYEECIS') AND
+(S.SEGMENT_NAME = UPPER('DOCS_EVAL_REPORT_DETAIL_REC'))) +
+(SELECT NVL(SUM(S.BYTES),0)
+FROM DBA_SEGMENTS S, DBA_LOBS L
+WHERE S.OWNER = UPPER('KYEECIS') AND
+(L.SEGMENT_NAME = S.SEGMENT_NAME AND L.TABLE_NAME = UPPER('DOCS_EVAL_REPORT_DETAIL_REC') AND L.OWNER = UPPER('DBO'))) +
+(SELECT NVL(SUM(S.BYTES),0)
+FROM DBA_SEGMENTS S, DBA_INDEXES I
+WHERE S.OWNER = UPPER('KYEECIS') AND
+(I.INDEX_NAME = S.SEGMENT_NAME AND I.TABLE_NAME = UPPER('DOCS_EVAL_REPORT_DETAIL_REC') AND INDEX_TYPE = 'LOB' AND I.OWNER = UPPER('DBO')))
+"TOTAL TABLE SIZE"
+FROM DUAL;
+
+我们用下面的SQL查出索引INDEX_EVAL_REPORT_DETAIL_REC的大小是9.6G，索引的定义见附件
+select bytes/1024/1024/1024 from dba_segments where segment_name='INDEX_EVAL_REPORT_DETAIL_REC';
+
+请问：怎么确定索引这么大(9.6G)是否合理,索引的大小由什么决定，怎样可以让索引减小
+
+
+
+
+sr工程师答复:请执行如下语句:
+
+set serveroutput on size 1000000
+set feedback off
+prompt Input segment name, owner (default current user), type (default table), partition name (default null)
+DECLARE
+p_segname varchar2(500);
+p_owner varchar2(100);
+p_type varchar2(100);
+p_partition varchar2(500);
+l_free_blks number;
+l_total_blocks number;
+l_total_bytes number;
+l_unused_blocks number;
+l_unused_bytes number;
+l_lastUsedExtFileId number;
+l_lastUsedExtBlockId number;
+l_last_used_block number;
+l_segment_space_mgmt varchar2(255);
+l_unformatted_blocks number;
+l_unformatted_bytes number;
+l_fs1_blocks number;
+l_fs1_bytes number;
+l_fs2_blocks number;
+l_fs2_bytes number;
+l_fs3_blocks number;
+l_fs3_bytes number;
+l_fs4_blocks number;
+l_fs4_bytes number;
+l_full_blocks number;
+l_full_bytes number;
+procedure p(p_label in varchar2,p_num in number)
+as
+begin
+dbms_output.put_line(rpad(p_label,40,'.')||to_char(p_num,'999,999,999,999'));
+end;
+
+
+
+begin
+p_segname := upper('&p_segname');
+
+p_owner := upper('&p_owner');
+if p_owner is null then
+p_owner := user;
+end if;
+
+p_type := upper('&p_type');
+if p_type is null then
+p_type := 'TABLE';
+end if;
+
+p_partition := upper('&p_partition');
+
+begin
+execute immediate 'select ts.segment_space_management
+from dba_segments seg,dba_tablespaces ts
+where seg.segment_name=:p_segname
+and (:p_partition is null or seg.partition_name =:p_segname)
+and seg.owner=:p_owner
+and seg.tablespace_name=ts.tablespace_name'
+into l_segment_space_mgmt
+using p_segname,p_partition,p_partition,p_owner;
+
+exception
+when too_many_rows then
+dbms_output.put_line('This must be a partitioned table,use p_partition=>');
+return;
+
+end;
+if l_segment_space_mgmt='AUTO'
+then
+dbms_space.space_usage(p_owner,p_segname,p_type,
+l_unformatted_blocks,
+l_unformatted_bytes,
+l_fs1_blocks,l_fs1_bytes,
+l_fs2_blocks,l_fs2_bytes,
+l_fs3_blocks,l_fs3_bytes,
+l_fs4_blocks,l_fs4_bytes,
+l_full_blocks,l_full_bytes,p_partition);
+
+p('Unformatted Block ',l_unformatted_blocks);
+p('FS1 Blocks (0-25) ',l_fs1_blocks);
+p('FS2 Blocks (25-50) ',l_fs2_blocks);
+p('FS3 Blocks (50-75) ',l_fs3_blocks);
+p('FS4 Blocks (75-100) ',l_fs4_blocks);
+p('Full Blocks ',l_full_blocks);
+else
+dbms_space.free_blocks(segment_owner=>p_owner,
+segment_name=>p_segname,
+segment_type=>p_type,
+freelist_group_id=>0,
+free_blks=>l_free_blks);
+p('Free Blocks',l_free_blks);
+end if;
+dbms_space.unused_space(segment_owner=>p_owner,
+segment_name=>p_segname,
+segment_type=>p_type,
+total_blocks=>l_total_blocks,
+total_bytes=>l_total_bytes,
+unused_blocks=>l_unused_blocks,
+unused_bytes=>l_unused_bytes,
+last_used_extent_file_id=>l_lastUsedExtFileId,
+last_used_extent_block_id=>l_lastUsedExtBlockId,
+last_used_block=>l_last_used_block,
+partition_name=>p_partition);
+p('Total Blocks',l_total_blocks);
+p('Total Bytes',l_total_bytes);
+p('Total MBytes',trunc(l_total_bytes/1024/1024));
+p('Unused Blocks',l_unused_blocks);
+p('Unused Bytes',l_unused_bytes);
+p('Last Used Ext FileId',l_lastUsedExtFileId);
+p('Last Used Ext BlockId',l_lastUsedExtBlockId);
+p('Last Used Block',l_last_used_block);
+END; -- Procedure
+/
+
+p_segname 索引名字
+p_owner 索引所属用户
+p_type 输入 index
+p_partition 直接回车
+
+
+
+瀚高dba答复:
+输入 p_segname 的值: INDEX_EVAL_REPORT_DETAIL_REC
+原值 35: p_segname := upper('&p_segname');
+新值 35: p_segname := upper('INDEX_EVAL_REPORT_DETAIL_REC');
+输入 p_owner 的值: KYEECIS
+原值 37: p_owner := upper('&p_owner');
+新值 37: p_owner := upper('KYEECIS');
+输入 p_type 的值: index
+原值 42: p_type := upper('&p_type');
+新值 42: p_type := upper('index');
+输入 p_partition 的值:
+原值 47: p_partition := upper('&p_partition');
+新值 47: p_partition := upper('');
+Unformatted Block ...................... 248 ---->>>为索引分配的位于高水位线之下但未用的块数.
+FS1 Blocks (0-25) ...................... 0     ---->>>
+FS2 Blocks (25-50) ..................... 5,158 ---->>>这四项代表:包含数据的,已经格式化的块.()内的数字代表块的"空闲度"
+FS3 Blocks (50-75) ..................... 0     ---->>>
+FS4 Blocks (75-100) .................... 0     ---->>>
+Full Blocks ............................ 1,230,401 ---->>>已经满的块,新插入的数据不会写入到这些块上.
+Total Blocks............................ 1,237,504 ---->>>为该段(table,index等等,此处是index段)分配的总空间量,单位是块数.
+Total Bytes............................. 10,137,632,768 ---->>>为该段(table,index等等,此处是index段)分配的总空间量,单位是Bytes.（在磁盘上的占用空间）
+Total MBytes............................ 9,668 ---->>>为该段(table,index等等,此处是index段)分配的总空间量,单位是MB数.
+Unused Blocks........................... 0 ---->>>未用的block数量,这些块已经分配给所查看的段,但目前在段的高水位之上.
+Unused Bytes............................ 0 ---->>>未用的Bytes,这些块已经分配给所查看的段,但目前在段的高水位之上.
+Last Used Ext FileId.................... 5 ---->>>包含最后一个区段(其中包含数据)的文件的ID
+Last Used Ext BlockId................... 3,230,336 ---->>>最后一个区段开始出的块ID,这是最后使用的文件中的块ID
+Last Used Block......................... 8,192---->>>最后一个区段中最后一个块的偏移量.
+
+SR答复如下:
+上面是脚本的结果，从这个结果中可以看到，该索引的大小是 9,668M。
+这里 Total Blocks 有 1,230,401，索引的实际大小就是 9,668M 左右，而索引的大小是由表的大小决定的。
+如果表比较大，索引也会比较大，没有办法减小。
+
+Free Blocks.............................           0
+Total Blocks............................       1,280
+Total Bytes.............................      10,485,760
+Total MBytes............................          10
+Unused Blocks...........................          41
+Unused Bytes............................     335,872
+Last Used Ext FileId....................           1
+Last Used Ext BlockId...................      96,768
+Last Used Block.........................          87
+SQL> SELECT MAX(OBJECT_iD) FROM ABC;
+
+MAX(OBJECT_ID)
+--------------
+     90236
+SQL> DELETE FROM ABC WHERE OBJECT_ID>200;
+SQL> COMMIT;
+SQL>         
+Free Blocks.............................       1,236
+Total Blocks............................       1,280
+Total Bytes.............................      10,485,760
+Total MBytes............................          10
+Unused Blocks...........................          41
+Unused Bytes............................     335,872
+Last Used Ext FileId....................           1
+Last Used Ext BlockId...................      96,768
+Last Used Block.........................          87
+SQL>
+
+
+
+
+

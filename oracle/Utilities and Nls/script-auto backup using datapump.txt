@@ -1,0 +1,24 @@
+[oracle@OADB dpdata]$ cat bak_datapump.sh
+#!/bin/sh
+# ##################################################################
+#             set by highgo
+# ##################################################################
+# Oracle Environment settings
+#aaa=$(echo `date +%m-%d`| awk -F"-" '{printf("%02d%02d\n",$1,$2)}'); --month,day
+dpdata=/home/oracle/dpdata
+DATE=`date +%Y-%m-%d-%H`
+source ~/.bash_profile
+export ORACLE_SID=orcl
+expdp OA0117/OA0117 directory=dpdata dumpfile=OA0117$DATE.dmp  logfile=OA0117$DATE.log
+
+# Let's delete the backups and logs that are more than 30 days old
+cd $dpdata
+date -R >> $dpdata/find
+find $dpdata -maxdepth 1 -name "OA0117*.dmp" -ctime +30 |wc -l >> $dpdata/find
+find $dpdata -maxdepth 1 -name "OA0117*.dmp" -ctime +30 -exec ls -atl {}  \; >> $dpdata/find
+find $dpdata -maxdepth 1 -name "OA0117*.dmp" -ctime +30 -exec rm -f {} \; >>$dpdata/find
+find $dpdata -maxdepth 1 -name "OA0117*.log" -ctime +30 -exec rm -f {} \; >>$dpdata/find
+# That's all
+[oracle@OADB dpdata]$
+
+

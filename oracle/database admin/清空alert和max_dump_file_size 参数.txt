@@ -1,0 +1,30 @@
+max_dump_file_size 参数：该参数可以限制进程对应的trc文件大小（不论该进程是oracle后台进程和前台应用对应的server process）
+When the trace file is limited in size, it may be automatically split into multiple files, called segments, if needed. The segments will have the same file name as the active trace file, but with an extra segment number appended.
+The trace file can be split into a maximum of 5 segments, and the size of each segment will typically be 1/5th of the trace file limit.
+When the combined size of all the trace file segments exceeds the specified limit, the oldest segment is deleted, and a new, empty segment is created. Thus, the trace file always contains the most recent trace information.
+Note that the first segment is never deleted, because it may contain relevant information about the initial state of the process.
+
+
+
+
+使用案例：
+
+若是一个trc文件已经4个g，并且一直在增长，
+
+然后设置上max_dump_file_size ='1024m', (注意该参数值外边有单引号)
+
+然后该trc文件就不再增长了。
+==============================
+清空alert大日志方法：
+UNIX(AIX,HP-UX)上：
+cat /dev/null> alert log （即可清空日志）
+or
+echo '' >alert.log
+
+windows 下： 
+建立一个空文件fu
+然后
+
+type fu > listener.log
+
+

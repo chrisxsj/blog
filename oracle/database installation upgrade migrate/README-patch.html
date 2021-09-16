@@ -1,0 +1,1089 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>Oracle&reg; Database Patch 21352635 - Database Patch Set Update 11.2.0.4.8 (Includes CPUOct2015)</title>
+<meta name="generator" content="Oracle DARB XHTML Converter (Mode = document) - Version 5.1.2 Build 748" />
+<meta name="date" content="2015-09-16T9:59:45Z" />
+<meta name="robots" content="noarchive" />
+<meta name="doctitle" content="Oracle&reg; Database Patch 21352635 - Database Patch Set Update 11.2.0.4.8 (Includes CPUOct2015)" />
+<meta name="relnum" content="" />
+<meta name="partnum" content="" />
+
+
+
+<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+<!-- Styles begin here -->
+<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+<style>
+body, p, table, td, th, ol, ul, a, dl, dt, dd, blockquote, caption {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.25;
+  color: black;
+  background-color: white;
+  /* Fahrner Method. See Zeldman. Working with Web Standards. pp. 323-5. */
+  font-size: x-small;
+  /* janis changed following */
+  voice-family: "\"}\"";
+  
+  voice-family: inherit;
+  font-size: small;
+}
+html > body {
+  font-size: small;
+}
+
+a {
+  text-decoration: underline;
+}
+
+a:link {
+  color: #630;
+  background-color: white;
+}
+
+a:visited {
+  color: #963;
+  background-color: white;
+}
+
+a:hover {
+  color: #f60;
+  background-color: white;
+}
+
+a:active {
+  color: #f60;
+  background-color: white;
+}
+
+a.glossary-link {
+  border-bottom: 1px dotted;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #369;
+  background-color: white;
+}
+
+h1 {
+  font-size: 1.6em;
+  font-weight: bold;
+  border: solid #cc9;
+  border-width: 0px 0px 1px 0px;
+  width: 100%;
+}
+
+h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+pre, code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+}
+
+code {
+  color: #369;
+  background-color: white;
+}
+
+code *.code-comment {
+  color: black;
+  background-color: white;
+}
+
+a:link code {
+  color: #630;
+  background-color: white;
+}
+
+a:visited code {
+  color: #963;
+  background-color: white;
+}
+
+a:hover code {
+  color: #f60;
+  background-color: white;
+}
+
+a:active code {
+  color: #f60;
+  background-color: white;
+}
+
+caption {
+  text-align: center;
+  font-weight: bold;
+  width: auto;
+}
+
+dt {
+  font-weight: bold;
+}
+
+td {
+  vertical-align: top;
+}
+
+th {
+  font-weight: bold;
+  text-align: left;
+  vertical-align: bottom;
+  color: #369;
+  background-color: white;
+}
+
+ol ol {
+    list-style-type: lower-alpha;
+}
+
+ol ol ol {
+    list-style-type: lower-roman;
+}
+
+table.table-border {
+  border: 1px solid #cc9;
+}
+
+table.table-border td,
+table.table-border th {
+  padding: 2px 4px 2px 4px;
+  color: black;
+  background-color: white;
+  border: 1px solid #cc9;
+}
+
+table.table-border th.table-header-border-left,
+table.table-border th.table-header-border-middle,
+table.table-border th.table-header-border-right {
+  color: #369;
+  background-color: #cc9;
+}
+
+table.table-border th.table-header-border-left {
+  border-left: 1px solid #cc9;
+  border-right: 1px solid white;
+  color: black;
+  background-color: #cc9;
+}
+
+table.table-border th.table-header-border-middle {
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  color: black;
+  background-color: #cc9;
+}
+
+table.table-border th.table-header-border-right {
+  border-left: 1px solid white;
+  border-right: 1px solid #cc9;
+  color: black;
+  background-color: #cc9;
+}
+
+span.gui-object, span.gui-object-action {
+  font-weight: bold;
+}
+
+span.gui-object-title { }
+
+p.horizontal-rule {
+  width: 100%;
+  border: solid #cc9;
+  border-width: 0px 0px 1px 0px;
+  margin-bottom: 4ex;
+}
+
+p.booktitle {
+  font-weight: bold;
+  font-size: 125%;
+}
+
+div.zz-skip-header {
+  margin-bottom: 0px;
+  margin-top: -2px;
+  padding: 0px;
+  text-align: center;
+  line-height: 1px;
+}
+
+div.zz-skip-header a:link,
+div.zz-skip-header a:visited,
+div.zz-skip-header a:hover,
+div.zz-skip-header a:active {
+  color: white;
+  background-color: white;
+  text-decoration: none;
+  font-size: 0.2ex;
+  line-height: 1px;
+}
+
+td.zz-nav-header-cell {
+  text-align: left;
+  font-size: 0.95em;
+  width: 99%;
+  color: black;
+  background-color: white;
+  font-weight: normal;
+  vertical-align: top;
+  margin-top: 0ex;
+  padding-top: 0ex;
+}
+
+a.zz-nav-header-link {
+  font-size: 0.95em;
+}
+
+td.zz-nav-button-cell {
+  white-space: nowrap;
+  text-align: center;
+  width: 1%;
+  vertical-align: top;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-top: 0ex;
+  padding-top: 0ex;
+}
+
+a.zz-nav-button-link {
+  font-size: 0.9em;
+}
+
+div.zz-nav-footer-menu {
+  width: 100%;
+  text-align: center;
+  margin-top: 2ex;
+  margin-bottom: 4ex;
+}
+
+p.zz-legal-notice, a.zz-legal-notice-link {
+  font-size: 0.85em;
+  /* display: none; */  /* Uncomment to hide legal notice */
+}
+
+p.seghead {
+  font-weight: bold;
+  margin-left: -2pt;
+}
+
+/*************************************/
+/*  Begin DARB Formats          */
+/*************************************/
+
+h5, h6 {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #369;
+  background-color: white;
+  font-size: 0.95em;
+  font-weight: bold;
+}
+
+h6 {
+  font-weight: normal;
+}
+
+td li p {
+  display: inline;
+}
+
+/* lose the h1 underscore */
+/*
+h1 {
+  border-width : 0px 0px 0px 0px;
+}
+*/
+
+/* Increase contrast between visited and unvisited links. */
+/*
+a:visited {
+  color: #a30;
+  background-color: white;
+}
+*/
+
+.bold, .codeinlinebold, .syntaxinlinebold, .term, .glossterm,
+.glossaryterm, .keyword, .msg, .msgexplankw, .msgactionkw, .notep1 {
+  font-weight: bold;
+}
+
+.italic, .codeinlineitalic, .syntaxinlineitalic, .variable {
+  font-style: italic;
+}
+
+.bolditalic, .codeinlineboldital, .syntaxinlineboldital,
+.titleinfigure, .titleinexample, .titleintable, .titleinequation {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.bridgehead, .titleinrefsubsect, .subhead1, .subhead2, .subhead3 {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #369;
+  background-color: white;
+  font-weight: bold;
+}
+
+.titleinrefsubsect, .subhead1 {
+  font-size: 1.1em;
+}
+
+.subhead2 {
+  font-size: 1.0em;
+}
+
+.subhead3 {
+  font-size: 0.95em;
+  display: inline;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.superscript {
+  vertical-align: super;
+}
+
+.subscript {
+  vertical-align: sub;
+}
+
+.listofeft {
+  border: none;
+}
+
+.betadraft {
+  color: #f00;
+  background-color: white;
+}
+
+.betadraftsubtitle {
+  text-align: center;
+  font-weight: bold;
+  color: #f00;
+  background-color: white;
+}
+
+.comment {
+  color: #080;
+  background-color: white;
+  font-weight: bold;
+}
+
+.copyrightlogo {
+  text-align: center;
+  font-size: 0.85em;
+  border-style: none;
+}
+
+.tocsubheader {
+  list-style-type: none;
+}
+
+/*************************************/
+/*  End DARB Formats                 */
+/*************************************/
+
+ all {
+  * {
+    background-color: transparent;
+    line-height: 1.2;
+  }
+  body {
+    color: black;
+    background-color: white;
+  }
+/*
+  dd {
+    margin-bottom: 2ex;
+  }
+  dl:first-child {
+    margin-top: 2ex;
+  }
+*/
+}
+
+ print {
+  body, p, table, td, th, ol, ul, a, dl, dt, dd, blockquote, caption {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+  }
+
+  h1, h2, h3, h4, h5, h6, th, thead td {
+    font-family: Arial, Helvetica, serif;
+    color: black;
+    background-color: white;
+  }
+
+  div.zz-skip-header {
+    display: none;
+  }
+
+  code, a:link, a:visited, a:hover, a:active {
+    color: black;
+    background-color: white;
+    text-decoration: none;
+  }
+}
+</style>
+
+<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+<!-- Styles end here -->
+<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+
+</head>
+<body>
+<div class="header"><a id="top" name="top"></a>
+<div class="zz-skip-header"><a href="#BEGIN">Skip Headers</a></div>
+
+<a name="BEGIN" id="BEGIN"></a></div>
+<!-- class="header" -->
+<div class="ind"><!-- End Header -->
+<div class="letterstyle">
+<h1>Oracle&reg; Database</h1>
+<p class="booktitle">Patch 21352635 - Database Patch Set Update 11.2.0.4.8 (Includes CPUOct2015)</p>
+<p class="invpartnumber">&nbsp;</p>
+<p class="date">Released: October 20, 2015</p>
+<p>This document is accurate at the time of release. For any changes and additional information regarding PSU 11.2.0.4.8, see these related documents that are available at My Oracle Support (<code><a href="http://support.oracle.com/">http://support.oracle.com/</a></code>):</p>
+<ul>
+<li>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=2037108.1">2037108.1</a> <span class="italic">Patch Set Update and Critical Patch Update October 2015 Availability Document</span></p>
+</li>
+<li>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=854428.1">854428.1</a> <span class="italic">Patch Set Updates for Oracle Products</span></p>
+</li>
+<li>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=2037751.1">2037751.1</a> <span class="italic">Oracle Database Patch Set Update 11.2.0.4.8 Known Issues</span></p>
+</li>
+</ul>
+<p>This document includes the following sections:</p>
+<ul>
+<li>
+<p><a href="#CHDFIJIE">Section 1, "Patch Information"</a></p>
+</li>
+<li>
+<p><a href="#BABDIEDD">Section 2, "Prerequisites"</a></p>
+</li>
+<li>
+<p><a href="#CHDCBBFE">Section 3, "Installation"</a></p>
+</li>
+<li>
+<p><a href="#BABEHDHB">Section 4, "Deinstallation"</a></p>
+</li>
+<li>
+<p><a href="#BGBGADGB">Section 5, "Known Issues"</a></p>
+</li>
+<li>
+<p><a href="#CHDDJHFI">Section 6, "References"</a></p>
+</li>
+<li>
+<p><a href="#BABCGCAB">Section 7, "Bugs Fixed by This Patch"</a></p>
+</li>
+<li>
+<p><a href="#BABDDGEI">Section 8, "Documentation Accessibility"</a></p>
+</li>
+</ul>
+<a id="CHDFIJIE" name="CHDFIJIE"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">1</span> Patch Information</h2>
+<p>Patch Set Update (PSU) patches are cumulative. That is, the content of all previous PSUs is included in the latest PSU patch.</p>
+<p>PSU 11.2.0.4.8 includes the fixes listed in <a href="#BABCGCAB">Section 7, "Bugs Fixed by This Patch"</a>.</p>
+<p>To install the PSU 11.2.0.4.8 patch, the Oracle home must have the 11.2.0.4.0 Database installed. Subsequent PSU patches can be installed on Oracle Database 11.2.0.4.0 or any PSU with a lower 5th numeral version than the one being installed.</p>
+<p>This patch is Oracle RAC Rolling Installable.</p>
+<p>This patch is Database Vault installable. Review My Oracle Support Document <a href="https://support.oracle.com/epmos/faces/DocumentDisplay?id=1195205.1#aref_section37">1195205.1</a> for details on how to apply this patch to a Database Vault environment.</p>
+<p>This patch is Data Guard Standby-First Installable. See My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1265700.1">1265700.1</a> <span class="italic">Oracle Patch Assurance - Data Guard Standby-First Patch Apply</span> for details on how to remove risk and reduce downtime when applying this patch.</p>
+<p>This patch contains a security fix due to which a <code>SELECT</code> query's plan <span class="italic">MAY</span> change under the following conditions:</p>
+<ul>
+<li>
+<p>The <code>SELECT</code> queries a table protected with a Fined Grained Auditing policy</p>
+</li>
+<li>
+<p>And the policy condition is <code>NULL</code></p>
+</li>
+</ul>
+<p><a href="#BABBJAIB">Table 1</a> describes installation types and <span class="bolditalic">security</span> content. For each installation type, it indicates the most recent PSU patch to include new security fixes that are pertinent to that installation type. If there are no security fixes to be applied to an installation type, then "None" is indicated. If a specific PSU is listed, then apply <span class="italic">that or any later PSU</span> patch to be current with security fixes.</p>
+<div class="tblruleformal"><a id="sthref1" name="sthref1"></a><a id="BABBJAIB" name="BABBJAIB"></a>
+<p class="titleintable">Table 1 Installation Types and Security Content</p>
+<table class="RuleFormal" title="Installation Types and Security Content" summary="Installation Types and Security Content" dir="ltr" border="1" width="100%" frame="hsides" rules="rows" cellpadding="3" cellspacing="0">
+<col width="22%" />
+<col width="*" />
+<thead>
+<tr align="left" valign="top">
+<th align="left" valign="bottom" id="r1c1-t2">Installation Type</th>
+<th align="left" valign="bottom" id="r1c2-t2">Latest PSU with Security Fixes</th>
+</tr>
+</thead>
+<tbody>
+<tr align="left" valign="top">
+<td align="left" id="r2c1-t2" headers="r1c1-t2">
+<p>Server homes</p>
+</td>
+<td align="left" headers="r2c1-t2 r1c2-t2">
+<p>PSU 11.2.0.4.8</p>
+<br /></td>
+</tr>
+<tr align="left" valign="top">
+<td align="left" id="r3c1-t2" headers="r1c1-t2">
+<p>Client-Only Installations</p>
+</td>
+<td align="left" headers="r3c1-t2 r1c2-t2">
+<p>None</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td align="left" id="r4c1-t2" headers="r1c1-t2">
+<p>Instant Client Installations</p>
+</td>
+<td align="left" headers="r4c1-t2 r1c2-t2">
+<p>None</p>
+<p>(The Instant Client installation is not the same as the client-only Installation. For additional information about Instant Client installations, see <a href="http://docs.oracle.com/cd/E11882_01/appdev.112/e10646/oci01int.htm#autoId33"><span class="italic">Oracle Call Interface Programmer's Guide</span></a>.)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<br /></div>
+<!-- class="tblruleformal" --></div>
+<!-- class="sect1" -->
+<a id="BABDIEDD" name="BABDIEDD"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">2</span> Prerequisites</h2>
+<p>This section includes the following section:</p>
+<ul>
+<li>
+<p><a href="#CBBFABAA">Section 2.1, "OPatch Utility"</a></p>
+</li>
+</ul>
+<a id="CBBFABAA" name="CBBFABAA"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">2.1</span> OPatch Utility</h3>
+<p>You must use the OPatch utility version 11.2.0.3.6 or later to apply this patch. Oracle recommends that you use the latest released OPatch version for 11.2, which is available for download from My Oracle Support patch <a href="http://updates.oracle.com/ARULink/PatchDetails/process_form?patch_num=6880880">6880880</a> by selecting the 11.2.0.0.0 release.</p>
+<p>For information about OPatch documentation, including any known issues, see My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=293369.1">293369.1</a> <span class="italic">OPatch documentation list</span>.</p>
+</div>
+<!-- class="sect2" --></div>
+<!-- class="sect1" -->
+<a id="CHDCBBFE" name="CHDCBBFE"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">3</span> Installation</h2>
+<p>These instructions are for all Oracle Database installations.</p>
+<ul>
+<li>
+<p><a href="#BABGEFDD">Section 3.1, "Patch Pre-Installation Instructions"</a></p>
+</li>
+<li>
+<p><a href="#BHAGIFCG">Section 3.2, "Patch Installation Instructions"</a></p>
+</li>
+<li>
+<p><a href="#CHDICDDB">Section 3.3, "Patch Post-Installation Instructions"</a></p>
+</li>
+<li>
+<p><a href="#BGBIEHIB">Section 3.4, "Patch Post-Installation Instructions for Databases Created or Upgraded after Installation of PSU 11.2.0.4.8 in the Oracle Home"</a></p>
+</li>
+</ul>
+<a id="BABGEFDD" name="BABGEFDD"></a>
+<div class="sect2"><!-- infolevel="all" infotype="General" -->
+<h3 class="sect2"><span class="secnum">3.1</span> Patch Pre-Installation Instructions</h3>
+<p>Before you install PSU 11.2.0.4.8, perform the following actions to check the environment and to detect and resolve any one-off patch conflicts.</p>
+<ul>
+<li>
+<p><a href="#BABIDCHF">Section 3.1.1, "Applying Database PSU Along Side the Oracle JavaVM Component 11.2.0.4.x Database PSU Patch"</a></p>
+</li>
+<li>
+<p><a href="#BABHIJFJ">Section 3.1.2, "Environments with Grid Infrastructure (GI)"</a></p>
+</li>
+<li>
+<p><a href="#BABEFEIF">Section 3.1.3, "Environment Checks"</a></p>
+</li>
+<li>
+<p><a href="#BABFBCCG">Section 3.1.4, "One-off Patch Conflict Detection and Resolution"</a></p>
+</li>
+</ul>
+<a id="BABIDCHF" name="BABIDCHF"></a>
+<div class="sect3"><!-- infolevel="all" infotype="General" -->
+<h4 class="sect3"><span class="secnum">3.1.1</span> Applying Database PSU Along Side the Oracle JavaVM Component 11.2.0.4.x Database PSU Patch</h4>
+<p>From October 2014 onwards, the Oracle JavaVM Component 11.2.0.4.x Database PSU patch is also available as a separate patch. This patch is not Oracle RAC Rolling Installable. For customers wanting to install both patches together during a single downtime window, follow the various Patching Options listed in the My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1929745.1">1929745.1</a> - <span class="italic">Oracle Recommended Patches -- "Oracle JavaVM Component Database PSU" (OJVM PSU) Patches</span>.</p>
+</div>
+<!-- class="sect3" -->
+<a id="BABHIJFJ" name="BABHIJFJ"></a>
+<div class="sect3"><!-- infolevel="all" infotype="General" -->
+<h4 class="sect3"><span class="secnum">3.1.2</span> Environments with Grid Infrastructure (GI)</h4>
+<p>If you are installing the PSU to an environment that has a Grid Infrastructure (GI) home, note the following:</p>
+<ul>
+<li>
+<p>Grid Infrastructure PSU 11.2.0.4.8 Patch <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=21523375">21523375</a> should be applied to the Grid Infrastructure home and Database home using the readme instructions provided with the patch.</p>
+</li>
+</ul>
+</div>
+<!-- class="sect3" -->
+<a id="BABEFEIF" name="BABEFEIF"></a>
+<div class="sect3">
+<h4 class="sect3"><span class="secnum">3.1.3</span> Environment Checks</h4>
+<ol>
+<li>
+<p>Ensure that the $PATH definition has the following executables: <code>make</code>, <code>ar</code>, <code>ld</code>, and <code>nm</code>.</p>
+<p>The location of these executables depends on your operating system. On many operating systems, they are located in <code>/usr/ccs/bin</code>, in which case you can set your PATH definition as follows:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+export PATH=$PATH:/usr/ccs/bin
+</pre></li>
+</ol>
+</div>
+<!-- class="sect3" -->
+<a id="BABFBCCG" name="BABFBCCG"></a>
+<div class="sect3">
+<h4 class="sect3"><span class="secnum">3.1.4</span> One-off Patch Conflict Detection and Resolution</h4>
+<p>For an introduction to the PSU one-off patch concepts, see "Patch Set Updates Patch Conflict Resolution" in My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=854428.1">854428.1</a> <span class="italic">Patch Set Updates for Oracle Products</span>.</p>
+<p>The fastest and easiest way to determine whether you have one-off patches in the Oracle home that conflict with the PSU, and to get the necessary conflict resolution patches, is to use the <span class="bold">Patch Recommendations</span> and <span class="bold">Patch Plans</span> features on the <span class="bold">Patches &amp; Updates</span> tab in My Oracle Support. These features work in conjunction with the My Oracle Support Configuration Manager. Recorded training sessions on these features can be found in Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=603505.1">603505.1</a>.</p>
+<p>However, if you are not using My Oracle Support Patch Plans, the My Oracle Support Conflict Checker tool enables you to upload an OPatch inventory and check the patches that you want to apply to your environment for conflicts.</p>
+<p>If no conflicts are found, you can download the patches. If conflicts are found, the tool finds an existing resolution to download. If no resolution is found, it will automatically request a resolution, which you can monitor in the <span class="bold">Plans and Patch Requests</span> region of the <span class="bold">Patches &amp; Updates</span> tab.</p>
+<p>For more information, see Knowledge Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1091294.1">1091294.1</a>, <span class="italic">How to use the My Oracle Support Conflict Checker Tool</span>.</p>
+<p>Or, use the following steps to manually discover conflicts and resolutions:</p>
+<ol>
+<li>
+<p>Determine whether any currently installed one-off patches conflict with the PSU patch as follows:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+unzip p21352635_112040_&lt;platform&gt;.zip
+cd 21352635
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+</pre></li>
+<li>
+<p>The report will indicate the patches that conflict with PSU 21352635 and the patches for which PSU 21352635 is a superset.</p>
+<p>Note that Oracle proactively provides PSU 11.2.0.4.8 one-off patches for common conflicts.</p>
+</li>
+<li>
+<p>Use My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1321267.1">1321267.1</a> <span class="italic">Database Patch conflict resolution</span> to determine, for each conflicting patch, whether a conflict resolution patch is already available, and if you need to request a new conflict resolution patch or if the conflict may be ignored.</p>
+</li>
+<li>
+<p>When all the one-off patches that you have requested are available at My Oracle Support, proceed with <a href="#BHAGIFCG">Section 3.2, "Patch Installation Instructions"</a>.</p>
+</li>
+</ol>
+</div>
+<!-- class="sect3" --></div>
+<!-- class="sect2" -->
+<a id="BHAGIFCG" name="BHAGIFCG"></a>
+<div class="sect2"><!-- infolevel="all" infotype="General" -->
+<h3 class="sect2"><span class="secnum">3.2</span> Patch Installation Instructions</h3>
+<p>Conflicting patches should be rolled back before applying the patch, otherwise <code>opatch apply</code> will report conflicts again.</p>
+<p>Follow these steps:</p>
+<ol>
+<li>
+<p>If you are using a Data Guard Physical Standby database, you must install this patch on both the primary database and the physical standby database, as described by My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=278641.1">278641.1</a>.</p>
+</li>
+<li>
+<p>If this is an Oracle RAC environment, install the PSU patch using the OPatch rolling (no downtime) installation method as the PSU patch is rolling Oracle RAC installable. Refer to My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=244241.1">244241.1</a> <span class="italic">Rolling Patch - OPatch Support for RAC</span>.</p>
+</li>
+<li>
+<p>If this is not a Oracle RAC environment, shut down all instances and listeners associated with the Oracle home that you are updating. For more information, see <span class="italic">Oracle Database Administrator's Guide</span>.</p>
+</li>
+<li>
+<p>Rollback any patches found during the One-off Patch Conflict Detection.</p>
+</li>
+<li>
+<p>Set your current directory to the directory where the patch is located and then run the OPatch utility by entering the following commands:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+unzip p21352635_112040_<span class="italic">&lt;platform&gt;</span>.zip
+cd 21352635
+opatch apply
+</pre></li>
+<li>
+<p>Install all resolutions to conflicts found during the One-off Patch Conflict Detection.</p>
+</li>
+<li>
+<p>If there are errors, refer to <a href="#BGBGADGB">Section 5, "Known Issues"</a>.</p>
+</li>
+</ol>
+</div>
+<!-- class="sect2" -->
+<a id="CHDICDDB" name="CHDICDDB"></a>
+<div class="sect2"><!-- infolevel="all" infotype="General" -->
+<h3 class="sect2"><span class="secnum">3.3</span> Patch Post-Installation Instructions</h3>
+<p>After installing the patch, perform the following actions:</p>
+<ol>
+<li>
+<p>Apply conflict resolution patches as explained in <a href="#BABJEHDJ">Section 3.3.1</a>.</p>
+</li>
+<li>
+<p>Load modified SQL files into the database, as explained in <a href="#CEGBIEDI">Section 3.3.2</a>.</p>
+</li>
+</ol>
+<a id="BABJEHDJ" name="BABJEHDJ"></a>
+<div class="sect3">
+<h4 class="sect3"><span class="secnum">3.3.1</span> Applying Conflict Resolution Patches</h4>
+<p>Apply the patch conflict resolution one-off patches that were determined to be needed when you performed the steps in <a href="#BABFBCCG">Section 3.1.4, "One-off Patch Conflict Detection and Resolution"</a>.</p>
+</div>
+<!-- class="sect3" -->
+<a id="CEGBIEDI" name="CEGBIEDI"></a>
+<div class="sect3">
+<h4 class="sect3"><span class="secnum">3.3.2</span> Loading Modified SQL Files into the Database</h4>
+<p>The following steps load modified SQL files into the database. For an Oracle RAC environment, perform these steps on <span class="italic">only one node</span>.</p>
+<ol>
+<li>
+<p>For each database instance running on the Oracle home being patched, connect to the database using SQL*Plus. Connect as SYSDBA and run the <code>catbundle.sql</code> script as follows:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+cd $ORACLE_HOME/rdbms/admin
+sqlplus /nolog
+SQL&gt; CONNECT / AS SYSDBA
+SQL&gt; STARTUP
+SQL&gt; @catbundle.sql psu apply
+SQL&gt; QUIT
+</pre>
+<p>The <code>catbundle.sql</code> execution is reflected in the dba_registry_history view by a row associated with bundle series <code>PSU</code>.</p>
+<p>For information about the <code>catbundle.sql</code> script, see My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=605795.1">605795.1</a> <span class="italic">Introduction to Oracle Database catbundle.sql</span>.</p>
+</li>
+<li>
+<p>If the OJVM PSU was applied for a previous PSU patch, you may see invalid Java classes after execution of the <code>catbundle.sql</code> script in the previous step. If this is the case, run <code>utlrp.sql</code> to re-validate these Java classes.</p>
+<pre xml:space="preserve" class="oac_no_warn">
+cd $ORACLE_HOME/rdbms/admin
+sqlplus /nolog
+SQL&gt; CONNECT / AS SYSDBA
+SQL&gt; @utlrp.sql
+</pre></li>
+<li>
+<p>Check the following log files in <code>$ORACLE_HOME/cfgtoollogs/catbundle</code> or <code>$ORACLE_BASE/cfgtoollogs/catbundle</code> for any errors:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+catbundle_PSU_<span class="italic">&lt;database SID&gt;</span>_APPLY_<span class="italic">&lt;TIMESTAMP&gt;</span>.log
+catbundle_PSU_<span class="italic">&lt;database SID&gt;</span>_GENERATE_&lt;<span class="italic">TIMESTAMP&gt;</span>.log
+</pre>
+<p>where <span class="italic">TIMESTAMP</span> is of the form <span class="italic">YYYYMMMDD_HH_MM_SS</span>. If there are errors, refer to <a href="#BGBGADGB">Section 5, "Known Issues"</a>.</p>
+</li>
+</ol>
+</div>
+<!-- class="sect3" --></div>
+<!-- class="sect2" -->
+<a id="BGBIEHIB" name="BGBIEHIB"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">3.4</span> Patch Post-Installation Instructions for Databases Created or Upgraded after Installation of PSU 11.2.0.4.8 in the Oracle Home</h3>
+<p>There are no actions required for databases that have been upgraded or created after installation of PSU 11.2.0.4.8.</p>
+</div>
+<!-- class="sect2" --></div>
+<!-- class="sect1" -->
+<a id="BABEHDHB" name="BABEHDHB"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">4</span> Deinstallation</h2>
+<p>These instructions apply if you need to deinstall the patch.</p>
+<ul>
+<li>
+<p><a href="#CHDCDABC">Section 4.1, "Patch Deinstallation Instructions for a Non Oracle RAC Environment"</a></p>
+</li>
+<li>
+<p><a href="#CHDIIEFA">Section 4.2, "Patch Post-Deinstallation Instructions for a Non Oracle RAC Environment"</a></p>
+</li>
+<li>
+<p><a href="#CHDICCBH">Section 4.3, "Patch Deinstallation Instructions for an Oracle RAC Environment"</a></p>
+</li>
+<li>
+<p><a href="#CEGHHFBE">Section 4.4, "Patch Post-Deinstallation Instructions for an Oracle RAC Environment"</a></p>
+</li>
+</ul>
+<a id="CHDCDABC" name="CHDCDABC"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">4.1</span> Patch Deinstallation Instructions for a Non Oracle RAC Environment</h3>
+<p>Follow these steps:</p>
+<ol>
+<li>
+<p>Verify that an <code>$ORACLE_HOME/rdbms/admin/catbundle_PSU_</code><code><span class="codeinlineitalic">&lt;database SID&gt;</span></code><code>_ROLLBACK.sql</code> file exists for each database associated with this ORACLE_HOME. If this is not the case, you must execute the steps in <a href="#CEGBIEDI">Section 3.3.2, "Loading Modified SQL Files into the Database"</a> against the database before deinstalling the PSU.</p>
+</li>
+<li>
+<p>Shut down all instances and listeners associated with the Oracle home that you are updating. For more information, see <span class="italic">Oracle Database Administrator's Guide</span>.</p>
+</li>
+<li>
+<p>Run the OPatch utility specifying the <code>rollback</code> argument as follows.</p>
+<pre xml:space="preserve" class="oac_no_warn">
+opatch rollback -id 21352635
+</pre></li>
+<li>
+<p>If there are errors, refer to <a href="#BGBGADGB">Section 5, "Known Issues"</a>.</p>
+</li>
+</ol>
+</div>
+<!-- class="sect2" -->
+<a id="CHDIIEFA" name="CHDIIEFA"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">4.2</span> Patch Post-Deinstallation Instructions for a Non Oracle RAC Environment</h3>
+<p>Follow these steps:</p>
+<ol>
+<li>
+<p>Start all database instances running from the Oracle home. (For more information, see <span class="italic">Oracle Database Administrator's Guide</span>.)</p>
+</li>
+<li>
+<p>For each database instance running out of the <code>ORACLE_HOME</code>, connect to the database using SQL*Plus as <code>SYSDBA</code> and run the rollback script as follows:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+cd $ORACLE_HOME/rdbms/admin
+sqlplus /nolog
+SQL&gt; CONNECT / AS SYSDBA
+SQL&gt; STARTUP
+SQL&gt; @catbundle_PSU_<span class="italic">&lt;database SID&gt;</span>_ROLLBACK.sql
+SQL&gt; QUIT
+</pre>
+<p>In an Oracle RAC environment, the name of the rollback script will have the format catbundle_PSU_<span class="italic">&lt;database SID PREFIX&gt;</span>_ROLLBACK.sql.</p>
+</li>
+<li>
+<p>If the OJVM PSU was applied for a previous PSU patch, you may see invalid Java classes after execution of the <code>catbundle.sql</code> script in the previous step. If this is the case, run <code>utlrp.sql</code> to re-validate these Java classes.</p>
+<pre xml:space="preserve" class="oac_no_warn">
+cd $ORACLE_HOME/rdbms/admin
+sqlplus /nolog
+SQL&gt; CONNECT / AS SYSDBA
+SQL&gt; @utlrp.sql
+</pre></li>
+<li>
+<p>Check the log file for any errors. The log file is found in <code>$ORACLE_BASE/cfgtoollogs/catbundle</code> and is named <code>catbundle_PSU_</code><code><span class="codeinlineitalic">&lt;database SID&gt;</span></code><code>_ROLLBACK_</code><code><span class="codeinlineitalic">&lt;TIMESTAMP&gt;</span></code><code>.log</code> where <span class="italic">TIMESTAMP</span> is of the form <span class="italic">YYYYMMMDD_HH_MM_SS</span>. If there are errors, refer to <a href="#BGBGADGB">Section 5, "Known Issues"</a>.</p>
+</li>
+</ol>
+</div>
+<!-- class="sect2" -->
+<a id="CHDICCBH" name="CHDICCBH"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">4.3</span> Patch Deinstallation Instructions for an Oracle RAC Environment</h3>
+<p>Follow these steps <span class="bolditalic">for each node</span> in the cluster, one node at a time:</p>
+<ol>
+<li>
+<p>Shut down the instance on the node.</p>
+</li>
+<li>
+<p>Run the OPatch utility specifying the <code>rollback</code> argument as follows.</p>
+<pre xml:space="preserve" class="oac_no_warn">
+opatch rollback -id 21352635
+</pre>
+<p>If there are errors, refer to <a href="#BGBGADGB">Section 5, "Known Issues"</a>.</p>
+</li>
+<li>
+<p>Start the instance on the node as follows:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+srvctl start instance &ndash;d &lt;db-unique-name&gt; -n &lt;nodename&gt;
+</pre></li>
+</ol>
+</div>
+<!-- class="sect2" -->
+<a id="CEGHHFBE" name="CEGHHFBE"></a>
+<div class="sect2">
+<h3 class="sect2"><span class="secnum">4.4</span> Patch Post-Deinstallation Instructions for an Oracle RAC Environment</h3>
+<p>Follow the instructions listed in Section <a href="#CHDIIEFA">Section 4.2, "Patch Post-Deinstallation Instructions for a Non Oracle RAC Environment"</a> <span class="bolditalic">only on</span> the node for which the steps in <a href="#CEGBIEDI">Section 3.3.2, "Loading Modified SQL Files into the Database"</a> were executed during the patch application.</p>
+<p>All other instances can be started and accessed as usual while you are executing the deinstallation steps.</p>
+</div>
+<!-- class="sect2" --></div>
+<!-- class="sect1" -->
+<a id="BGBGADGB" name="BGBGADGB"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">5</span> Known Issues</h2>
+<p>For information about OPatch issues, see My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=293369.1">293369.1</a> <span class="italic">OPatch documentation list</span>.</p>
+<p>For issues documented after the release of this PSU, see My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=2037751.1">2037751.1</a> <span class="italic">Oracle Database Patch Set Update 11.2.0.4.8 Known Issues</span>.</p>
+<p>Other known issues are as follows.</p>
+<dl>
+<dd><a id="sthref2" name="sthref2"></a></dd>
+<dt class="seghead">Issue 1&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>The following ignorable errors may be encountered while running the <code>catbundle.sql</code> script or its rollback script:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+ORA-29809: cannot drop an operator with dependent objects
+ORA-29931: specified association does not exist
+ORA-29830: operator does not exist
+ORA-00942: table or view does not exist
+ORA-00955: name is already used by an existing object
+ORA-01430: column being added already exists in table
+ORA-01432: public synonym to be dropped does not exist
+ORA-01434: private synonym to be dropped does not exist
+ORA-01435: user does not exist
+ORA-01917: user or role 'XDB' does not exist
+ORA-01920: user name '&lt;user-name&gt;' conflicts with another user or role name
+ORA-01921: role name '&lt;role name&gt;' conflicts with another user or role name
+ORA-01952: system privileges not granted to 'WKSYS'
+ORA-02303: cannot drop or replace a type with type or table dependents
+ORA-02443: Cannot drop constraint - nonexistent constraint
+ORA-04043: object &lt;object-name&gt; does not exist
+ORA-29832: cannot drop or replace an indextype with dependent indexes
+ORA-29844: duplicate operator name specified 
+ORA-14452: attempt to create, alter or drop an index on temporary table already in use
+ORA-06512: at line &lt;line number&gt;. If this error follow any of above errors, then can be safely ignored.
+ORA-01927: cannot REVOKE privileges you did not grant
+</pre></dd>
+<dd><a id="sthref3" name="sthref3"></a></dd>
+<dt class="seghead">Issue 2&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>Warnings may be returned during the re-link phase of 21352635. These warnings may be ignored.</p>
+<pre xml:space="preserve" class="oac_no_warn">
+warning: overriding commands for target `nmosudo'
+warning: ignoring old commands for target `nmosudo'
+</pre>
+<p>See the following document for additional information.</p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1562458.1">1562458.1</a> <span class="italic">Relinking the DB Control 11.2.0.3 Agent Displays a Warning Message "overriding commands for target 'nmosudo'"</span></p>
+</dd>
+<dd><a id="sthref4" name="sthref4"></a></dd>
+<dt class="seghead">Issue 3&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>On HP-UX systems, the following ignorable warnings may be encountered during the relinking of the <code>oracle</code> binary:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+WARNING:OUI-67215:
+OPatch found the word "failed" in the stderr of the make command.Please look at this stderr. You can re-run this make command.
+ 
+cc: warning 487: Possibly incorrect message catalog.
+total_lntt_bytes is 0, assuming size of .debug_lntt
+Failed to mmap lntt temp file.
+</pre></dd>
+<dd><a id="sthref5" name="sthref5"></a></dd>
+<dt class="seghead">Issue 4&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>On AIX systems, the following ignorable warnings may be encountered during the relinking of the <code>oracle</code> binary:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+WARNING:OUI-67215:
+OPatch found the word "failed" in the stderr of the make command.Please look at this stderr. You can re-run this make command.
+
+ld: 0711-224 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-345 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-773 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-783 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-301 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-415 WARNING: Duplicate symbol: &lt;symbol&gt;
+ld: 0711-319 WARNING: Duplicate symbol: &lt;symbol&gt;
+</pre></dd>
+<dd><a id="sthref6" name="sthref6"></a></dd>
+<dt class="seghead">Issue 5&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>On IBM: Linux on System Z, the following ignorable warnings may be encountered during relinking of <code>e2eme</code> binary:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+OUI-67215:
+OPatch found the word "warning" in the stderr of
+the make command.
+
+Please look at this stderr. You can re-run this
+make command.
+Stderr output:
+ins_emagent.mk:113: warning: overriding commands for target `nmosudo'
+ins_emagent.mk:52: warning: ignoring old
+commands for target `nmosudo'
+</pre></dd>
+<dd><a id="sthref7" name="sthref7"></a></dd>
+<dt class="seghead">Issue 6&nbsp;&nbsp;&nbsp;</dt>
+<dd>
+<p>If Oracle Database Vault is enabled, the following error can occur during the execution of the Post Installation or Deinstallation steps:</p>
+<pre xml:space="preserve" class="oac_no_warn">
+initjvmaux.drop_sros();
+ 
+EXECUTE IMMEDIATE 'create or replace java system';
+...
+ORA-01031: insufficient privileges
+ORA-06512: at "SYS.INITJVMAUX", line 535
+ORA-06512: at line 3
+</pre>
+<p>To recover from this issue, see the following My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1935120.1">1935120.1</a> <span class="italic">ORA-01031 during Post Install / De-install for Database PSU or OJVM PSU</span></p>
+</dd>
+</dl>
+</div>
+<!-- class="sect1" -->
+<a id="CHDDJHFI" name="CHDDJHFI"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">6</span> References</h2>
+<p>The following documents are references for this patch.</p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=293369.1">293369.1</a> <span class="italic">OPatch documentation list</span></p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=360870.1">360870.1</a> <span class="italic">Impact of Java Security Vulnerabilities on Oracle Products</span></p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1321267.1">1321267.1</a> <span class="italic">Database Patch conflict resolution</span></p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=21352635.8">21352635.8</a> <span class="italic">Database 11.2.0.4.8 Patch Set Update (PSU)</span></p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1611785.1">1611785.1</a> 11.2.0.4 Patch Set Updates - List of Fixes in each PSU</p>
+<p>Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1561792.2">1561792.2</a> <span class="italic">Patching Assistant: Oracle Database/Client</span> - Select <span class="bold">PSU/SPU (aka CPU)</span></p>
+</div>
+<!-- class="sect1" -->
+<a id="BABCGCAB" name="BABCGCAB"></a>
+<div class="sect1"><!-- infolevel="all" infotype="General" -->
+<h2 class="sect1"><span class="secnum">7</span> Bugs Fixed by This Patch</h2>
+<p>This patch includes the following bug fixes.</p>
+<div class="sect2"><!-- infolevel="all" infotype="General" --><a id="sthref8" name="sthref8"></a>
+<h3 class="sect2"><span class="secnum">7.1</span> CPU Molecules</h3>
+<p><span class="bold">CPU molecules in PSU 11.2.0.4.8:</span></p>
+<p>PSU 11.2.0.4.8 contains the following new PSU 11.2.0.4.8 molecules:</p>
+<div class="inftblinformal">
+<table class="Informal" summary="List of molecules" dir="ltr" border="1" width="100%" frame="hsides" rules="groups" cellpadding="3" cellspacing="0">
+<col width="1%" />
+<col width="*" />
+<tbody>
+<tr align="left" valign="top">
+<td align="left" id="r1c1-t3"><br /></td>
+<td align="left">21538485 - DB-11.2.0.4-MOLECULE-030-CPUOCT2015</td>
+</tr>
+<tr align="left" valign="top">
+<td align="left" id="r2c1-t3"><br /></td>
+<td align="left" headers="r2c1-t3">21538558 - DB-11.2.0.4-MOLECULE-031-CPUOCT2015</td>
+</tr>
+<tr align="left" valign="top">
+<td align="left" id="r3c1-t3"><br /></td>
+<td align="left" headers="r3c1-t3">21538567 - DB-11.2.0.4-MOLECULE-032-CPUOCT2015</td>
+</tr>
+</tbody>
+</table>
+<br /></div>
+<!-- class="inftblinformal" --></div>
+<!-- class="sect2" -->
+<div class="sect2"><!-- infolevel="all" infotype="General" --><a id="sthref9" name="sthref9"></a>
+<h3 class="sect2"><span class="secnum">7.2</span> Bug Fixes</h3>
+<p>See My Oracle Support Document <a href="https://support.oracle.com/CSP/main/article?cmd=show&amp;type=NOT&amp;id=1611785.1">1611785.1</a> that documents all the non-security bugs fixed in each 11.2.0.4 Patch Set Update (PSU).</p>
+<p>PSU 11.2.0.4.8 contains the following new fixes:</p>
+<a id="sthref10" name="sthref10"></a>
+<p class="subhead1">Enterprise Manager</p>
+<pre xml:space="preserve" class="oac_no_warn">
+   20448824 - Fix for bug 20448824
+</pre>
+<a id="sthref11" name="sthref11"></a>
+<p class="subhead1">Generic</p>
+<pre xml:space="preserve" class="oac_no_warn">
+   16065166 - PERFORMANCE REGRESSION IN KGL FUNCTIONS
+   20441797 - Fix for bug 20441797
+</pre>
+<a id="sthref12" name="sthref12"></a>
+<p class="subhead1">XML Database</p>
+<pre xml:space="preserve" class="oac_no_warn">
+   20925795 - Fix for bug 20925795
+</pre></div>
+<!-- class="sect2" --></div>
+<!-- class="sect1" -->
+<a id="BABDDGEI" name="BABDDGEI"></a>
+<div class="sect1">
+<h2 class="sect1"><span class="secnum">8</span> Documentation Accessibility</h2>
+<p>For information about Oracle's commitment to accessibility, visit the Oracle Accessibility Program website at <code><a href="http://www.oracle.com/us/corporate/accessibility/index.html">http://www.oracle.com/us/corporate/accessibility/index.html</a></code>.</p>
+<a id="sthref13" name="sthref13"></a>
+<p class="subhead2">Access to Oracle Support</p>
+<p>Oracle customers have access to electronic support through My Oracle Support. For information, visit <code><a href="http://www.oracle.com/support/contact.html">http://www.oracle.com/support/contact.html</a></code> or visit <code><a href="http://www.oracle.com/us/corporate/accessibility/support/index.html">http://www.oracle.com/us/corporate/accessibility/support/index.html</a></code> if you are hearing impaired.</p>
+</div>
+<!-- class="sect1" -->
+<a id="sthref14" name="sthref14"></a>
+<hr />
+<p>Patch 21352635 - Database Patch Set Update 11.2.0.4.8 (Includes CPUOct2015) for UNIX</p>
+<p>Copyright &copy; 2006, 2015,&nbsp;Oracle and/or its affiliates. All rights reserved.</p>
+<p>This software and related documentation are provided under a license agreement containing restrictions on use and disclosure and are protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.</p>
+<p>The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.</p>
+<p>If this is software or related documentation that is delivered to the U.S. Government or anyone licensing it on behalf of the U.S. Government, the following notice is applicable:</p>
+<p>U.S. GOVERNMENT RIGHTS Programs, software, databases, and related documentation and technical data delivered to U.S. Government customers are "commercial computer software" or "commercial technical data" pursuant to the applicable Federal Acquisition Regulation and agency-specific supplemental regulations. As such, the use, duplication, disclosure, modification, and adaptation shall be subject to the restrictions and license terms set forth in the applicable Government contract, and, to the extent applicable by the terms of the Government contract, the additional rights set forth in FAR 52.227-19, Commercial Computer Software License (December 2007). Oracle America, Inc., 500 Oracle Parkway, Redwood City, CA 94065.</p>
+<p>This software or hardware is developed for general use in a variety of information management applications. It is not developed or intended for use in any inherently dangerous applications, including applications that may create a risk of personal injury. If you use this software or hardware in dangerous applications, then you shall be responsible to take all appropriate fail-safe, backup, redundancy, and other measures to ensure its safe use. Oracle Corporation and its affiliates disclaim any liability for any damages caused by use of this software or hardware in dangerous applications.</p>
+<p>Oracle and Java are registered trademarks of Oracle and/or its affiliates. Other names may be trademarks of their respective owners.</p>
+<p>Intel and Intel Xeon are trademarks or registered trademarks of Intel Corporation. All SPARC trademarks are used under license and are trademarks or registered trademarks of SPARC International, Inc. AMD, Opteron, the AMD logo, and the AMD Opteron logo are trademarks or registered trademarks of Advanced Micro Devices. UNIX is a registered trademark licensed through X/Open Company, Ltd.</p>
+<p>This software or hardware and documentation may provide access to or information on content, products, and services from third parties. Oracle Corporation and its affiliates are not responsible for and expressly disclaim all warranties of any kind with respect to third-party content, products, and services. Oracle Corporation and its affiliates will not be responsible for any loss, costs, or damages incurred due to your access to or use of third-party content, products, or services.</p>
+</div>
+<!-- class="letterstyle" --></div>
+<!-- class="ind" -->
+
+  <!-- Start Footer -->
+<div class="footer">
+<hr />
+<div align="center" width="34%">
+<font size="-2">
+Copyright&nbsp;&copy;&nbsp;2006, 2015,&nbsp;Oracle and/or its affiliates.&nbsp;All&nbsp;rights&nbsp;reserved.
+</font>
+</div><!-- class="footer" -->
+</body>
+</html>
+

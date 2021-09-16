@@ -1,0 +1,1080 @@
+公安厅windows 11.2.0.3 rac
+
+#public-ip
+10.48.21.173  sd-zjk-01
+10.48.21.174  sd-zjk-02
+10.48.21.175  sd-zjk-03
+
+
+
+#vip
+10.48.21.246 sd-zjk-01-vip
+10.48.21.247 sd-zjk-02-vip
+10.48.21.248 sd-zjk-03-vip
+
+#priv
+
+195.195.195.1 sd-zjk-01-priv
+195.195.195.2 sd-zjk-02-priv
+195.195.195.3 sd-zjk-03-priv
+
+#scan
+
+10.48.21.249  sd-zjk-scan
+
+
+检查操作系统时间
+
+############################清理原有节点信息#########
+
+
+##清除重装主机的OCR条目
+D:\app\11.2.0\grid\BIN\crsctl delete node -n sd-zjk-02
+D:\app\11.2.0\grid\BIN\crsctl delete node -n sd-zjk-03
+
+olsnodes
+##从OCR中删除重装主机的VIP信息
+D:\app\11.2.0\grid\BIN\srvctl stop vip -i sd-zjk-02-vip
+D:\app\11.2.0\grid\BIN\srvctl stop vip -i sd-zjk-03-vip
+
+D:\app\11.2.0\grid\BIN\srvctl remove vip -i sd-zjk-02-vip -f
+
+D:\app\11.2.0\grid\BIN\srvctl remove vip -i sd-zjk-03-vip -f
+
+##清除重装主机的GI和DB home的inventory信息
+D:\app\11.2.0\grid\oui\bin\setup.exe -updateNodeList ORACLE_HOME=D:\app\11.2.0\grid "CLUSTER_NODES=sd-zjk-01" CRS=TRUE -silent -local
+
+#db   D:\app\Administrator\product\11.2.0\dbhome_1
+D:\app\Administrator\product\11.2.0\dbhome_1\oui\bin\setup.exe -updateNodeList ORACLE_HOME=D:\app\Administrator\product\11.2.0\dbhome_1 CLUSTER_NODES=sd-zjk-01 -silent -local
+
+###dbca 清理数据库实例信息
+
+SQL> select name,password from user$ where name='SYS';
+
+NAME                           PASSWORD
+------------------------------ ------------------------------
+SYS                            C89E957D620BC4ED
+
+
+
+alter user sys identified by oracle; 
+alter user sys identified by values 'C89E957D620BC4ED';
+
+##检查
+D:\app\11.2.0\grid\BIN\cluvfy  stage -post nodedel -n sd-zjk-02
+#########添加第二个节点#########
+
+netsh interface ipv4 show global
+
+netsh interface ipv4 set global dhcpmediasense=disabled
+netsh interface ipv6 set global dhcpmediasense=disabled
+
+
+C:\Users\Administrator>net time \\sd-zjk-01
+\\sd-zjk-01 的当前时间是 2017/11/2 9:19:25
+
+命令成功完成。
+
+
+C:\Users\Administrator>net time \\sd-zjk-01 /set /y
+\\sd-zjk-01 的当前时间是 2017/11/2 9:19:40
+
+命令成功完成。
+
+###windows time 服务
+
+##运行CVU检查
+D:\app\11.2.0\grid\BIN\cluvfy  stage -pre nodeadd -n sd-zjk-02 -verbose
+
+##
+D:\app\11.2.0\grid\oui\bin\addNode.bat -silent "CLUSTER_NEW_NODES={sd-zjk-02}" "CLUSTER_NEW_VIRTUAL_HOSTNAMES={sd-zjk-02-vip}"
+
+在重装节点上执行root.sh来启动CRS stack
+
+###db
+D:\app\Administrator\product\11.2.0\dbhome_1\oui\bin\addNode.bat -silent "CLUSTER_NEW_NODES={sd-zjk-02}"
+
+##当DB Home添加完成，使用srvctl检查DB和实例的注册情况，如需要则添加他们。
+
+
+
+#########添加第三个节点#########
+##运行CVU检查
+D:\app\11.2.0\grid\BIN\cluvfy stage -pre nodeadd -n sd-zjk-03 -verbose
+
+##
+D:\app\11.2.0\grid\oui\bin\addNode.bat -silent "CLUSTER_NEW_NODES={sd-zjk-03}" "CLUSTER_NEW_VIRTUAL_HOSTNAMES={sd-zjk-03-vip}"
+
+#D:\app\11.2.0\grid\crs\config>gridconfig.bat
+
+###db
+D:\app\Administrator\product\11.2.0\dbhome_1\oui\bin\addNode.bat -silent "CLUSTER_NEW_NODES={sd-zjk-03}"
+
+##当DB Home添加完成，使用srvctl检查DB和实例的注册情况，如需要则添加他们。
+dbca
+
+
+D:\>crsctl stat res -t
+--------------------------------------------------------------------------------
+
+NAME           TARGET  STATE        SERVER                   STATE_DETAILS
+
+--------------------------------------------------------------------------------
+
+Local Resources
+--------------------------------------------------------------------------------
+
+ora.CRSDG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+               ONLINE  ONLINE       sd-zjk-02
+
+               ONLINE  ONLINE       sd-zjk-03
+
+ora.DATADG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+               ONLINE  ONLINE       sd-zjk-02
+
+               ONLINE  ONLINE       sd-zjk-03
+
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       sd-zjk-01
+
+               ONLINE  ONLINE       sd-zjk-02
+
+               ONLINE  ONLINE       sd-zjk-03
+
+ora.asm
+               ONLINE  ONLINE       sd-zjk-01                Started
+
+               ONLINE  ONLINE       sd-zjk-02                Started
+
+               ONLINE  ONLINE       sd-zjk-03                Started
+
+ora.gsd
+               OFFLINE OFFLINE      sd-zjk-01
+
+               OFFLINE OFFLINE      sd-zjk-02
+
+               OFFLINE OFFLINE      sd-zjk-03
+
+ora.net1.network
+               ONLINE  ONLINE       sd-zjk-01
+
+               ONLINE  ONLINE       sd-zjk-02
+
+               ONLINE  ONLINE       sd-zjk-03
+
+ora.ons
+               ONLINE  ONLINE       sd-zjk-01
+
+               ONLINE  ONLINE       sd-zjk-02
+
+               ONLINE  ONLINE       sd-zjk-03
+
+ora.registry.acfs
+               ONLINE  ONLINE       sd-zjk-01
+
+               OFFLINE OFFLINE      sd-zjk-02
+
+               OFFLINE OFFLINE      sd-zjk-03
+
+--------------------------------------------------------------------------------
+
+Cluster Resources
+--------------------------------------------------------------------------------
+
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.cvu
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.oc4j
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.scan1.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sd-zjk-01.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sd-zjk-02.vip
+      1        ONLINE  ONLINE       sd-zjk-02
+
+ora.sd-zjk-03.vip
+      1        ONLINE  ONLINE       sd-zjk-03
+
+ora.sdzjkdb.db
+      1        ONLINE  ONLINE       sd-zjk-01                Open
+
+      2        ONLINE  ONLINE       sd-zjk-02                Open
+
+      3        ONLINE  ONLINE       sd-zjk-03                Open
+
+
+D:\>cluvfy stage -post crsinst -n all
+
+执行 集群服务设置 的后期检查
+
+正在检查节点的可访问性...
+节点 "sd-zjk-01" 的节点可访问性检查已通过
+
+
+正在检查等同用户...
+用户 "Administrator" 的等同用户检查已通过
+
+正在检查节点连接性...
+
+检查: 接口 "public" 的节点连接性
+接口 "public" 的节点连接性检查已通过
+子网 "10.48.21.0" 的 TCP 连接性检查通过
+
+
+检查: 接口 "priv" 的节点连接性
+接口 "priv" 的节点连接性检查已通过
+子网 "195.195.195.0" 的 TCP 连接性检查通过
+
+正在检查子网掩码一致性...
+子网 "10.48.21.0" 的子网掩码一致性检查已通过。
+子网 "195.195.195.0" 的子网掩码一致性检查已通过。
+子网掩码一致性检查已通过。
+
+节点连接性检查已通过
+
+正在检查多点传送通信...
+
+正在检查子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信...
+子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信的检查已通过
+。
+
+正在检查子网 "195.195.195.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信..
+.
+子网 "195.195.195.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信的检查已通
+过。
+
+多点传送通信检查已通过。
+时区一致性 检查已通过
+
+正在检查 Oracle 集群表决磁盘配置...
+
+“ASM 运行”检查通过。ASM 正在所有指定节点上运行
+
+Oracle 集群表决磁盘配置检查已通过
+
+正在检查集群管理器完整性...
+
+
+正在检查 CSS 守护程序...
+Oracle 集群同步服务似乎处于联机状态。
+
+集群管理器完整性检查已通过
+
+
+正在检查集群完整性...
+
+
+集群完整性检查已通过
+
+
+正在检查 OCR 完整性...
+
+正在检查是否缺少非集群配置...
+所有节点都没有非集群的, 仅限本地的配置
+
+
+“ASM 运行”检查通过。ASM 正在所有指定节点上运行
+
+ocr 位置 "+CRSDG" 的磁盘组在所有节点上都可用
+
+
+NOTE:
+此检查不验证 OCR 内容的完整性。请以授权用户的身份执行 'ocrcheck' 以验证 OCR 的内
+容。
+
+OCR 完整性检查已通过
+
+正在检查 CRS 完整性...
+
+集群件版本一致性测试已通过
+
+CRS 完整性检查已通过
+
+正在检查节点应用程序是否存在...
+
+检查 VIP 节点应用程序是否存在 (必需)
+VIP 节点应用程序检查通过
+
+检查 NETWORK 节点应用程序是否存在 (必需)
+NETWORK 节点应用程序检查通过
+
+检查 GSD 节点应用程序是否存在 (可选)
+节点 "sd-zjk-03,sd-zjk-02,sd-zjk-01" 上的 GSD 节点应用程序已脱机
+
+检查 ONS 节点应用程序是否存在 (可选)
+ONS 节点应用程序检查通过
+
+
+正在检查单客户机访问名 (SCAN)...
+
+正在检查 TCP 与 SCAN 监听程序之间的连接性...
+所有集群节点上都存在 TCP 与 SCAN 监听程序之间的连接性
+
+SCAN VIP 和监听程序设置的验证通过
+
+正在检查 OLR 完整性...
+
+正在检查 OLR 配置文件...
+
+OLR 配置文件检查成功
+
+
+正在检查 OLR 文件属性...
+
+OLR 文件检查成功
+
+
+WARNING:
+此检查不验证 OLR 内容的完整性。请以授权用户的身份执行 'ocrcheck -local' 以验证 O
+LR 的内容。
+
+OLR 完整性检查通过
+在 ASM 上检测到 OCR。正在运行 ACFS 完整性检查...
+
+开始检查 ASM 是否正在所有集群节点上运行...
+
+“ASM 运行”检查通过。ASM 正在所有指定节点上运行
+
+正在启动磁盘组检查以查看是否至少配置了一个磁盘组...
+磁盘组检查通过。至少配置了一个磁盘组
+
+任务 ACFS 完整性检查已通过
+
+正在检查是否在所有节点上安装了集群件...
+集群件的安装检查通过
+
+正在检查 CTSS 资源是否在所有节点上运行...
+CTSS 资源检查通过
+
+
+正在查询所有节点上时间偏移量的 CTSS...
+时间偏移量的 CTSS 查询通过
+
+检查 CTSS 状态已启动...
+CTSS 处于观察程序状态。使用 NTP 切换到时钟同步检查
+
+
+正在使用网络时间协议 (NTP) 启动时钟同步检查...
+
+正在检查守护程序的活动性...
+"W32Time" 的活动性检查已通过
+针对 NTP 守护程序或服务是否活动的检查在所有节点上均已通过
+
+使用网络时间协议 (NTP) 进行时钟同步检查通过
+
+
+Oracle 集群时间同步服务检查已通过
+检查 VIP 配置。
+检查 VIP 子网配置。
+VIP 子网配置检查通过。
+检查 VIP 可访问性
+VIP 子网可访问性检查通过。
+
+集群服务设置 的后期检查成功。
+D:\>
+
+
+C:\Users\Administrator>ipconfig /all
+
+Windows IP 配置
+
+   主机名  . . . . . . . . . . . . . : sd-zjk-02
+   主 DNS 后缀 . . . . . . . . . . . :
+   节点类型  . . . . . . . . . . . . : 混合
+   IP 路由已启用 . . . . . . . . . . : 否
+   WINS 代理已启用 . . . . . . . . . : 否
+
+以太网适配器 public:
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Intel(R) 82576 Gigabit Dual Port Network
+Connection #3
+   物理地址. . . . . . . . . . . . . : 00-E0-ED-23-97-24
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+   本地链接 IPv6 地址. . . . . . . . : fe80::19ad:6960:c7f2:21c5%15(首选)
+   IPv4 地址 . . . . . . . . . . . . : 10.48.21.174(首选)
+   子网掩码  . . . . . . . . . . . . : 255.255.255.0
+   默认网关. . . . . . . . . . . . . : 10.48.21.254
+   DHCPv6 IAID . . . . . . . . . . . : 369156333
+   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-21-8A-F2-0A-00-25-90-59-E6-0
+
+   DNS 服务器  . . . . . . . . . . . : 10.48.1.10
+   TCPIP 上的 NetBIOS  . . . . . . . : 已启用
+
+以太网适配器 priv:
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Intel(R) 82576 Gigabit Dual Port Network
+Connection #2
+   物理地址. . . . . . . . . . . . . : 00-25-90-59-E6-0B
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+   本地链接 IPv6 地址. . . . . . . . : fe80::cfb:b29e:3734:a06c%13(首选)
+   IPv4 地址 . . . . . . . . . . . . : 195.195.195.2(首选)
+   子网掩码  . . . . . . . . . . . . : 255.255.255.0
+   默认网关. . . . . . . . . . . . . :
+   DHCPv6 IAID . . . . . . . . . . . : 301999504
+   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-21-8A-F2-0A-00-25-90-59-E6-0
+
+   DNS 服务器  . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                       fec0:0:0:ffff::2%1
+                                       fec0:0:0:ffff::3%1
+   TCPIP 上的 NetBIOS  . . . . . . . : 已禁用
+
+以太网适配器 本地连接 4:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Intel(R) 82576 Gigabit Dual Port Network
+Connection #4
+   物理地址. . . . . . . . . . . . . : 00-E0-ED-23-97-25
+   DHCP 已启用 . . . . . . . . . . . : 是
+   自动配置已启用. . . . . . . . . . : 是
+
+以太网适配器 本地连接:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Intel(R) 82576 Gigabit Dual Port Network
+Connection
+   物理地址. . . . . . . . . . . . . : 00-25-90-59-E6-0A
+   DHCP 已启用 . . . . . . . . . . . : 是
+   自动配置已启用. . . . . . . . . . : 是
+
+隧道适配器 isatap.{5046B7B4-E299-4FD9-A396-DD8289EEBA9D}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Microsoft ISATAP Adapter
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+
+隧道适配器 isatap.{CABBB296-1D6B-4A6A-81C4-11D6623DF850}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Microsoft ISATAP Adapter #2
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   
+   自动配置已启用. . . . . . . . . . : 是
+
+隧道适配器 isatap.{9BA5CA9B-F783-472A-B536-A0F746B438E6}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Microsoft ISATAP Adapter #3
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+
+隧道适配器 isatap.{3815E116-4573-4D21-8C5F-3F9836A619D4}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Microsoft ISATAP Adapter #4
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+
+隧道适配器 6TO4 Adapter:
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Microsoft 6to4 Adapter
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+   IPv6 地址 . . . . . . . . . . . . : 2002:c3c3:c302::c3c3:c302(首选)
+   默认网关. . . . . . . . . . . . . : 2002:7f00:1::7f00:1
+   DNS 服务器  . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                       fec0:0:0:ffff::2%1
+                                       fec0:0:0:ffff::3%1
+   TCPIP 上的 NetBIOS  . . . . . . . : 已禁用
+
+C:\Users\Administrator>
+
+
+
+D:\>crsctl stat res -t
+--------------------------------------------------------------------------------
+
+NAME           TARGET  STATE        SERVER                   STATE_DETAILS
+
+--------------------------------------------------------------------------------
+
+Local Resources
+--------------------------------------------------------------------------------
+
+ora.CRSDG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.DATADG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.asm
+               ONLINE  ONLINE       sd-zjk-01                Started
+
+ora.gsd
+               OFFLINE OFFLINE      sd-zjk-01
+
+ora.net1.network
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.ons
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.registry.acfs
+               ONLINE  ONLINE       sd-zjk-01
+
+--------------------------------------------------------------------------------
+
+Cluster Resources
+--------------------------------------------------------------------------------
+
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.cvu
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.oc4j
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.scan1.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sd-zjk-01.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sd-zjk-02.vip
+      1        ONLINE  INTERMEDIATE sd-zjk-01                FAILED OVER
+
+ora.sd-zjk-03.vip
+      1        ONLINE  INTERMEDIATE sd-zjk-01                FAILED OVER
+
+ora.sdzjkdb.db
+      1        ONLINE  ONLINE       sd-zjk-01                Open
+
+      2        ONLINE  OFFLINE
+
+      3        ONLINE  OFFLINE
+
+
+D:\>D:\app\11.2.0\grid\BIN\crsctl delete node -n sd-zjk-02
+CRS-4660: 找不到要删除的节点 sd-zjk-02。
+CRS-4000: 命令 Delete 失败, 或已完成但出现错误。
+
+D:\>D:\app\11.2.0\grid\BIN\crsctl delete node -n sd-zjk-03
+CRS-4660: 找不到要删除的节点 sd-zjk-03。
+CRS-4000: 命令 Delete 失败, 或已完成但出现错误。
+
+D:\>olsnodes
+sd-zjk-01
+
+D:\>D:\app\11.2.0\grid\BIN\srvctl remove vip -i sd-zjk-02-vip -f
+
+D:\>D:\app\11.2.0\grid\BIN\srvctl remove vip -i sd-zjk-03-vip -f
+
+D:\>
+
+D:\>crsctl stat res -t
+--------------------------------------------------------------------------------
+
+NAME           TARGET  STATE        SERVER                   STATE_DETAILS
+
+--------------------------------------------------------------------------------
+
+Local Resources
+--------------------------------------------------------------------------------
+
+ora.CRSDG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.DATADG.dg
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.asm
+               ONLINE  ONLINE       sd-zjk-01                Started
+
+ora.gsd
+               OFFLINE OFFLINE      sd-zjk-01
+
+ora.net1.network
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.ons
+               ONLINE  ONLINE       sd-zjk-01
+
+ora.registry.acfs
+               ONLINE  ONLINE       sd-zjk-01
+
+--------------------------------------------------------------------------------
+
+Cluster Resources
+--------------------------------------------------------------------------------
+
+ora.LISTENER_SCAN1.lsnr
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.cvu
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.oc4j
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.scan1.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sd-zjk-01.vip
+      1        ONLINE  ONLINE       sd-zjk-01
+
+ora.sdzjkdb.db
+      1        ONLINE  ONLINE       sd-zjk-01                Open
+
+      2        ONLINE  OFFLINE
+
+      3        ONLINE  OFFLINE
+
+
+D:\>
+
+D:\>D:\app\11.2.0\grid\BIN\cluvfy  stage -post nodedel -n sd-zjk-02
+
+执行 删除节点 的后期检查
+
+正在检查 CRS 完整性...
+
+集群件版本一致性测试已通过
+
+CRS 完整性检查已通过
+
+删除节点检查通过
+
+删除节点 的后期检查成功。
+
+D:\>D:\app\11.2.0\grid\BIN\cluvfy  stage -post nodedel -n sd-zjk-03
+
+执行 删除节点 的后期检查
+
+正在检查 CRS 完整性...
+
+集群件版本一致性测试已通过
+
+CRS 完整性检查已通过
+
+删除节点检查通过
+
+删除节点 的后期检查成功。
+
+
+
+
+
+
+
+D:\>D:\app\11.2.0\grid\BIN\cluvfy  stage -pre nodeadd -n sd-zjk-02 -verbose
+
+执行 添加节点 的预检查
+
+正在检查节点的可访问性...
+
+检查: 节点 "sd-zjk-01" 的节点可访问性
+  目标节点                                  是否可访问?
+  ------------------------------------  ------------------------
+  sd-zjk-02                             是
+结果:节点 "sd-zjk-01" 的节点可访问性检查已通过
+
+
+正在检查等同用户...
+
+检查: 用户 "Administrator" 的等同用户
+  节点名                                   状态
+  ------------------------------------  ------------------------
+  sd-zjk-02                             通过
+结果:用户 "Administrator" 的等同用户检查已通过
+
+正在检查节点连接性...
+
+
+节点 "sd-zjk-01" 的接口信息
+ 名称     IP 地址           子网              网关              默认网关
+    HW 地址             MTU
+ ------ --------------- --------------- --------------- --------------- --------
+--------- ------
+ public 10.48.21.173    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.246    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.247    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.248    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.249    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ priv   195.195.195.1   195.195.195.0   UNKNOWN         UNKNOWN         00:25:90
+:59:E6:31 1500
+
+
+节点 "sd-zjk-02" 的接口信息
+ 名称     IP 地址           子网              网关              默认网关
+    HW 地址             MTU
+ ------ --------------- --------------- --------------- --------------- --------
+--------- ------
+ public 10.48.21.174    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:23:97:24 1500
+ priv   195.195.195.2   195.195.195.0   UNKNOWN         UNKNOWN         00:25:90
+:59:E6:0B 1500
+
+
+检查: 接口 "public" 的节点连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.246]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.247]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.247]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.248]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.248]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.249]         sd-zjk-02[10.48.21.174]         是
+
+结果:接口 "public" 的节点连接性检查已通过
+
+
+检查: 子网 "10.48.21.0" 的 TCP 连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.246          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.247          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.248          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.249          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-02:10.48.21.174          通过
+
+结果:子网 "10.48.21.0" 的 TCP 连接性检查通过
+
+正在检查子网掩码一致性...
+子网 "10.48.21.0" 的子网掩码一致性检查已通过。
+子网掩码一致性检查已通过。
+
+结果:节点连接性检查已通过
+
+正在检查多点传送通信...
+
+正在检查子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信...
+子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信的检查已通过
+。
+
+多点传送通信检查已通过。
+
+正在检查 CRS 完整性...
+
+集群件版本一致性测试已通过
+Oracle Clusterware 在节点 "sd-zjk-01" 上处于健康状态
+
+CRS 完整性检查已通过
+
+正在检查共享资源...
+
+正在检查 CRS 主目录位置...
+共享 "D:\app\11.2.0\grid"
+结果:用于添加节点的共享资源检查通过
+
+
+正在检查节点连接性...
+
+
+节点 "sd-zjk-01" 的接口信息
+ 名称     IP 地址           子网              网关              默认网关
+    HW 地址             MTU
+ ------ --------------- --------------- --------------- --------------- --------
+--------- ------
+ public 10.48.21.173    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.246    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.247    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.248    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ public 10.48.21.249    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:21:36:F6 1500
+ priv   195.195.195.1   195.195.195.0   UNKNOWN         UNKNOWN         00:25:90
+:59:E6:31 1500
+
+
+节点 "sd-zjk-02" 的接口信息
+ 名称     IP 地址           子网              网关              默认网关
+    HW 地址             MTU
+ ------ --------------- --------------- --------------- --------------- --------
+--------- ------
+ public 10.48.21.174    10.48.21.0      UNKNOWN         UNKNOWN         00:E0:ED
+:23:97:24 1500
+ priv   195.195.195.2   195.195.195.0   UNKNOWN         UNKNOWN         00:25:90
+:59:E6:0B 1500
+
+
+检查: 接口 "public" 的节点连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.246]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.247]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.173]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.247]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.246]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-01[10.48.21.248]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.247]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.248]         sd-zjk-01[10.48.21.249]         是
+
+  sd-zjk-01[10.48.21.248]         sd-zjk-02[10.48.21.174]         是
+
+  sd-zjk-01[10.48.21.249]         sd-zjk-02[10.48.21.174]         是
+
+结果:接口 "public" 的节点连接性检查已通过
+
+
+检查: 子网 "10.48.21.0" 的 TCP 连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.246          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.247          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.248          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-01:10.48.21.249          通过
+
+  sd-zjk-01:10.48.21.173          sd-zjk-02:10.48.21.174          通过
+
+结果:子网 "10.48.21.0" 的 TCP 连接性检查通过
+
+
+检查: 接口 "priv" 的节点连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01[195.195.195.1]        sd-zjk-02[195.195.195.2]        是
+
+结果:接口 "priv" 的节点连接性检查已通过
+
+
+检查: 子网 "195.195.195.0" 的 TCP 连接性
+  源                               目标                              是否已连接?
+
+  ------------------------------  ------------------------------  --------------
+--
+  sd-zjk-01:195.195.195.1         sd-zjk-02:195.195.195.2         通过
+
+结果:子网 "195.195.195.0" 的 TCP 连接性检查通过
+
+正在检查子网掩码一致性...
+子网 "10.48.21.0" 的子网掩码一致性检查已通过。
+子网 "195.195.195.0" 的子网掩码一致性检查已通过。
+子网掩码一致性检查已通过。
+
+结果:节点连接性检查已通过
+
+正在检查多点传送通信...
+
+正在检查子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信...
+子网 "10.48.21.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信的检查已通过
+。
+
+正在检查子网 "195.195.195.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信..
+.
+子网 "195.195.195.0" 是否能够与多点传送组 "230.0.1.0" 进行多点传送通信的检查已通
+过。
+
+多点传送通信检查已通过。
+
+检查: 内存总量
+  节点名           可用                        必需                        状态
+
+  ------------  ------------------------  ------------------------  ----------
+  sd-zjk-02     63.9911GB (6.7099492E7KB)  922MB (944128.0KB)        通过
+
+  sd-zjk-01     63.9911GB (6.7099492E7KB)  922MB (944128.0KB)        通过
+
+结果:内存总量 检查已通过
+
+检查: 可用内存
+  节点名           可用                        必需                        状态
+
+  ------------  ------------------------  ------------------------  ----------
+  sd-zjk-02     60.6287GB (6.3573836E7KB)  50MB (51200.0KB)          通过
+
+  sd-zjk-01     898.3672MB (919928.0KB)   50MB (51200.0KB)          通过
+
+结果:可用内存 检查已通过
+
+检查: 交换空间
+  节点名           可用                        必需                        状态
+
+  ------------  ------------------------  ------------------------  ----------
+  sd-zjk-02     127.9804GB (1.34197124E8KB)  16GB (1.6777216E7KB)      通过
+
+  sd-zjk-01     127.9804GB (1.3419714E8KB)  16GB (1.6777216E7KB)      通过
+
+结果:交换空间 检查已通过
+
+检查: "sd-zjk-02:D:\app\11.2.0\grid" 的 空闲磁盘空间
+  路径                节点名           装载点           可用            必需
+        状态
+  ----------------  ------------  ------------  ------------  ------------  ----
+--------
+  D:\app\11.2.0\grid  sd-zjk-02     D             399.9021GB    4.5GB         通
+过
+结果:"sd-zjk-02:D:\app\11.2.0\grid" 的 空闲磁盘空间 检查已通过
+
+检查: "sd-zjk-01:D:\app\11.2.0\grid" 的 空闲磁盘空间
+  路径                节点名           装载点           可用            必需
+        状态
+  ----------------  ------------  ------------  ------------  ------------  ----
+--------
+  D:\app\11.2.0\grid  sd-zjk-01     D             126.9282GB    4.5GB         通
+过
+结果:"sd-zjk-01:D:\app\11.2.0\grid" 的 空闲磁盘空间 检查已通过
+
+检查: "sd-zjk-02:C:\Windows\temp" 的 空闲磁盘空间
+  路径                节点名           装载点           可用            必需
+        状态
+  ----------------  ------------  ------------  ------------  ------------  ----
+--------
+  C:\Windows\temp   sd-zjk-02     C             86.9116GB     1GB           通过
+
+结果:"sd-zjk-02:C:\Windows\temp" 的 空闲磁盘空间 检查已通过
+
+检查: "sd-zjk-01:C:\Windows\temp" 的 空闲磁盘空间
+  路径                节点名           装载点           可用            必需
+        状态
+  ----------------  ------------  ------------  ------------  ------------  ----
+--------
+  C:\Windows\temp   sd-zjk-01     C             120.8482GB    1GB           通过
+
+结果:"sd-zjk-01:C:\Windows\temp" 的 空闲磁盘空间 检查已通过
+
+检查: 系统体系结构
+  节点名           可用                        必需                        状态
+
+  ------------  ------------------------  ------------------------  ----------
+  sd-zjk-02     64-bit                    64-bit                    通过
+
+  sd-zjk-01     64-bit                    64-bit                    通过
+
+结果:系统体系结构 检查已通过
+
+检查环境变量 "PATH" 的值的长度
+检查: 环境变量 "PATH" 的值的长度
+  节点名               是否已设置?        最大长度          实际长度          注
+释
+  ----------------  ------------  ------------  ------------  ----------------
+  sd-zjk-02         是             5119          100           通过
+
+  sd-zjk-01         是             5119          270           通过
+
+结果:环境变量 "PATH" 的值长度检查已通过。
+
+检查 TCP/IP 的介质传感状态
+  节点名           是否启用?                     注释
+  ------------  ------------------------  ------------------------
+  sd-zjk-02     否                         通过
+  sd-zjk-01     否                         通过
+结果:TCP/IP 的介质传感状态检查已通过
+
+正在检查 OCR 完整性...
+
+OCR 完整性检查已通过
+
+正在检查 Oracle 集群表决磁盘配置...
+
+Oracle 集群表决磁盘配置检查已通过
+检查: 时区一致性
+结果:时区一致性 检查已通过
+
+正在使用网络时间协议 (NTP) 启动时钟同步检查...
+
+正在检查守护程序的活动性...
+
+检查: "W32Time" 的活动性
+  节点名                                   正在运行?
+  ------------------------------------  ------------------------
+  sd-zjk-02                             是
+  sd-zjk-01                             是
+结果:"W32Time" 的活动性检查已通过
+针对 NTP 守护程序或服务是否活动的检查在所有节点上均已通过
+
+结果:使用网络时间协议 (NTP) 进行时钟同步检查通过
+
+
+添加节点 的预检查成功。
+
+D:\>

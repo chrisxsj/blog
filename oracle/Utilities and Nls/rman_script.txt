@@ -1,0 +1,43 @@
+Rman Script:
+[CONFIGURE CONTROLFILE AUTOBACKUP ON;
+run {
+allocate channel ch1 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch1,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch2 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch2,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch3 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch3,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch4 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch4,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch5 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch5,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch6 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch6,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch7 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch7,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+allocate channel ch8 type 'sbt_tape' connect sys/**********@dfkzyk2
+PARMS="SBT_LIBRARY=/opt/simpana/Base64/libobk.a(shr.o),BLKSIZE=1048576,ENV=(CV_mmsApiVsn=2,CV_channelPar=ch8,ThreadCommandLine=BACKUP -jm 45 -a 2:24 -cl 10 -ins 9 -at 80 -j 15959 -jt 15959:4:1 -bal 1 -rcp 0 -ms 8 -data -ma 8 -tc -chg 1:8 -rac 4  -cn lpar4 -vm Instance001)"
+TRACE 0;
+setlimit channel ch1 maxopenfiles 1;
+setlimit channel ch2 maxopenfiles 1;
+setlimit channel ch3 maxopenfiles 1;
+setlimit channel ch4 maxopenfiles 1;
+setlimit channel ch5 maxopenfiles 1;
+setlimit channel ch6 maxopenfiles 1;
+setlimit channel ch7 maxopenfiles 1;
+setlimit channel ch8 maxopenfiles 1;
+backup
+incremental level = 0
+filesperset = 1
+skip inaccessible  database
+include current controlfile  ;
+}
+exit;
+]

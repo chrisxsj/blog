@@ -1,0 +1,22 @@
+raw
+查看/etc/udev/rules.d/60-raw.rules
+
+
+
+asmlib
+[root@rh4racdb01 ~]# oracleasm querydisk -d DATA1
+Disk "DATA1" is a valid ASM disk on device [8, 97]
+[root@rh4racdb01 ~]# ll /dev/sd* | grep 8 | grep 97
+brw-rw----  1 root disk 8,  97 Sep  9 17:31 /dev/sdg1
+
+注意：11g可以直接看出disk
+[root@rh4racdb01 ~]# oracleasm querydisk -d DATA1
+Disk "DATA1" is a valid ASM disk on device sdg [8, 97]
+
+
+
+# /etc/init.d/oracleasm querydisk -p DISK1
+Disk "DISK1" is a valid ASM disk
+/dev/sdb1: LABEL="DISK1" TYPE="oracleasm"
+
+

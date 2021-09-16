@@ -1,0 +1,82 @@
+ 1 C:\>rman target /
+
+
+恢复管理器: Release 10.2.0.3.0 - Production on 星期三 5月 21 22:25:34 2008
+Copyright (c) 1982, 2005, Oracle.  All rights reserved.
+
+
+已连接到目标数据库 (未启动)
+
+
+RMAN> startup mount;
+
+
+Oracle 实例已启动
+数据库已装载
+
+
+系统全局区域总计    251658240 字节
+
+
+Fixed Size                    1289988 字节
+Variable Size                171966716 字节
+Database Buffers              75497472 字节
+Redo Buffers                  2904064 字节
+
+
+RMAN> catalog start with 'd:\obak\';
+
+
+使用目标数据库控制文件替代恢复目录
+搜索与样式 d:\obak 匹配的所有文件
+
+
+数据库未知文件的列表
+=====================================
+文件名: D:\obak\FULL20080520
+文件名: D:\obak\Seed_Database.dfb
+
+
+是否确实要将上述文件列入目录 (输入 YES 或 NO)? YES
+正在编制文件目录...
+目录编制完毕
+
+
+已列入目录的文件的列表
+=======================
+文件名: D:\obak\Seed_Database.dfb
+
+
+未列入目录的文件的列表
+=======================================
+文件名: D:\obak\FULL20080520
+  RMAN-07518: 原因: 外部数据库文件 DBID: 1052376487  数据库名: EEYGLE
+
+
+RMAN> list backup;
+
+
+
+
+
+
+
+
+
+
+2 然后在节点 2 注册该归档文件，操作如下：
+ JSSDBN2> alter database register physical logfile
+ '/data/oradata/jssdbn2/archivelog/1_218_703671669.dbf';
+
+
+
+
+3 查询catalog的日志
+
+
+sql> select name,thread#,sequence#,completion_time,status from v$archived_log where sequence=218 and thread#=1;
+rman>list archivelog sequence 218 thread 1;
+list archive log
+v$archived_log
+v$log_history
+信息都来自control file

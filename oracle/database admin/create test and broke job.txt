@@ -1,0 +1,137 @@
+一、dbms_job涉及到的知识点
+1、创建job：
+variable jobno number;
+dbms_job.submit(:jobno, —-job号  
+                'your_procedure;',—-执行的存储过程, ';'不能省略 
+                next_date, —-下次执行时间  
+                'interval' —-每次间隔时间，interval以天为单位
+); 
+–系统会自动分配一个任务号jobno。
+2、删除job: dbms_job.remove(jobno); 
+3、修改要执行的操作: job:dbms_job.what(jobno, what);  
+4、修改下次执行时间：dbms_job.next_date(jobno, next_date);  
+5、修改间隔时间：dbms_job.interval(jobno, interval);
+6、启动job: dbms_job.run(jobno);  
+7、停止job: dbms.broken(jobno, broken, nextdate); –broken为boolean值 
+二、初始化相关参数job_queue_processes
+1、job_queue_process表示oracle能够并发的job的数量，当job_queue_process值为0时表示全部停止oracle的job。
+2、查看job_queue_processes参数
+方法一：
+show parameter job_queue_process;
+方法二：
+select * from v$parameter where name='job_queue_processes';
+3、修改job_queue_processes参数
+alter system set job_queue_processes = 10;
+
+conn hr/hr
+
+create table t(
+  id   varchar2(30),
+  name varchar2(30)
+);
+
+
+
+create or replace procedure proce_t is
+begin
+   insert into t(id, name) values('1', to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss'));
+   commit;
+end;
+/
+
+or
+空的procedure
+CREATE OR REPLACE PROCEDURE test
+    AS
+BEGIN
+    dbms_output.put_line('hello');
+END;
+/
+
+declare
+jobno number;
+begin
+  sys.dbms_job.submit(job => jobno,
+                      what => 'proce_t;',
+                      next_date => sysdate,
+                      interval => 'sysdate+5/24/60',
+                           instance => 1);
+  commit;
+end;
+/
+
+sysdate+5/24/60  --每5分钟
+trunc(sysdate,'mi')+10/1440  --每10分钟
+
+begin
+   dbms_job.run(23);
+   commit;
+end;
+/
+
+select job,schema_user,to_char(last_date,'yyyy-mm-dd hh24:mi:ss'),to_char(next_date,'yyyy-mm-dd hh24:mi:ss'),interval,what,broken from dba_jobs;
+
+select * from hr.t;
+
+1    2018-07-13 10:42:54
+1    2018-07-13 10:47:54
+1    2018-07-13 10:52:54
+1    2018-07-13 10:57:54
+==================================
+stop running job
+
+11g之前版本
+
+第一步：查看正在运行的jobs
+SQL>select * from dba_jobs_running;
+
+然后确定你要停止的job，这个数据字典对应的job就是下面要执行的过程的第一个参数。
+
+第二步：确定要停掉的job的SID，SERIAL#和系统进程id
+select b.SID,b.SERIAL#,c.SPID
+from dba_jobs_running a,v$session b,v$process c
+where a.sid = b.sid and b.PADDR = c.ADDR and job=23
+
+
+
+第三步：This procedure sets the broken flag. Broken jobs are never run.   --注意：是job的owner执行
+SQL>  EXEC DBMS_JOB.BROKEN(23,TRUE);
+SQL>  commit;
+Usage Notes
+You must issue a COMMIT statement immediately after the statement.
+
+
+
+此时这个job还是运行的，可以通过dba_jobs_running查看
+第四步：使用alter system kill session 'SID,SERIAL#;杀掉会话。
+
+如果要杀很久，直接使用操作系统命令
+kill -9 spid
+ 
+
+第五步：调整这个job
+ALTER SYSTEM SET job_queue_processes = 0;
+
+第六步 修改你要修改的任何东西，甚至是JOB内的内容。
+第七步 恢复
+EXEC DBMS_JOB.BROKEN(23,false);
+ALTER SYSTEM SET job_queue_processes = 100;
+
+
+11g及之后版本
+1 –查询所有正在运行的JOB
+select * from Dba_Scheduler_Running_Jobs
+2 找到job的spid
+select s.sid,s.serial#,p.spid from v$session s,v$process p where s.paddr=p.addr and s.sid=640;
+3 –强制停止当前的JOB
+exec dbms_scheduler.stop_job('job名称',force => true);
+4 如无法强制停止，则在操作系统层面删掉对应的进程
+kill -9 spid
+=================================
+
+How to Fix Broken Jobs (文档 ID 2118423.1)
+How to Fix Broken Jobs (DBMS_JOBS) (文档 ID 2127951.1)
+Troubleshooting Assistant: Get Assistance to Understand and Troubleshoot Oracle DBMS_SCHEDULER (文档 ID 1585228.2)
+Can't find the job with job number or name in dba_jobs (文档 ID 2211729.1)
+PACKAGE DBMS_JOB Specification (文档 ID 67686.1)
+What does TOTAL_TIME column in DBA_JOBS Measure? (文档 ID 1012533.7)

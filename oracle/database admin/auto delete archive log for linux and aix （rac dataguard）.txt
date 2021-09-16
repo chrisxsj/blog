@@ -1,0 +1,186 @@
+删除归档情况
+归档路径是，快速恢复区， 删除asm磁盘上的归档日志，并不能生效，因为数据库读取的是数据字典信息,rm
+后未更新此数据字典视图。
+归档路径使用磁盘路径，删除asm磁盘上的归档日志，数据库能识别到空间的释放。
+
+删除归档前一定要注意!!!!!!!
+v$recover_file
+
+
+
+
+del_arch_rman_primary.sh
+
+
+
+#!/bin/bash or #!/bin/ksh
+source ~/.bash_profile
+####################################
+#    At primary host his1
+####################################
+
+#------------Get max sequence from maxsequence.txt-----------------
+SEQUENCE=`awk '{if (NR==1) print $1}' /home/oracle/script/orcl_max_sequence_non_th1.txt`
+thread=`awk '{if (NR==1) print $2}'  /home/oracle/script/orcl_max_sequence_non_th1.txt`
+
+let "SEQUENCE_DEL=SEQUENCE - 10"
+export ORACLE_SID=orcl1
+
+echo "connect target /"                                               >  /home/oracle/script/del_arch_rman_primary.rcv
+echo "run {"                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "allocate channel d1 type disk;"                                 >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete archivelog until sequence $SEQUENCE_DEL thread $thread;" >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "crosscheck archivelog all;"                                     >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete  expired archivelog all;"                                >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "release channel d1; "                                           >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "} "                                                             >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "run {"                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "crosscheck archivelog all;"                                     >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete noprompt expired archivelog all;"                        >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "} "                                                             >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "exit "                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+
+#----------------exec the del_arc_rman_primary.rcv scripts-------------------------
+source ~/.bash_profile
+export ORACLE_SID=orcl1
+DATE=`date +%Y-%m-%d`
+rman cmdfile=/home/oracle/script/del_arch_rman_primary.rcv log=/home/oracle/script/log/del_arch_rman_primary$DATE.log
+
+[oracle@his2 script]$ vi del_arch_rman_primary.sh
+
+#!/bin/bash or #!/bin/ksh
+source ~/.bash_profile
+####################################
+#    At primary host his2
+####################################
+
+#------------Get max sequence from maxsequence.txt-----------------
+SEQUENCE=`awk '{if (NR==1) print $1}' /home/oracle/script/orcl_max_sequence_non_th2.txt`
+thread=`awk '{if (NR==1) print $2}'  /home/oracle/script/orcl_max_sequence_non_th2.txt`
+
+let "SEQUENCE_DEL=SEQUENCE - 10"
+export ORACLE_SID=orcl1
+
+echo "connect target /"                                               >  /home/oracle/script/del_arch_rman_primary.rcv
+echo "run {"                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "allocate channel d1 type disk;"                                 >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete archivelog until sequence $SEQUENCE_DEL thread $thread;" >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "crosscheck archivelog all;"                                     >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete  expired archivelog all;"                                >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "release channel d1; "                                           >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "} "                                                             >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "run {"                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "crosscheck archivelog all;"                                     >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "delete noprompt expired archivelog all;"                        >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "} "                                                             >> /home/oracle/script/del_arch_rman_primary.rcv
+echo "exit "                                                          >> /home/oracle/script/del_arch_rman_primary.rcv
+
+#----------------exec the del_arc_rman_primary.rcv scripts-------------------------
+source ~/.bash_profile
+export ORACLE_SID=orcl2
+DATE=`date +%Y-%m-%d`
+rman cmdfile=/home/oracle/script/del_arch_rman_primary.rcv log=/home/oracle/script/log/del_arch_rman_primary$DATE.log
+
+
+
+crontab -l
+30 1 * * 3,6 sh /home/oracle/script/del_arch_rman_primary.sh
+=====================================================================================
+dataguard-standby!!!!!
+
+config ssh authorized key!!!!!!!!!!!!!!!!!
+
+[oracle@rac1 script]$ scp /home/oracle/script/orcl_max_sequence_non_th1.txt 212.7.8.3:/home/oracle/script/
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+The fingerprint for the RSA key sent by the remote host is
+7f:6a:b6:4b:f1:81:89:3f:04:61:a1:bb:40:1e:9f:e7.
+Please contact your system administrator.
+Add correct host key in /home/oracle/.ssh/known_hosts to get rid of this message.
+Offending key in /home/oracle/.ssh/known_hosts:5
+RSA host key for 212.7.8.3 has changed and you have requested strict checking.
+Host key verification failed.
+lost connection
+[oracle@rac1 script]$
+
+need delete local (/home/oracle/.ssh/known_hosts) 212.7.8.3 rsa info!!!!!!!!!!!!!!!!!!!!
+
+1
+212.7.8.102
+$ ssh oracle@212.7.8.3 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+$ ssh oracle@212.7.8.3 cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+
+212.7.8.3
+$ ssh oracle@212.7.8.102 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+$ ssh oracle@212.7.8.102 cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+
+2
+212.7.8.102
+$ ssh oracle@212.7.8.4 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+212.7.8.4
+$ ssh oracle@212.7.8.102 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+
+
+
+get_last_sequence_dg.sh
+
+
+
+#!/bin/bash or #!/bin/ksh
+####################################
+#    At standby host rac1
+####################################
+#---get orcl instance's sequence which is already applied---
+source ~/.bash_profile
+export ORACLE_SID=orcl1
+sqlplus -s /nolog<<EOF
+conn / as sysdba
+set TERMOUT OFF
+set FEEDBACK OFF
+set HEADING OFF
+spool /home/oracle/script/orcl_max_sequence_thread1.txt
+select max(sequence#),thread# from v\$archived_log where registrar='RFS' and applied='YES' and thread#='1'  group by sequence#,thread# order by sequence# desc;
+spool off
+spool /home/oracle/script/orcl_max_sequence_thread2.txt
+select max(sequence#),thread# from v\$archived_log where registrar='RFS' and applied='YES' and thread#='2'  group by sequence#,thread# order by sequence# desc;
+spool off
+host sed /^$/d /home/oracle/script/orcl_max_sequence_thread1.txt > /home/oracle/script/orcl_max_sequence_non_th1.txt
+host sed /^$/d /home/oracle/script/orcl_max_sequence_thread2.txt > /home/oracle/script/orcl_max_sequence_non_th2.txt
+host rm -rf /home/oracle/script/orcl_max_sequence_thread1.txt
+host rm -rf /home/oracle/script/orcl_max_sequence_thread2.txt
+host scp /home/oracle/script/orcl_max_sequence_non_th1.txt 212.7.8.3:/home/oracle/script/
+host scp /home/oracle/script/orcl_max_sequence_non_th2.txt 212.7.8.4:/home/oracle/script/
+exit
+EOF
+
+crontab -l
+10 1 * * 3,6 sh /home/oracle/script/get_lastest_sequenct_dg.sh
+==========================
+del_arch_rman_standby.sh
+
+#!/bin/bash or #!/bin/ksh
+DATE=`date +%Y-%m-%d-H`
+source ~/.bash_profile
+export ORACLE_SID=orcl1
+rman log=/home/oracle/script/log/del_arch_rman$DATE.log append <<EOF
+connect target /
+run
+{
+delete noprompt archivelog until time 'sysdate-1/24';
+#delete archivelog  until time "to_date('2016-07-29 15:30:00','yyyy-mm-dd hh24:mi:ss')";
+crosscheck archivelog all;
+delete noprompt expired archivelog all;
+}
+EOF
+
+crontab -l
+10 3 * * 6 sh /u01/app/oracle/script/del_arch_rman_standby.sh
+
+此处noprompt有没有都可以
+
+

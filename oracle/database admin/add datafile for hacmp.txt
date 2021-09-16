@@ -1,0 +1,22 @@
+hacmp并发卷组方式加datafile
+第一：
+在1个节点执行：
+  mklv -y iboc_system -T O -w n -s n -r n datavg 4
+
+--mklv -y LVname      -T O -w n -s n -r n VGname NumPPs"
+iboc_system为lv名字
+datavg为并发卷组名
+4为4个pps
+
+
+
+第二：在2个节点都执行：
+chown oracle:dba /dev/riboc_system
+chmod 660 /dev/riboc_system
+
+假设/dev/riboc_system 有10240M大小。
+
+第三：在1个节点执行：
+create tablespace EBANK_COMMON_TS datafile '/dev/riboc_system' size 10000M autoextend off;
+或者
+alter tablespace EBANK_COMMON_TS  add datafile '/dev/riboc_system' size 10000M autoextend off;

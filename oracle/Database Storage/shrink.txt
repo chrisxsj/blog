@@ -1,0 +1,123 @@
+Reclaiming Wasted Space
+Understanding Reclaimable Unused Space
+Only segments in locally managed tablespaces(SEGMENT_SPACE_MANAGEMENT is auto) with automatic segment space management (ASSM) are eligible. 
+
+SQL> select TABLESPACE_NAME,SEGMENT_SPACE_MANAGEMENT,EXTENT_MANAGEMENT,ALLOCATION_TYPE from dba_tablespaces;
+
+
+Using the Segment Advisor
+variable id number;
+begin
+  declare
+  name varchar2(100);
+  descr varchar2(500);
+  obj_id number;
+  begin
+  name:='Manual_Employees';
+  descr:='Segment Advisor Example';
+
+  dbms_advisor.create_task (
+    advisor_name     => 'Segment Advisor',
+    task_id          => :id,
+    task_name        => name,
+    task_desc        => descr);
+
+  dbms_advisor.create_object (
+    task_name        => name,
+    object_type      => 'TABLE',
+    attr1            => 'HR',
+    attr2            => 'EMPLOYEES',
+    attr3            => NULL,
+    attr4            => NULL,
+    attr5            => NULL,
+    object_id        => obj_id);
+
+  dbms_advisor.set_task_parameter(
+    task_name        => name,
+    parameter        => 'recommend_all',
+    value            => 'TRUE');
+
+  dbms_advisor.execute_task(name);
+  end;
+end; 
+/
+
+select task_name, status from dba_advisor_tasks
+   where owner = 'SYS' and advisor_name = 'Segment Advisor';
+
+The following example shows how to query the DBA_ADVISOR_* views to retrieve findings from all Segment Advisor runs submitted by user 
+select af.task_name, ao.attr2 segname, ao.attr3 partition, ao.type, af.message 
+  from dba_advisor_findings af, dba_advisor_objects ao
+  where ao.task_id = af.task_id
+  and ao.object_id = af.object_id
+  and ao.owner = 'SYS';
+
+  
+The following query returns recommendations by the most recent run of the Auto Segment Advisor, with the suggested command to run to follow the recommendations:  
+select tablespace_name, segment_name, segment_type, partition_name,
+recommendations, c1 from
+table(dbms_space.asa_recommendations('FALSE', 'FALSE', 'FALSE'));
+
+
+Shrinking Database Segments Online
+segment shrink requires that rows be moved to new locations. Therefore, you must first enable row movement in the object you want to shrink and disable any rowid-based triggers defined on the object. 
+ALTER TABLE ... ENABLE ROW MOVEMENT
+
+Shrink operations can be performed only on segments in locally managed tablespaces with automatic segment space management (ASSM). Within an ASSM tablespace, all segment types are eligible for online segment shrink except these:
+    IOT mapping tables
+    Tables with rowid based materialized views
+    Tables with function-based indexes
+
+
+Invoking Online Segment Shrink
+You can shrink space in a table, index-organized table, index, partition, subpartition, materialized view, or materialized view log. You do this using ALTER TABLE, ALTER INDEX, ALTER MATERIALIZED VIEW, or ALTER MATERIALIZED VIEW LOG statement with the SHRINK SPACE clause
+Two optional clauses let you control how the shrink operation proceeds:
+
+    The COMPACT clause lets you divide the shrink segment operation into two phases. When you specify COMPACT, Oracle Database defragments the segment space and compacts the table rows but postpones the resetting of the high water mark and the deallocation of the space until a future time. This option is useful if you have long-running queries that might span the operation and attempt to read from blocks that have been reclaimed. The defragmentation and compaction results are saved to disk, so the data movement does not have to be redone during the second phase. You can reissue the SHRINK SPACE clause without the COMPACT clause during off-peak hours to complete the second phase.
+
+    The CASCADE clause extends the segment shrink operation to all dependent segments of the object. For example, if you specify CASCADE when shrinking a table segment, all indexes of the table will also be shrunk. (You need not specify CASCADE to shrink the partitions of a partitioned table.) To see a list of dependent segments of a given object, you can run the OBJECT_DEPENDENT_SEGMENTS procedure of the DBMS_SPACE package.
+
+
+Examples	
+alter table/index/materialized view object_name shrink space [cascade] [compact];
+cascade：是指压缩所有依赖的对象，比如压缩表语句加上cascade，表上所有的索引都会被压缩
+compact：把压缩过程分为两个阶段：第一个阶段的语句带compact，压缩段空间，在这个过程中需要在表上加RX锁，即只在需要移动的行上加锁。由于涉及到rowid的改变，需要enable row movement.同时要disable基于rowid的trigger.这一过程对业务影响比较小。；第二个阶段语句不带compact，调整高水位并释放收回的空间。此过程需要在表上加X锁，会造成表上的所有DML语句阻塞。在业务特别繁忙的系统上可能造成比较大的影响。对于大表，建议采用compact选项
+SQL> alter table employees enable row movement;
+SQL> ALTER TABLE employees SHRINK SPACE COMPACT;    
+SQL> ALTER TABLE employees SHRINK SPACE;
+Shrink a table and all of its dependent segments (including LOB segments):
+ALTER TABLE employees SHRINK SPACE CASCADE;
+Shrink a single partition of a partitioned table:
+ALTER TABLE customers MODIFY PARTITION cust_P1 SHRINK SPACE;
+
+======================================================================
+conn hr/hr
+create table t as select * from all_objects;
+create index i on t(object_id);
+
+查看表和索引的空间使用情况：
+select segment_name,segment_type,bytes,blocks from dba_segments where owner='HR' and segment_name in('T','I');
+SEGMENT_NAME   SEGMENT_TYPE            BYTES    BLOCKS
+--------------- ------------------ ---------- ----------
+T               TABLE                9437184      1152
+I               INDEX                2097152        256
+
+删除表数据，发现表和索引的空间并没有被收回：
+delete from t;
+commit;
+select segment_name,segment_type,bytes,blocks from dba_segments where owner='HR' and segment_name in('T','I');
+SEGMENT_NAME  SEGMENT_TYPE            BYTES    BLOCKS
+-------------- ------------------ ---------- ----------
+T              TABLE                9437184      1152
+I              INDEX                2097152        256
+
+直到做了段收缩之后，空间才被真正收回：
+alter table t enable row movement;
+alter table t shrink space cascade compact;
+alter table t shrink space cascade;
+select segment_name,segment_type,bytes,blocks from dba_segments where owner='HR' and segment_name in('T','I'); 
+
+SEGMENT_NAME      SEGMENT_TYPE            BYTES    BLOCKS
+------------------ ------------------ ---------- ----------
+T                  TABLE                  65536          8
+I                  INDEX                  65536          8

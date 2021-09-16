@@ -1,0 +1,60 @@
+overview of predefined accounts
+
+https://docs.oracle.com/cd/E11882_01/server.112/e10575/tdpsg_user_accounts.htm#TDPSG20030
+
+Home / Database / Oracle Database Online Documentation 11g Release 2 (11.2) / Database Administration/Database 2 Day + Security Guide
+3 Securing Oracle Database User Accounts
+
+Predefined Administrative Accounts
+Predefined Non-Administrative User Accounts
+Predefined Sample Schema User Accounts
+
+Predefined Administrative Accounts：22
+ANONYMOUS
+CTXSYS
+DBSNMP
+EXFSYS
+LBACSYS
+MDSYS
+MGMT_VIEW
+OLAPSYS
+ORDDATA
+OWBSYS
+ORDPLUGINS
+ORDSYS
+OUTLN
+SI_INFORMTN_SCHEMA
+SYS
+SYSMAN
+SYSTEM
+WK_TEST
+WKSYS
+WKPROXY
+WMSYS
+XDB
+
+Predefined Non-Administrative User Accounts：9
+APEX_PUBLIC_USER
+DIP
+FLOWS_040100
+FLOWS_FILES
+MDDATA
+ORACLE_OCM
+SPATIAL_CSW_ADMIN_USR
+SPATIAL_WFS_ADMIN_USR
+XS$NULL
+
+Predefined Sample Schema User Accounts：7
+BI
+HR
+OE
+PM
+IX
+SH
+In addition to the sample schema accounts, Oracle Database provides another sample schema account, SCOTT. The SCOTT schema contains the tables EMP, DEPT, SALGRADE, and BONUS. The SCOTT account is used in examples throughout the Oracle Database documentation set. When you install Oracle Database, the SCOTT account is locked and expired.
+
+SCOTT/TIGER
+
+==================
+
+

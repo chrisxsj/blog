@@ -1,0 +1,57 @@
+$ cat del_trace_find.sh
+
+#!/usr/bin/bash
+# delete trace file by find command 
+# highgo
+# created by Jason in May 11,2018
+# BEGIN
+date >>/tmp/script/del_trace_find.log
+find /u02/app/oracle/diag/rdbms/orcl/orcl/trace/ -maxdepth 1 -name "*.trc" -ctime +10 |wc -l >>/tmp/script/del_trace_find.log
+find /u02/app/oracle/diag/rdbms/orcl/orcl/trace/ -maxdepth 1 -name "*.trc" -ctime +10 -exec rm -f {} \; >>/tmp/script/del_trace_find.log
+date >>/tmp/script/del_trace_find.log
+echo "------------------------------" >>/tmp/script/del_trace_find.log
+# END
+
+注意以下的trace
+
+$ORACLE_BASE/.../bdump
+*.trc  *.trw
+$ORACLE_BASE/.../udump
+$ORACLE_HOME/rdbms/audit 
+$ORACLE_HOME/rdbms/log
+listener log
+
+
+
+find . -name "*.trc" -ctime +40 -exec ls -atl {} \;
+find . -name "*.trc" -ctime +40 -exec rm {} \;
+find . -size +30000k -exec ls -atl {} \;
+find . -size +30000k -exec rm {} \;
+
+
+
+
+find /u01/app/diag/rdbms/dzyyhis/dzyyhis2/trace/ -name "*.trc" -ctime +10 -exec rm -rf {} \;
+find /u01/app/diag/rdbms/dzyyhis/dzyyhis2/trace/ -name "*.trm" -ctime +10 -exec rm -rf {} \;
+find /u01/app/diag/rdbms/dzyyhis/dzyyhis2/trace/ -name "cdmp_*" -ctime +10 -exec rm -rf {} \;
+find /u01/app/diag/asm/+asm/+ASM2/trace/ -name "*.trc" -ctime +10 -exec rm -rf {} \;
+find /u01/app/diag/asm/+asm/+ASM2/trace/ -name "*.trm" -ctime +10 -exec rm -rf {} \;
+find /u01/app/diag/asm/+asm/+ASM2/trace/ -name "*cdmp_*" -ctime +10 -exec rm -rf {} \;
+
+
+
+xargs结合find使用
+用rm 删除太多的文件时候，可能得到一个错误信息：/bin/rm Argument list too long. 用xargs去避免这个问题：
+find . -type f -name "*.log" -print0 | xargs -0 rm -f
+
+======================
+windows 下
+创建一个空文件
+type null
+将空文件写入到告警日志
+type null > alert_test.log
+
+
+
+
+

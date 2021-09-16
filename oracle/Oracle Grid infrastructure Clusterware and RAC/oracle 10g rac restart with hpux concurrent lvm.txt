@@ -1,0 +1,87 @@
+一.     数据库启动步骤
+ 1.     telnet到小型机的root用户下，使用bdf命令检查文件系统空间没有满的，使用#
+ 在其中一台数据库上：
+ cmruncl -f -v
+ 命令启动双机。
+ (如果只启动一台机器，使用#cmruncl -f -v -n 节点名)
+
+ #
+ cmviewcl
+ 可以观察到双机正常启动
+
+ 2.     如果是开机后第一次启动双机，则双机启动后数据库自动启动。过一段时间后观察crs状态，所有资源都online。
+ #
+ su  - oracle
+ $
+ crs_stat -t，
+
+ 如果出现vip、监听offline，排除网线故障后$srvctl start nodeapps -n 节点名。
+ 3.     如果开机后曾经手动停止过crs，则双机不会自动启动crs，此时需要手动启动crs
+ 在两台机器上的root用户下
+ #
+ crsctl start crs
+ crs服务开始启动
+
+
+ 过一段时间后，
+ $crs_stat -t
+ 可以观察到所有服务和数据库都已经正常启动。
+
+ 4.     #su - oracle
+ $sqlplus / as sysdba
+ 能够连接进入数据库，启动完毕。
+
+
+ 二.     数据库关闭步骤
+ 1.     先进入oracle用户
+ su - oracle
+ 2.     停止数据库:在其中一台机器上
+ $
+ srvctl stop database -d his -o immediate
+ 3.     停止数据库监听，在其中一台机器上
+ $
+ srvctl stop listener -n wyfyhis1
+ $
+ srvctl stop listener -n wyfyhis2
+ 4.     停止节点服务，在其中一台机器上
+ $
+ srvctl stop nodeapps -n wyfyhis1
+ $
+ srvctl stop nodeapps -n wyfyhis2
+ 5.     检查资源是否都已经offline，在一台机器上：
+ $
+ crs_stat -t
+
+ 6.     停止crs:
+ 在一台机器上
+ 返回root用户
+ exit
+ crsctl stop crs
+ 在另一台机器上
+ exit
+ crsctl stop crs
+ 7.     使用#
+ ps -ef|grep crs
+ 命令检查crs是否停止,当只剩下如下输出时则crs停止完毕。
+
+
+ 8.     #bdf检查两台小型机文件系统没有快满的。
+ 9.     在其中一个节点上停止双机#
+ cmhaltcl -v -f
+ 10.     使用cmviewcl命令确认双机已经关闭。
+
+
+
+
+
+
+ 三.     一台服务器自动重启后加入集群
+ 如果有一台服务器自动重启，另一台服务器的双机和数据库正常，可以使用如下命令独立启动重启的服务器。
+ 用root用户telnet到重启了的服务器上。
+ cmrunnode 节点名
+ 如wyfyhis1
+ cmrunnode wyfyhis2
+
+ 之后双机正常启动，并带动数据库自动启动
+
+

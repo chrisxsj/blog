@@ -1,0 +1,144 @@
+How to Convert 10g Single-Instance database to 10g RAC using Manual Conversion procedure (Doc ID 747457.1)	To BottomTo Bottom	
+
+In this Document
+	Goal
+	Fix
+ 	Scalability RAC Community
+	References
+
+Applies to:
+Oracle Database - Enterprise Edition - Version 10.1.0.2 and later
+Information in this document applies to any platform.
+This note applies to all Unix platforms.
+***Checked for relevance on 11-Mar-2013***
+
+Goal
+
+This article provides a method to convert a Single Instance 10g database to a RAC 10g database. It can be used for 10gR2 or 11gR1, too.
+Fix
+
+Following are the steps:
+
+1. on the first node
+
+
+Make a full database backup of the single-instance database before you change anything.
+
+1) Install Oracle Clusterware on all nodes you intend to have as cluster members, following the directions in Chapter 4 and Chapter 5 (Oracle? Database Oracle Clusterware and Oracle Real Application Clusters Installation Guide <platform>).
+http://www.oracle.com/pls/db102/portal.portal_db?selected=3#index-ORA
+
+Eventually patch the clusterware software (the clusterware version need to be equal or higher than the rdbms version) as well as the rdbms software
+
+During the "Install Oracle Database 10g Software with Real Application Clusters", make sure that you select a new Oracle home other than the one from which the single-instance database was running in case the single-instance database is running on one of the systems. Upgrade the RAC RDBMS software to the same version as the original single-instance database.
+
+2) Configure the cluster listener, i.e. configure the listener through netca from the new cluster RDBMS Home. Eventually stop the single instance listeners when they are running on one of the clustered nodes in case they are using the same listener ports. Ideally, use the 'LISTENER' as name for that listener.
+
+3) Restore the backup of datafiles,redo logs,control file to a shared location on the cluster 
+(If you are using ASM ,then please follow Note 452758.1 How to Convert a Single-Instance ASM to Cluster ASM)
+
+4) Take a backup of original single-instance pfile to e.g. /tmp/initorcl.ora and Add the following entry in pfile, e.g. for a two node RAC cluster
+*.cluster_database = TRUE
+*.cluster_database_instances = 2
+*.undo_management=AUTO
+<SID1>.undo_tablespace=undotbs (undo tablespace which already exists)
+<SID1>.instance_name=<SID1>
+<SID1>.instance_number=1
+<SID1>.thread=1
+<SID1>.local_listener=<LISTENERNAME>_<HOSTNAME1>
+<SID2>.instance_name=<SID2>
+<SID2>.instance_number=2
+<SID2>.local_listener=<LISTENERNAME>_<HOSTNAME2>
+<SID2>.thread=2
+<SID2>.undo_tablespace=UNDOTBS2
+<SID2>.cluster_database = TRUE
+<SID2>.cluster_database_instances = 2 
+ 
+
+<SID1> is equal to "<db_name>1". <SID2> is equal to "<db_name>2", e.g. ORCL1, ORCL2.
+
+
+5) change the location of control file in parameter file
+
+local drive to shared cluster file system location
+
+ie control_files='<local path>/control01.ctl'
+
+to ie control_files='<shared cluster file system path>/control01.ctl'
+
+6) create spfile from pfile( spfile should be stored in shared device)
+
+export ORACLE_SID=ORCL1
+sqlplus "/ as sysdba"
+create spfile='<shared cluster file system path>/spfileORCL.ora' from pfile='/tmp/initORCL.ora';
+exit
+
+7) Create the $ORACLE_HOME/dbs/init<sid>.ora e.g. initORCL1.ora file that contains the following entry
+
+spfile='spfile_path_name'
+
+spfile_path_name is the complete path name of the SPFILE.
+
+example :-
+
+spfile='/cfs/spfile/spfileORCL1.ora'
+
+8) create new password file for ORCL1 instance.
+
+orapwd file=orapwORCL1 password=oracle
+
+9) start the database in mount stage
+
+10) Rename the datafile,redo logs to new shared device
+
+alter database rename file '<full path of source file name>' to '<new shared location path';
+
+11) Add second instance redo logs (or more when multiple instances will be started)
+
+alter database
+add logfile thread 2
+group 3 ('<shared location/redo2_01_100.dbf') size 100M,
+group 4 ('<shared location/redo2_02_100.dbf') size 100M;
+
+alter database enable public thread 2;
+
+
+12) create the second (or more) instance undo tablespace from existing instance
+
+Path and file name will different for your environment
+
+
+CREATE UNDO TABLESPACE UNDOTBS2 DATAFILE
+'/dev/RAC/undotbs_02_210.dbf' SIZE 200M ;
+
+
+13) Open your database (i.e. alter database open;) and run $ORACLE_HOME/rdbms/admin/catclust.sql to create cluster database specific views within the existing instance
+
+
+2. On the second node and other nodes
+
+14) Set ORACLE_SID and ORACLE_HOME environment variables on the second node
+
+15) Create the $ORACLE_HOME/dbs/init<sid>.ora e.g. initORCL2.ora file for the second node the same way as with point 7.
+
+16) create new password file for second instance ORCL2 instance as in point 8
+
+orapwd file=orapwORCL2 password=oracle
+
+17) Start the second Instance
+
+3. on one of the nodes
+
+18) After configuring the listener,you have to add the database in cluster as below
+srvctl add database -d <database name> -o <ORACLE_HOME path> -p <spfile location and name>
+
+srvctl add instance -d <database name> -i <instance 1 name> -n <node 1 name >
+
+srvctl add instance -d <database name> -i <instance 2 name> -n <node 2 name >
+
+19) in case ASM is used, add the rdbms instance / asm dependency, e.g.
+srvctl modify instance -d <db_unique_name> -i <SID1> -s <+ASM1>
+
+
+Scalability RAC Community
+
+To discuss this topic further with Oracle experts and industry peers, we encourage you to review, join or start a discussion in the My Oracle Support Scalability RAC Community.

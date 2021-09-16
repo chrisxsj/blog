@@ -1,0 +1,22 @@
+单独启动ons服务
+$ crs_getperm ora.hpdb1.ons
+名称: ora.hpdb1.ons
+owner:oracle:rwx,pgrp:dba:r-x,other::r--,
+$ onsctl start
+为 -s (239) 获取 IP 失败
+为 -s (239) 获取 IP 失败
+为 -s (239) 获取 IP 失败
+onsctl: ons failed to start
+$ onsctl ping
+为 -s (239) 获取 IP 失败
+ons is not running ...
+$ crs_start ora.hpdb1.ons
+Attempting to start `ora.hpdb1.ons` on member `hpdb1`
+Start of `ora.hpdb1.ons` on member `hpdb1` failed.
+hpdb2 : CRS-1019: Resource ora.hpdb1.ons (application) cannot run on hpdb2
+ 
+CRS-0215: 无法启动资源 'ora.hpdb1.ons'。
+查看数据库日志
+2016-03-16 16:25:55.677: [  CRSRES][424984] startRunnable: setting CLI values
+2016-03-16 16:25:57.475: [  CRSAPP][424984] StartResource error for ora.hpdb2.ons error code = 1
+经过查找，当前数据库的hostname被设置成了“-s”。因当前服务器是hpUnix，在hpUnix下，执行“hostname -s”会将主机的hostname修改为“-s”，将hostname修改为正确的主机名，再次启动ons，启动成功。

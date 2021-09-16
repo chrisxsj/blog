@@ -1,0 +1,52 @@
+dba_tablespaces
+dba_segments
+dba_extents
+
+
+select dbms_rowid.rowid_block_number(rowid) from test where id=1; 
+
+
+
+select id,name, dbms_rowid.rowid_relative_fno(rowid), dbms_rowid.rowid_block_number(rowid),dbms_rowid.rowid_row_number(rowid)  from hr.test where id=2;
+
+查看数据库内容
+alter system dump datafile 4 block 201;
+select * from v$diag_info;
+
+全表扫描table access full >物理上从小的数据块开始扫描 
+每个会话hash后使用的块都不一样。所以heap table是无序存放的！
+
+block header ：
+ cache layer: 20bytes  描述块结构
+ transaction  layer fixed: 48bytes
+ transaction  layer variable: 24bytes
+
+
+select * from v$type_size where component  in ('KCB','KTB');
+
+COMPONEN TYPE       DESCRIPTION                   TYPE_SIZE
+ -------- -------- -------------------------------- ----------
+ KCB     KCBH       BLOCK COMMON HEADER                  20
+ KTB     KTBIT       TRANSACTION VARIABLE HEADER             24
+ KTB     KTBBH       TRANSACTION FIXED HEADER             48
+ KTB     KTBBH_BS TRANSACTION BLOCK BITMAP SEGMENT         8
+======================================================
+
+block 数据块：
+DBA； 0x02000085    --data block address
+ 0x： 16进制
+ 02000085  》1位代表4bit》 32bit=10+22   10bit：文件号  22bit：块号
+ 02000085 》 转换成2进制 0000 0010 0000 》转换成10进制 8
+ 85 》》133
+
+ 怎么猜出前10 bit？？？
+
+ power(2,10) =一个表空间最多1024个数据文件
+ power(2,22) *8192 =32G 数据文件为8k的数据文件最大32G
+
+=======================================================
+
+segments header > assm  /mssm
+select header_file,header_block from dba_segments where segment_name ='TEST';
+
+L3 > L2 > L1

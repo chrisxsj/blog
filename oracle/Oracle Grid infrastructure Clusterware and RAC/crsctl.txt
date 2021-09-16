@@ -1,0 +1,73 @@
+http://blog.csdn.net/tianlesoftware/article/details/5358573
+
+
+Oracle 推荐在对集群做调整时，比如增加，删除节点之前，应该对OCR做一个备份，可以使用export 备份到指定文件，如果做了replace或者restore 等操作，Oracle 建议使用 cluvfy comp ocr -n all 命令来做一次全面的检查。该命令在clusterware 的安装软件里。
+7）使用cluvfy 工具检查一致性
+[root@raw1 cluvfy]# ./runcluvfy.sh comp ocr -n all
+Verifying OCR integrity
+Unable to retrieve nodelist from Oracle clusterware.
+Verification cannot proceed.
+
+
+
+
+查看asm磁盘组的状态
+#crsctl stat res -t 
+#crsctl stat res -p 
+#crsctl status res ora.DATA.dg -p 
+#crsctl status res ora.FRA.dg -p 
+
+
+是用crs_stop -f  参数把crs中状态是UNKNOWN的服务关掉，然后再用crs_start -f （加一个-f的参数）启动所有的服务就可以。参考：http://www.rachelp.nl/index_kb.php?menu=articles&actie=show&id=31
+
+
+crsctl start res ora.his02.ons
+
+===============================================
+1 节点层 
+olsnodes显示集群节点列表
+olsnodes -help
+
+$ORA_CRS_HOME/bin/olsnodes -n -i
+
+2 网络层
+oifcfg用来定义修改oracle集群需要的网卡属性
+oifcfg -help
+oifcfg iflist
+oifcfg getif
+
+$ oifcfg setif -global eth4/255.255.255.0:public
+$ oifcfg delif -global eth4/255.255.255.0 -force
+
+ 3 集群层
+clusterware组成的集群，这一层负责维护集群内的共享设备，并为上一层rac应用集群提供完整的集群状态视图
+
+crsctl，ocrcheck，ocrdump，ocrconfig
+crsctl check cluster
+crsctl check cssd
+crsctl check ctss
+crsctl query css votedisk
+
+ocrdump -stdout
+
+ocrcheck
+
+ocrconfig -showbackup
+
+4 应用层
+rac集群，主要是若干资源的维护
+srvctl，onsctl,crs_stat
+
+crs_stat -t
+crs_stat -ls
+
+srvctl -help
+
+srvctl config database
+srvctl config database -d orcl
+srvctl config nodeapps
+srvctl config listener
+
+srvctl status database -d orcl
+srvctl stop database -d orcl
+servctl stop instance -d orcl -i orcl1 -o immediate

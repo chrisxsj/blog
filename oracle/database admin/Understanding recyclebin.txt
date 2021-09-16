@@ -1,0 +1,41 @@
+1 回收站默认是开启的.不过我们可以通过参数recyclebin来关闭和开启.
+ 
+如果只是针对每个session可以通过alter session set recyclebin=off; 和 alter session set recyclebin=on;来关闭和开启
+ 
+如果是针对所有session可以通过修改系统参数recyclebin来实现,不过这里要注意10g和11g有点不一样,它们的参数类型不同
+ 
+10g可以用:alter system set recyclebin=off; 和alter system set recyclebin=on;来关闭和开启
+ 
+11g可以用:alter system set recyclebin=off deferred; 和alter system set recyclebin=on deferred;来关闭和开启
+
+
+
+2 查看回收站内容 
+ 
+select * from user_recyclebin;或select * from recyclebin;查看当前用户所drop的对象(里面有对象之前的名字和drop之后的名字)
+ 
+select * from dba_recyclebin;查看所有用户drop掉的对象
+
+3 还原回收站内容
+ 
+假如有表test被drop,drop后的object_name是BIN$qAUuckGyd3TgQKjAFAFTAg==$0
+ 
+可以用flashback table "BIN$qAUuckGyd3TgQKjAFAFTAg==$0"  to before drop ;(记得名字加双引号)
+ 
+或者flashback table test  to before drop ;来还原.不过假如drop掉一个表test,再新建一个表test,然后再drop.那么flashback table test  to before drop只能还原最后被drop掉的表test.最先drop掉的表还原时会出错,因为表名不能重名.所以必须改名flashback table test  to before drop rename to test2
+
+4 清空回收站
+ 
+如果一次只清空一个表,可以用PURGE table  test 或PURGE table "BIN$qAUuckGyd3TgQKjAFAFTAg==$0";
+ 
+如果一次清空所有的可以用PURGE recyclebin 或者PURGE dba_recyclebin
+ 
+还原时是只能一次还原一个表,不能像清空一样一次还原所有表
+
+5 注意事项
+ 
+如果表是在system表空间下面则不能使用回收站的功能,不知道为啥有这限制啊
+ 
+如果表空间快满时系统会自动的去清空回收站中一部分内容,先清空最早drop的对象
+
+本篇文章来源于 Linux公社网站(www.linuxidc.com)  原文链接：http://www.linuxidc.com/Linux/2012-01/51273.htm

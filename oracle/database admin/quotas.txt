@@ -1,0 +1,23 @@
+使用 quotas
+
+ 注意 应避免一下情况
+ Resource Role or Unlimited Tablespace System Privilege granted
+
+
+ SQL> create user first identified by first
+   2  default tablespace users
+   3  temporary tablespace temp
+   4  profile default
+   5  quota 100m on users;
+
+ 查看用户的quotas
+ select * from dba_ts_quotas; 
+select * from user_ts_quotas;
+
+
+
+3、更改用户的表空间限额：
+全局：
+grant unlimited tablespace to abc;
+针对某个表空间：
+alter user abc quota unlimited on test;
