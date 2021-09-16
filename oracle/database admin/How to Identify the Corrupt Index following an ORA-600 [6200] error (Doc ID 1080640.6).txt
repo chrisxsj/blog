@@ -1,0 +1,68 @@
+How to Identify the Corrupt Index following an ORA-600 [6200] error (Doc ID 1080640.6)
+To Bottom
+
+
+
+
+
+
+
+
+
+***Checked for relevance on 28-Nov-2012***
+
+
+
+Subject:
+========
+
+How to identify a corrupt index following an ORA-600 [6200] error.
+
+
+
+Description:
+============
+
+ORA-600 [6200] is reported when trying to access a given table.
+
+This indicates an index corruption has been detected.
+
+The standard solution is to drop and recreate ALL the indices for that table.
+
+However, the trace file produced at the time of the error can be used to
+determine exactly which index is corrupted.
+Example:
+--------
+
+This example shows an exerpt from the trace file and how to determine
+which index is corrupt.
+
+1.  Excerpt from trace file:
+
+  ksedmp: internal or fatal error
+  ORA-00600: internal error code, arguments: [6200], [260], [262], [], [], [], [], []
+
+  Block header dump: dba: 0x7b404757
+   Object id on Block? Y
+   seg/obj: 0x6190 csc: 0x00.4e537b5  itc: 2  flg: -typ: 2 - INDEX
+       fsl: 0  fnx: 0x0
+
+2.  Note the value of the seg/obj field (i.e. 0x6190) and translate this to
+    a decimal number.
+    $A==%x6190
+    $show sym a
+    A == 24976   Hex = 00006190  Octal = 00000060620
+
+3.  Look up the object name in the DBA_OBJECTS view.
+
+    SVRMGR> SELECT OBJECT_ID, OBJECT_NAME FROM DBA_OBJECTS
+            WHERE DATA_OBJECT_ID  = '24976';
+
+    DATA_OBJEC OBJECT_NAME                                                          
+           
+    ---------- ------------------------------------------------------
+         24976 tab1_index5
+   
+    This is the index that you should drop and recreate.
+
+

@@ -1,0 +1,24 @@
+使用oifcfg修改网卡设置, oifconfig可以用来设置和查看网卡使用的方式.
+查看当前配置：
+#cd /oracle/crs/bin
+[root@db1 bin]# ./oifcfg getif -global
+eth0  172.16.36.0  global  public
+eth3  10.10.10.0  global  cluster_interconnect
+-- 删除当前 eth0配置
+[root@db1 bin]# ./oifcfg delif -global eth0
+[root@db1 bin]# ./oifcfg getif -global
+eth3  10.10.10.0  global  cluster_interconnect
+-- 重新添加 eth0
+[root@db1 bin]# ./oifcfg setif -global eth0/10.55.125.0:public
+[root@db1 bin]# ./oifcfg getif -global
+eth0  172.16.37.0  global  public
+eth3  10.10.10.0  global  cluster_interconnect
+# ./oifcfg iflist
+
+
+
+
+[root@rac2 bin]# ./oifcfg getif ------------>>>OCR中存储的subnet id 信息
+[root@rac2 bin]# ./oifcfg iflist ------------>>>os上的subnet id信息
+
+

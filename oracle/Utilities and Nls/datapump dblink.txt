@@ -1,0 +1,18 @@
+也可创建db_link使用网络链的方式在客户端机器上执行此expdp
+
+在windows2003上建立Oracle 10.2.0.5的数据库，
+1.     create or replace directory dmpdir as 'H:\hisback1115';
+ 2.     grant read,write on directory dmpdir to expuser;
+ 3.     建立dblink：
+ create database link hplink connect to hrip identified by ****** using  'orcl9i';
+ 4.     使用网络链的方式在windows2003机器上执行此expdp操作，远程从hpux rac上导出数据，导出脚本如下：expdp expuser/expuser dumpfile=his1115full.dmp directory=dmpdir network_link=hplink  parallel=2 full=Y
+ 5.     有个别含有lang数据类型的表无法使用网络链导出，这些表需要在hpux操作系统上执行expdp命令单表导出:
+
+ expdp hrip/****** dumpfile=BASE_table.dmp directory=dmpdir tables="BASE.EXTENDQUERY_FORMAT,BASE.REPORTDWSYNTAX"
+
+
+expdp hrip/****** dumpfile=COMM_table.dmp directory=dmpdir tables="COMM.BMP"
+
+
+
+impdp hrip/hrip directory=impdir  dumpfile=HIS1115FULL.DMP remap_schema=hrip:hrip parallel=4 exclude=user schemas=hrip

@@ -1,0 +1,24 @@
+Why ASMLIB and why not(ZT)
+ http://hi.baidu.com/r12_ebs/item/b1a0700cf1dffa6dd45a113e
+
+
+ ASMLIB是一种基于Linux module，专门为Oracle Automatic Storage Management特性设计的内核支持库(kernel support library)。
+ 长久以来我们对ASMLIB的认识并不全面，这里我们来具体了解一下使用ASMLIB的优缺点。
+ 理论上我们可以从ASMLIB API中得到的以下益处:
+ 总是使用direct,async IO解决了永久性设备名的问题，即便在重启后设备名已经改变的情况下解决了文件权限、拥有者的问题减少了I/O期间从用户模式到内核模式的上下文切换，从而可能降低cpu使用率减少了文件句柄的使用量ASMLIB API提供了传递如I/O优先级等元信息到存储设备的可能
+ 虽然从理论上我们可以从ASMLIB中得到性能收益，但实践过程中这种优势是几乎可以忽略的，没有任何性能报告显示ASMLIB对比Linux上原生态的udev设备管理服务有任何性能上的优势。在Oracle官方论坛上有一篇<ASMLib and Linux block devices>讨论ASMLIB性能收益的帖子，你可以从中看到”asmlib wouldn’t necessarily give you much of an io performance benefit, it’s mainly for ease of management as it will find/discover the right devices for you, the io effect of asmlib is large the same as doing async io to raw devices.”的评论，实际上使用ASMLIB和直接使用裸设备(raw device)在性能上没有什么差别。
+ ASMLIB可能带来的缺点:
+ 对于多路径设备(multipathing)需要在/etc/sysconfig/oracleasm-_dev_oracleasm配置文件中设置ORACLEASM_SCANORDER及ORACLEASM_SCANEXCLUDE，以便ASMLIB能找到正确的设备文件，具体可以参考Metalink Note<How To Setup ASM & ASMLIB On Native Linux Multipath Mapper disks? [ID 602952.1]>因为ASM INSTANCE使用ASMLIB提供的asm disk，所以增加了额外的层面每次Linux Kernel更新，都需要替换新的ASMLIB包增加了因人为错误造成宕机downtime的可能使用ASMLIB意味着要花费更多时间去创建和维护因为ASMLIB的存在，可能引入更多的bug，这是我们最不想看到的使用ASMLIB创建的disk，其disk header并不会和普通的asm disk header有什么不同，仅仅是在头部多出了ASMLIB的属性空间。
+ 结论:
+ 我个人的观点是尽可能不要使用ASMLIB，当然这不是DBA个人所能决定的事情。另一方面这取决于个人习惯，在rhel 4的早期发行版本中没有提供udev这样的设备管理服务，这导致在rhel 4中大量的ASM+RAC组合的系统使用ASMLIB。如果是在RHEL/OEL 5中那么你有充分的理由利用udev而放弃ASMLIB。
+ Reference:
+ ASMLIB Performance vs Udev
+ RAC+ASM 3 years in production Stories to share
+ How To Setup ASM & ASMLIB On Native Linux Multipath Mapper disks? [ID 602952.1]
+ ASMLib and Linux block devices
+ zt:http://www.oracledatabase12g.com/archives/why-asmlib-and-why-not.html
+
+
+
+ 优点：（asmlib记录的是磁盘头信息，重启后，即使磁盘盘符顺序不一致，也不会影响asm磁盘、rac服务启动。）
+

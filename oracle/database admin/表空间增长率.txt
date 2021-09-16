@@ -1,0 +1,57 @@
+
+set linesize 200 pagesize 200
+col inc_ratex format a20
+break on report
+compute sum of inc_mb on report
+
+SELECT
+    a.name,
+    b.tablespace_id,
+    b.datetime,
+    b.used_size_mb,
+    b.inc_mb,
+    CASE
+            WHEN substr(inc_rate,1,1) = '.'    THEN '0' || inc_rate
+            WHEN substr(inc_rate,1,2) = '-.'   THEN '-0'
+                                                     || substr(inc_rate,2,length(inc_rate) )
+            ELSE inc_rate
+        END
+    AS inc_ratex
+FROM
+    v$tablespace a,
+    (
+        SELECT
+            tablespace_id,
+            datetime,
+            used_size_mb,
+            ( DECODE(prev_use_mb,0,0,used_size_mb) - prev_use_mb ) AS inc_mb,
+            TO_CHAR(round( (DECODE(prev_use_mb,0,0,used_size_mb) - prev_use_mb) / DECODE(prev_use_mb,0,1,prev_use_mb) * 100,2) )
+            || '%' AS inc_rate
+        FROM
+            (
+                SELECT
+                    tablespace_id,
+                    trunc(TO_DATE(rtime,'mm/dd/yyyy hh24:mi:ss') ) datetime,
+                    MAX(tablespace_usedsize * 8 / 1024) used_size_mb,
+                    LAG(MAX(tablespace_usedsize * 8 / 1024),1,0) OVER(
+                        PARTITION BY tablespace_id
+                        ORDER BY
+                            trunc(TO_DATE(rtime,'mm/dd/yyyy hh24:mi:ss') )
+                    ) AS prev_use_mb
+                FROM
+                    dba_hist_tbspc_space_usage
+                WHERE
+                    trunc(TO_DATE(rtime,'mm/dd/yyyy hh24:mi:ss') ) > trunc(SYSDATE - 2)
+                GROUP BY
+                    tablespace_id,
+                    trunc(TO_DATE(rtime,'mm/dd/yyyy hh24:mi:ss') )
+            )
+    ) b
+WHERE
+    a.ts# = b.tablespace_id and a.ts# not in (0,1,2,3,4,5)
+ORDER BY
+    b.tablespace_id,
+    datetime;
+    
+clear computes
+clear breaks

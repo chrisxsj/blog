@@ -1,0 +1,16 @@
+
+latch case
+
+SELECT ADDR,LATCH#,NAME FROM V$LATCH;
+
+ SELECT ADDR,LATCH#,NAME FROM V$LATCH_CHILDREN lower(NAME) like '%cache buffers chains%';
+
+
+
+
+ select to_number('9F7FE3A0','xxxxxxxxxxxxx') - to_number('9F7FE2D8','xxxxxxxxxxx') from dual;
+
+
+
+
+ select min(ba),max(ba) from x$bh;   ---查看buffer cache的地址范围  如果lathc的地址不再此范围呢则说明latch不再buffer cache中！！，所以latch实在share pool中！！

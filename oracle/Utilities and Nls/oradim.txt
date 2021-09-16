@@ -1,0 +1,45 @@
+
+1、什么是oradim
+=============
+ORADIM工具是Oracle在Windows上的一个命令行工具，用于手工进行Oracle服务的创建、修改、删除等工作。ORADIM的使用很简单，通过帮助文件可以看到常用的命令示例，此处不再赘述。
+
+ORADIM在数据库恢复中也常被用到，很多朋友都问过这样的问题：在Windows上，如果系统崩溃了，可能数据库软件丢掉了，但是数据文件、控制文件、日志文件等都还在，该怎样来恢复Oracle数据库？
+
+其实过程很简单，通常只要按原来的目录结构重新安装Oracle软件，然后通过ORADIM工具重建服务，就可以启动实例、加载数据库（当然相关的参数文件和口令文件等需要在$ORACLE_HOME\database目录存在）。
+
+C:\>oradim -new -sid eygle
+
+实例已创建。
+
+
+
+2、Oradim工具的用法
+================
+创建例程：
+ -NEW -SID sid | -SRVC 服务 [-INTPWD 口令] [-MAXUSERS 数量] [-STARTMODE a|m] [-PFILE 文件] [-TIMEOUT 秒]
+   
+编辑例程：
+ -EDIT -SID sid [-NEWSID sid] [-INTPWD 口令] [-STARTMODE auto|manual] [-PFILE 文件名]     [-SHUTMODE a|i|n]    [-SHUTTYPE srvc|inst|srvc,inst] [-TIMEOUT 秒]
+   
+删除例程：
+      -DELETE -SID sid | -SRVC 服务名称
+
+启动服务和例程：
+        -STARTUP -SID sid [-USRPWD 口令] [-STARTTYPE srvc|inst|srvc,inst] [-PFILE 文件名]
+
+关闭服务和例程：
+        -SHUTDOWN -SID sid [-USRPWD 口令] [-SHUTTYPE srvc|inst|srvc,inst] [-SHUTMODE a | i | n]
+
+查询帮助：
+        -? | -h | -help
+
+相关说明:
+-SID      sid        指定要启动的实例名称
+-SRVC     服务       指定要启动的服务名称
+-USRPWD   口令       指定内部用户的口令，如果作为NT管理员登录，不用此参数
+-PFILE    文件名     为实例指明初始化参数文件，如果参数文件在Oracle的默认位置，则不需要此命令
+-STARTTYPE srvc|inst|srvc,inst  表示要启动什幺srvc—只启动服务inst—启动实例，服务必须已经启动并开始工作了srvc,inst —服务和实例都启动
+-SHUTTYPE srvc|inst|srvc,inst   表示要终止什幺，参数选项同上 
+-STARTMODE a|m   表示启动实例所使用的模式a—auto方式（自动）m—manual方式（手动）
+-SHUTMODE a|i|n   表示终止实例所使用的关闭模式a—abort方式i—immediate方式n—normal方式
+

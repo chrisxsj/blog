@@ -1,0 +1,1 @@
+[pg诊断](script/pg诊断)

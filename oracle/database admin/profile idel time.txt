@@ -1,0 +1,35 @@
+限制用户连接时间可以修改profile参数配置。
+ profile中有一个resource为：idle_time
+ 用户连接空闲时间超出这个参数设置就会断开。
+ 可以为此参数修改合适参数值。如5（5分钟），unlimited（不限制）
+
+ col profile format a20
+ col resource_name foramt a30
+ col limit format a20
+ select * from dba_profiles;   --查看有哪些profile。及profile中有哪些resource_name
+ select username,profile from dba_users;  --查看有哪些用户，这些用户所属profile是哪个
+ show parameter resource_limit;      --查看参数资源限制
+ alter system set resource_limit=true;   --修改参数使资源限制生效。
+
+ 修改profile中idle_time设置
+ ALTER PROFILE default LIMIT IDLE_TIME  2;
+ 注：修改profile中参数会对使用此profile的所有用户生效。如果想对单独用户限制，可以建立一个新的profile。更改用户使用此profile。
+
+
+ 1. 查看用户密码的有效期设置(一般默认的配置文件是DEFAULT)
+
+    SQL > SELECT * FROM dba_profiles WHERE profile='DEFAULT' AND resource_name='PASSWORD_LIFE_TIME'
+
+ 2. 将密码有效期由默认的180天修改成“无限制”，修改之后不需要重启动数据库，会立即生效
+
+   SQL > Alter PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+
+ 3. 帐户再改一次密码
+
+   SQL > alter user ink identified by <原来的密码> ----不用换新密码
+
+ 4. 使用修改后的用户登录，如果报“ORA-28000:用户已被锁”，解锁
+
+   SQL > alter user db_user account unlock;
+
+   SQL > commit; 

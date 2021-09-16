@@ -1,0 +1,17 @@
+SELECT
+    s.inst_id,
+    s.username,
+    s.sid,
+    s.serial#,
+    t.used_ublk "Number os undo Blocks Used"
+FROM
+    gv$session s,
+    gv$transaction t,
+    v$rollname r
+WHERE
+    s.saddr = t.ses_addr
+    AND t.xidusn = r.usn
+    AND s.sid = 302
+    AND s.inst_id = 1;
+
+sql 相关的事务信息

@@ -1,0 +1,221 @@
+OGG正在同步的channel中添加单表
+==========================
+eg：
+同步库vio_print_para(wfbh) 同步到滨州（3716）
+
+info
+
+SQL> select owner,table_name from dba_tables where table_name='VIO_PRINT_PARA';
+
+OWNER                   TABLE_NAME
+------------------------------ ------------------------------
+TRFF_APP               VIO_PRINT_PARA
+
+SQL>
+
+TRFF_APP.VIO_PRINT_PARA
+
+SQL> desc TRFF_APP.VIO_PRINT_PARA;
+Name                       Null?    Type
+----------------------------------------- -------- ----------------------------
+WSBH                       NOT NULL VARCHAR2(15)
+YSM                       NOT NULL VARCHAR2(100)
+YSZ                            VARCHAR2(4000)
+
+SQL>
+
+GGSCI (rac1) 4> view params REPBZ
+
+replicat repbz
+setenv ( NLS_LANG =  "AMERICAN_AMERICA.ZHS16GBK" )
+assumetargetdefs
+gettruncates
+ALLOWNOOPUPDATES
+
+reperror 1403, discard
+userid goldengate@rac1:1521/weifa, password oracleoraclebz
+
+DBOPTIONS DEFERREFCONST, suppresstriggers
+discardfile ./dirrpt/repbz.dsc, purge, megabytes 5000
+
+map TRFF_APP.VEH_SCHOOLBUS_PERMIT ,target TRFF_APP.VEH_SCHOOLBUS_PERMIT;
+map TRFF_APP.VEH_MODIFY ,target TRFF_APP.VEH_MODIFY;
+map TRFF_APP.WXP_YS_VEHICLE ,target TRFF_APP.WXP_YS_VEHICLE;
+map TRFF_APP.WXP_TRANS_PASSPORT ,target TRFF_APP.WXP_TRANS_PASSPORT;
+map TRFF_APP.ACD_DREC ,target TRFF_APP.ACD_DREC;
+map TRFF_APP.ACD_PROPERTYCHANGE ,target TRFF_APP.ACD_PROPERTYCHANGE;
+map trff_app.drv_fee_item ,target drv_fee_item,insertmissingupdates;
+
+
+
+GGSCI (rac1) 5>
+select count(*) from TRFF_APP.VIO_PRINT_PARA where wsbh like '3716%';
+2159337
+====================================
+1 primary
+
+
+
+edit params EXTBZXF
+--add on 20180905
+TABLE TRFF_APP.VIO_PRINT_PARA,FILTER (@strfind (wsbh, "3716")=1);
+
+edit params DPBZXF
+--add on 20180905
+TABLE TRFF_APP.VIO_PRINT_PARA,FILTER (@strfind (wsbh, "3716")=1);
+
+注意修改传输和抽取进程！！！！！！！！！
+
+添加全列日志!!!!!!!!!!!
+
+GGSCI (syncdbadm01.sync.sdjj.com) 3> info trandata trff_app.VIO_PRINT_PARA
+
+Logging of supplemental redo log data is disabled for table TRFF_APP.VIO_PRINT_PARA.
+
+GGSCI (syncdbadm01.sync.sdjj.com) 4> add trandata trff_app.VIO_PRINT_PARA
+
+Logging of supplemental redo data enabled for table TRFF_APP.VIO_PRINT_PARA.
+
+
+
+stop EXTBZXF
+start EXTBZXF
+
+stop DPBZXF
+start DPBZXF
+
+note:
+导出前，添加需要同步的表（把注释去掉）并重启抽取进程
+
+SQL> select to_char(current_scn) from v$database;
+
+TO_CHAR(CURRENT_SCN)
+----------------------------------------
+
+TO_CHAR(CURRENT_SCN)
+----------------------------------------
+16152120107657
+
+
+
+
+SQL>
+
+SQL> select * from dba_directories;
+
+OWNER                   DIRECTORY_NAME
+------------------------------ ------------------------------
+DIRECTORY_PATH
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYS                   EXP
+/ogg/impdp
+
+
+
+expdp \'/ as sysdba\'   parfile=/ogg/impdp/VIO_PRINT_PARA.par   
+
+vi VIO_PRINT_PARA.par
+
+directory=EXP
+dumpfile=VIO_PRINT_PARA20180905.dmp
+logfile=VIO_PRINT_PARA20180905.expdp
+parallel=1
+flashback_scn=16152120107657
+#FILTER (@strfind (wsbh, "3716")=1);
+tables=TRFF_APP.VIO_PRINT_PARA
+QUERY=TRFF_APP.VIO_PRINT_PARA:"WHERE wsbh like '3716%'"
+
+scp  /ogg/impdp/VIO_PRINT_PARA20180905.dmp oracle@10.231.146.223:/rmanbak/ogg/impdp
+
+
+
+==============================================
+standby！！！！！！1
+
+add replicat reppara,exttrail /rmanbak/ogg/ggs/dirdat/lt,checkpointtable  goldengate.ckptfull
+
+edit param reppara
+
+replicat reppara
+setenv ( NLS_LANG =  "AMERICAN_AMERICA.ZHS16GBK" )
+assumetargetdefs
+gettruncates
+ALLOWNOOPUPDATES
+
+reperror 1403, discard
+userid goldengate@rac1:1521/weifa, password oracleoraclebz
+
+DBOPTIONS DEFERREFCONST, suppresstriggers
+discardfile ./dirrpt/reppara.dsc, purge, megabytes 5000
+
+map TRFF_APP.VIO_PRINT_PARA ,target TRFF_APP.VIO_PRINT_PARA;
+
+
+
+chown oracle:oinstall VIO_PRINT_PARA20180905.dmp
+chmod 775 VIO_PRINT_PARA20180905.dmp
+
+-rw-r----- 1 oracle oinstall  164360192 Sep  5 11:20 VIO_PRINT_PARA20180905.dmp
+
+sys@WEIFA>set linesize 200
+sys@WEIFA>select * from dba_directories;
+
+OWNER                   DIRECTORY_NAME
+------------------------------ ------------------------------
+DIRECTORY_PATH
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYS                   EXPDMP
+/home/oracle/expdmp
+
+SYS                   SHOUFEI
+/rmanbak/shoufei
+
+SYS                   EXP
+/rmanbak/ogg/impdp
+
+echo $ORACLE_SID
+weifa1
+impdp \'/ as sysdba\'   parfile=/rmanbak/ogg/impdp/VIO_PRINT_PARA.par
+
+vi VIO_PRINT_PARA.par
+
+directory=EXP
+dumpfile=VIO_PRINT_PARA20180905.dmp
+logfile=VIO_PRINT_PARA20180905.impdp
+tables=TRFF_APP.VIO_PRINT_PARA
+#exclude=statistics,index
+
+create index
+ignore
+
+exec dbms_stats.gather_table_stats(OWNNAME => 'TRFF_APP', TABNAME => 'VIO_PZGL', CASCADE => TRUE,degree =>8);
+ignore
+
+>>>05-SEP-18 11.06.55.000000000 AM
+oracle@rac1:/rmanbak/ogg/ggs/dirdat>ls -atlr lt*
+-rw-r----- 1 oracle oinstall 49999431 Sep  5 09:32 lt011562
+-rw-r----- 1 oracle oinstall 49998780 Sep  5 10:04 lt011563
+-rw-r----- 1 oracle oinstall 49999467 Sep  5 10:19 lt011564
+-rw-r----- 1 oracle oinstall 49999860 Sep  5 10:57 lt011565
+-rw-r----- 1 oracle oinstall 36124814 Sep  5 11:29 lt011566
+
+alter replicat reppara ,extseqno 11565 extrba 0
+info all
+start reppara aftercsn  16152115291851
+info all
+
+GGSCI (rac1) 31> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING                                           
+REPLICAT    RUNNING     REPADD      00:00:00      00:00:02    
+REPLICAT    RUNNING     REPBZ       00:00:00      00:00:02    
+REPLICAT    RUNNING     REPBZADD    00:00:00      00:00:02    
+REPLICAT    RUNNING     REPBZXF     00:00:00      00:00:02    
+REPLICAT    RUNNING     REPPARA     00:00:00      00:00:02    
+REPLICAT    RUNNING     REPVEH      00:00:00      00:00:02    
+REPLICAT    RUNNING     REPVEIL     00:00:00      00:00:02    
+REPLICAT    RUNNING     REPVIO      00:00:00      00:00:02    
+
+

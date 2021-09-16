@@ -1,0 +1,43 @@
+
+reboot
+
+linux 下 osw随操作系统启动而启动的标准脚本：
+
+
+[oracle@rac2 ~]$ cat /etc/rc.local
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+touch /var/lock/subsys/local
+ 
+ 
+/bin/sh /home/oracle/oswbb/autostartosw.sh
+ 
+ 
+/home/oracle/oswbb/autostartosw.sh的脚本内容如下：
+cd /home/oracle/oswbb
+/usr/bin/nohup /home/oracle/oswbb/startOSWbb.sh &
+
+===================================
+随os启动而启动的脚本：
+以下假设 oswbb 安装在了 /archlog/oswbb 目录中。
+ 
+
+[root@RAC2 ~]# cat /etc/rc.local 
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+
+# nohup /archlog/oswbb/startOSWbb.sh & 
+# /bin/sh /archlog/oswbb/autostartosw.sh
+
+cd /tmp/oswbb&&/tmp/oswbb/startOSWbb.sh  30 48
+
+
+

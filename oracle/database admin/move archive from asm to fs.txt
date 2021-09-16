@@ -1,0 +1,96 @@
+把归档从asm中复制到文件系统中
+ 1.
+ rman> backup as copy archivelog from sequence 410 until sequence 411 thread 1 format 'd:\cims\%h_%e_archivelogs.arc';   
+     ##########Note, %h is thread number, %e is log sequence number.  However, any name can be used.  
+or use between
+RUN
+ {
+   ALLOCATE CHANNEL dev1 DEVICE TYPE sbt;
+   BACKUP ARCHIVELOG 
+     SEQUENCE BETWEEN 31 AND 40 THREAD 1
+     # delete original archived redo logs after backup completes
+     DELETE INPUT;
+}
+
+
+RMAN> list archivelog sequence 411;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1082    1    411     A 2012-10-12 07:41:10 D:\CIMS\1_411_ARCHIVELOGS.ARC
+ 972     1    411     A 2012-10-12 07:41:10 +LEIDATA/lei/arc00411_0754642225.001
+
+ RMAN> list archivelog sequence 410;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1081    1    410     A 2012-10-12 07:39:43 D:\CIMS\1_410_ARCHIVELOGS.ARC
+ 971     1    410     A 2012-10-12 07:39:43 +LEIDATA/lei/arc00410_0754642225.001
+
+ 2. rman copy 或者
+
+ rman> copy archivelog '+LEIDATA/lei/arc00409_0754642225.001' to 'd:\cims\arc00409_0754642225.001';
+
+ RMAN> list archivelog sequence 409;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1080    1    409     A 2012-10-12 07:38:55 D:\CIMS\ARC00409_0754642225.001
+ 970     1    409     A 2012-10-12 07:38:55 +LEIDATA/lei/arc00409_0754642225.001
+
+ 3.使用dbms_file_transfer包
+ 自己做实验即可。想实验asm ，单机就可以，我的机器就是asm存储的10.2.0.4 的单机db。试验机会是自己创造的。
+
+ 4. rman backup archive and restore archive
+
+ How to Copy Archivelog Files From ASM to Filesystem and vice versa [ID 944831.1]
+ How to restore archive logs to an alternative location when they already reside on disk [ID 399894.1] 
+
+把归档从asm中复制到文件系统中
+ 1.
+ rman> backup as copy archivelog from sequence 410 until sequence 411 thread 1 format 'd:\cims\%h_%e_archivelogs.arc';   
+     ##########Note, %h is thread number, %e is log sequence number.  However, any name can be used.  
+or use between
+RUN
+ {
+   ALLOCATE CHANNEL dev1 DEVICE TYPE sbt;
+   BACKUP ARCHIVELOG 
+     SEQUENCE BETWEEN 31 AND 40 THREAD 1
+     # delete original archived redo logs after backup completes
+     DELETE INPUT;
+}
+
+
+RMAN> list archivelog sequence 411;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1082    1    411     A 2012-10-12 07:41:10 D:\CIMS\1_411_ARCHIVELOGS.ARC
+ 972     1    411     A 2012-10-12 07:41:10 +LEIDATA/lei/arc00411_0754642225.001
+
+ RMAN> list archivelog sequence 410;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1081    1    410     A 2012-10-12 07:39:43 D:\CIMS\1_410_ARCHIVELOGS.ARC
+ 971     1    410     A 2012-10-12 07:39:43 +LEIDATA/lei/arc00410_0754642225.001
+
+ 2. rman copy 或者
+
+ rman> copy archivelog '+LEIDATA/lei/arc00409_0754642225.001' to 'd:\cims\arc00409_0754642225.001';
+
+ RMAN> list archivelog sequence 409;
+ List of Archived Log Copies
+ Key     Thrd Seq     S Low Time            Name
+ ------- ---- ------- - ------------------- ----
+ 1080    1    409     A 2012-10-12 07:38:55 D:\CIMS\ARC00409_0754642225.001
+ 970     1    409     A 2012-10-12 07:38:55 +LEIDATA/lei/arc00409_0754642225.001
+
+ 3.使用dbms_file_transfer包
+ 自己做实验即可。想实验asm ，单机就可以，我的机器就是asm存储的10.2.0.4 的单机db。试验机会是自己创造的。
+
+ 4. rman backup archive and restore archive
+
+ How to Copy Archivelog Files From ASM to Filesystem and vice versa [ID 944831.1]
+ How to restore archive logs to an alternative location when they already reside on disk [ID 399894.1] 
+

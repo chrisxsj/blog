@@ -1,0 +1,21 @@
+
+
+REMAP_SCHEMA
+expdp SYSTEM/password SCHEMAS=hr DIRECTORY=dpump_dir1 DUMPFILE=hr.dmp
+
+impdp SYSTEM/password DIRECTORY=dpump_dir1 DUMPFILE=hr.dmp 
+REMAP_SCHEMA=hr:scott
+
+
+
+REMAP_TABLESPACE
+impdp hr/hr REMAP_TABLESPACE=tbs_1:tbs_6 DIRECTORY=dpump_dir1 DUMPFILE=employees.dmp 
+REMAP_TABLE
+Default: There is no default
+Purpose
+Allows you to rename tables during an import operation.
+Syntax and Description
+You can use either of the following syntaxes (see the Usage Notes below):
+REMAP_TABLE=[schema.]old_tablename[.partition]:new_tablename
+OR
+REMAP_TABLE=[schema.]old_tablename[:partition]:new_tablename

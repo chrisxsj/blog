@@ -1,0 +1,44 @@
+给你个脚本试试。
+
+计算datafile可以resize收缩的空间.
+col name for a40
+col resizecmd for a80
+
+select a.file#,a.name,a.bytes/1024/1024 CurrentMB,
+       ceil(HWM * a.block_size)/1024/1024 ResizeTo,
+       (a.bytes - HWM * a.block_size)/1024/1024 ReleaseMB,
+       'alter database datafile '''||a.name||''' resize '||
+       ceil(HWM * a.block_size/1024/1024) || 'M;' ResizeCMD
+from v$datafile a,
+     (select file_id,max(block_id+blocks-1) HWM
+       from dba_extents
+       group by file_id) b
+where a.file# = b.file_id(+)
+and (a.bytes - HWM *block_size)>0
+order by 5
+/
+
+如果只是想对某个表个间的datafile resize,可采用:
+select a.file#,a.name,a.bytes/1024/1024 CurrentMB,
+       ceil(HWM * a.block_size)/1024/1024 ResizeTo,
+       (a.bytes - HWM * a.block_size)/1024/1024 ReleaseMB,
+       'alter database datafile '''||a.name||''' resize '||
+       ceil(HWM * a.block_size/1024/1024) || 'M;' ResizeCMD
+from v$datafile a,
+     (select file_id,max(block_id+blocks-1) HWM
+       from dba_extents where file_id in
+              (select b.file#  From v$tablespace a ,v$datafile b
+                where a.ts#=b.ts# and a.name='MP2000')
+       group by file_id) b
+where a.file# = b.file_id(+)
+and (a.bytes - HWM *block_size)>0
+order by 5
+/
+
+
+计划tempfile可以resize的空间.on apply that have only one tempfile
+
+select 'alter database tempfile '''||a.name ||''' reize '||b.siz||'M;' from v$tempfile a,
+     (select tmsize.maxblk*bk.value/1024/1024 siz from
+         (select nvl(max(segblk#),128) maxblk  from v$sort_usage) tmsize,
+         (select value From v$parameter where name = 'db_block_size') bk) b

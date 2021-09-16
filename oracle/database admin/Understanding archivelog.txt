@@ -1,0 +1,45 @@
+v$log_history里你看到的记录数是根据MAXLOGHISTORY参数指定的，这个参数在CREATE CONTROL FILE.. MAXLOGHISTORY时指定，如果定为200你在V$LOG_HISTORY里看到的记录数不会超过200，即使有1000条数据在CONTROL FILE中
+
+
+v$archived_log的记录数是根据CONTROL_FILE_RECORD_KEEP_TIME来指定的，这参数指定了CONTROL FILE里记录保留的最少天数，默认为7天，如果你在7天里产生了1000条记录那查v$archived_log时会显示1000，但查 V$LOG_HISTORY会显示200.
+
+
+那么rman =>list archivelog？？？=v$arhived_log??
+
+
+查看归档每天切换次数
+select to_char(completion_time ,'yyyymmdd'), count(*)  day from gv$archived_log
+where to_char(completion_time ,'yyyymmdd')>'20130701'
+and inst_id=1
+and thread#=1
+group by thread#,to_char(completion_time ,'yyyymmdd')
+order by 1 asc ;
+
+
+可精确到时间，每小时切换次数
+select thread#,to_char(completion_time ,'yyyymmdd-hh24'), count(*)  day
+ from gv$archived_log
+where to_char(completion_time ,'yyyymmdd')>'20130731'
+and thread#=1 and inst_id=1
+group by thread#,to_char(completion_time ,'yyyymmdd-hh24')
+order by 2 asc ;
+
+
+怀疑归档满的原因是因为归档日志数量暴增,有可能做大量dml操作。如批量删除
+
+
+
+delete archive log until time 'sysdate-6';
+
+
+查看每天归档大小
+
+rem 归档日产生数量， 
+ select 
+ trunc(completion_time) as "Date"
+ ,count(*) as "Count"
+ ,((sum(blocks * block_size)) /1024 /1024) as "MB"
+from v$archived_log where  STANDBY_DEST  ='NO' 
+group by trunc(completion_time) order by trunc(completion_time) ; 
+
+

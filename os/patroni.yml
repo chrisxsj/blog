@@ -1,0 +1,147 @@
+#Global/Universal
+#cluster名称
+scope: clusterp
+#命名空间目录（一级目录名/<namespace>/<scope>/config）
+namespace: nsp
+#节点名称
+name: p1
+
+#log
+log:  
+  level: INFO
+  dir: /opt/patroni_data
+  file_num: 4
+  file_size: 25000000
+
+#bootstrap:
+#  initdb:
+    #- encoding: UTF8
+    #- locale: en_US.UTF-8
+    #- data-checksums
+    #- auth: sm4
+    # 如果需要创建账号
+    # users:
+    #   admin:
+    #     password: Hello@123
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeouts: 10
+    maximum_lag_on_failover: 33554432
+    max_timelines_history: 0
+    check_timeline: true
+
+    postgresql:
+      use_slots: true
+      use_pg_rewind: true
+      parameters:
+# Some of the PostgreSQL parameters must hold the same values on the master and the replicas.
+#  For those, values set either in the local patroni configuration files or via the environment variables take no effect.
+#  To alter or set their values one must change the shared configuration in the DCS.
+#  Below is the actual list of such parameters together with the default values
+
+        max_connections: 800
+        wal_level: logical
+        track_commit_timestamp: off
+        #max_worker_processes: 80
+        #max_prepared_transactions: 500
+        #wal_log_hints: 'on'
+
+#For the parameters below, PostgreSQL does not require equal values among the master and all the replicas.
+#  However, considering the possibility of a replica to become the master at any time,
+#  it doesn’t really make sense to set them differently;
+#  therefore, Patroni restricts setting their values to the Dynamic configuration
+
+        max_wal_senders: 20
+        max_replication_slots: 20
+        wal_keep_segments: 80
+        wal_keep_size: '128MB'
+
+#-----------dsc-only end---------------------------------
+
+#etcd
+etcd:
+  hosts: 192.168.80.141:2379,192.168.80.142:2379,192.168.80.143:2379
+
+#REST API
+restapi:
+  connect_address: 192.168.80.141:8008
+  listen: 0.0.0.0:8008
+
+#proxy:
+#  weight: 1
+#  streaming_replication_delay_time: 5000
+
+postgresql:
+  database: postgres
+  bin_dir: /opt/pg133/bin
+  data_dir: /opt/pg133/data
+  connect_address:  192.168.80.141:5433
+  listen: 0.0.0.0:5433
+  authentication:
+    superuser:
+      username: postgres
+      password: postgres
+    replication:
+      password: postgres
+      username: postgres
+    rewind:
+      password: postgres
+      username: postgres
+  parameters:
+    #支持优化参数配置
+    archive_mode: 'off'
+    archive_command: test ! -f /opt/archive/%f && cp %p /opt/archive/%f
+    archive_timeout: 1800s
+    listen_addresses: '*'
+    port: 5433
+    shared_buffers: '512MB'
+    effective_cache_size: '5GB'
+    maintenance_work_mem: '30MB'
+    work_mem: '10MB'
+    max_wal_size: '10GB'
+    min_wal_size: '1GB'
+    checkpoint_timeout: '30min'
+    checkpoint_completion_target: 0.8
+    logging_collector: 'on'
+    log_destination: csvlog
+    log_directory: pg_log
+    log_filename: postgresql_%d.log
+    log_rotation_age: 1d
+    log_truncate_on_rotation: 'on'
+    log_line_prefix: '%m %p %u %d'
+    log_file_mode: '0644'
+    autovacuum_analyze_scale_factor: 0.02
+    autovacuum_max_workers: 5
+    autovacuum_vacuum_scale_factor: 0.05
+    checkpoint_completion_target: 0.8
+    hot_standby: 'on'
+    log_autovacuum_min_duration: 0
+    log_checkpoints: 'on'
+    log_connections: 'on'
+    log_disconnections: 'on'
+    log_line_prefix: '%t [%p]: [%l-1] %c %x %d %u %a %h '
+    log_lock_waits: 'on'
+    log_min_duration_statement: 5000
+    log_statement: ddl
+    log_temp_files: 0
+    tcp_keepalives_idle: 900
+    tcp_keepalives_interval: 100
+    track_functions: all
+    # ssl
+    ssl: 'off'
+    ssl_cert_file: /opt/server.crt
+    ssl_key_file: /opt/server.key
+  pg_hba:
+  - local   all             all                                     md5
+  - host    all             all             0.0.0.0/0            md5
+  - host    all             all             ::1/128                 md5
+  - local   replication     all                                     md5
+  - host    replication     all             0.0.0.0/0            md5
+  - host    replication     all             ::1/128                 md5
+  use_unix_socket: false
+
+#watchdog:
+#  mode: off # off | automatic | required
+#  driver: 'default'
+#  safety_margin: 5

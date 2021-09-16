@@ -1,0 +1,108 @@
+ Bug 20186278  crfclust.bdb Becomes Huge Size Due to Sudden Retention Change
+ This note gives a brief overview of bug 20186278.
+ The content was last updated on: 14-JUL-2015
+ Click here for details of each of the sections below.
+Affects:
+
+    Product (Component)	Oracle Server (PCW)
+    Range of versions believed to be affected 	Versions BELOW 12.2
+    Versions confirmed as being affected 	
+
+        11.2.0.4
+        11.2.0.3 
+
+    Platforms affected	Generic (all / most platforms affected)
+
+Fixed:
+
+    The fix for 20186278 is first included in 	
+
+        12.2 (Future Release)
+        11.2.0.4.7 (Jul 2015) Grid Infrastructure Patch Set Update (GI PSU) 
+
+
+    Interim patches may be available for earlier versions - click here to check. 
+
+Symptoms:
+	
+Related To:
+
+    Storage Space Usage Affected 
+
+	
+
+    Cluster Ready Services / Parallel Server Management 
+
+Description
+
+    BDB retension time suddenly change to 1094795585 or some other huge value.
+    This may cause crfclust.bdb file to grow in size, as crflogd tries to keep 
+    data for longer retention. 
+     
+    Rediscovery Notes
+     
+    When hitting this problem, crflogd.log may show the retention size being 
+    suddenly updated to a large size. 
+     
+     ------------------------------------------------------------------
+     2014-02-03 15:36:29.799: [ CRFLOGD][2363541248]updateDBRetention: new retention is 1094795585 seconds and 4702111234474983745 bytes
+     ------------------------------------------------------------------
+     
+    Current retention value may be checked with following command. 
+    If the retention value (unit: seconds) shows a large value like 
+    1094795585, you are likely to have hit this problem.
+     
+     $ oclumon manage -get repsize
+     CHM Repository Size = 1094795585
+     
+    Workaround
+     
+    Modify BDBSIZE parameter in config file crf<hostname>.ora to 
+    adequately lower value. To do so, follow these steps:
+     
+    1. Issue "$GI_HOME/bin/crsctl stop res ora.crf -init " on all the nodes of cluster.
+    2. Locate the config file $GRID_HOME/crf/admin/crf<hostname>.ora
+    3. Manually edit the crf<hostname>.ora file on every node of the cluster and
+       change BDBSIZE tag entry and remove the value (set it to blank) or 
+       set it to a desired value, eg. 61511. Do not delete the BDBSIZE tag itself.
+    4. Restart ora.crf daemon on every node.
+     
+
+Please note: The above is a summary description only. Actual symptoms can vary. Matching to any symptoms here does not confirm that you are encountering this problem. For questions about this bug please consult Oracle Support.
+
+References
+
+    Bug:20186278 (This link will only work for PUBLISHED bugs)
+    Note:245840.1 Information on the sections in this article 
+
+
+============================
+
+Hi
+ 数据库的crfclust.bdb文件异常大，查询文章说是bug
+Bug 20186278 - crfclust.bdb Becomes Huge Size Due to Sudden Retention Change ( Doc ID 20186278.8 )
+请确认这个问题。
+
+ora.crf服务是为Cluster Health Monitor（以下简称CHM）提供服务的，用来自动收集操作系统的资源（CPU、内存、SWAP、进程、I/O以及网络等）的使用情况。
+ora.crf服务生成的文件（$GI_HOME/crf/db/$HOMENAME/目录中所有的 crf*.bdb和$HOSTNAME.ldb ）
+http://blog.csdn.net/msdnchina/article/details/49403105
+
+WORKAROUNDS:
+ To free memory:
+ "$GI_HOME/bin/crsctl stop res ora.crf -init" on all nodes
+ cd $GI_HOME/crf/db/<nodename>
+ rm *.bdb
+ $GI_HOME/bin/crsctl start res ora.crf -init
+
+ To reset the BDBSIZE:
+ 1. Issue "$GI_HOME/bin/crsctl stop res ora.crf -init " on all the nodes of
+ cluster.
+ 2. Locate the file crf<hostname>.ora file (found in <GIHOME>/crf/admin
+ directory).
+ 3. Manually edit the crf<hostname>.ora file on every node of the cluster as
+ follows.
+ a. Locate the BDBSIZE tag entry in the above file and remove the value
+(set it to blank), do not delete the BDBSIZE tag
+4. Restart the ora.crf daemon on every node
+
+只停CRF，对RAC和数据库无影响。

@@ -1,0 +1,34 @@
+青岛公安的app工程师今天下午delete from t_ry_czrk t where t.xxztbz=0 ，据说删除了80万行。
+ 于是undo就使用率100%了。
+ 其实，大批量的数据处理，总的原则是：分批删除,逐次提交
+ 下边的这个例子是我从网上搜来的，请各位自行学习。
+
+ create table big_table(a int,b char(3));
+
+ declare
+   i int;
+ begin
+   for i in 1 .. 10000 loop
+     insert /*+ append */
+     into big_table nologging
+     values
+       (i, 'sex');
+     if mod(i, 1000) = 0 then--每1000 commit一次
+       commit;
+     end if;
+   end loop;
+ end;
+
+
+
+ BEGIN
+   LOOP
+     DELETE FROM big_table
+      WHERE rownum < 1000;--每删除999行commit一次
+     IF SQL%ROWCOUNT = 0 THEN
+       EXIT;
+     END IF;
+     COMMIT;
+   END LOOP;
+   COMMIT;
+ END; 

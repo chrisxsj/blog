@@ -1,0 +1,72 @@
+aix 单机自启动 
+
+本文参考了http://www.oklinux.cn/html/sql/oracle/20080717/58118.html
+
+
+1.在 /home/oracle目录下，建立startdb文件，文件内容如下：
+
+ echo "begin to start oracle"
+ lsnrctl start
+ sqlplus / as sysdba @/home/oracle/startdbsql
+ echo "oracle have started"
+
+ 给startdb执行权限
+
+ 2. /home/oracle/startdbsql.sql文件，其内容如下：
+ startup
+ exit
+
+ 3.在/etc下建立文件rc.startdb，脚本如下：
+ su - oracle -c "/home/oracle/startdb"
+
+ 4.把启动信息放到/etc/inittab中，使用如下命令：
+ mkitab "startdb:2:wait:/etc/rc.startdb"
+
+
+
+=======================================================
+ogg auto startup
+
+启动
+
+ 1.用oracle用户建立/home/oracle/script/startmgr.sh ，文件内容如下：
+ sh date
+ start mgr !
+
+ 2.chmod +x startmgr.sh
+
+
+ 3.用oracle用户建立/home/oracle/script/startgg.sh，文件内如下：
+ /gg/ggs/ggsci paramfile /home/oracle/script/startmgr.sh >/home/oracle/script/ggstartoutput
+
+ 4.chmod +x startgg.sh
+
+ 5.在/etc下建立文件rc.startgg，脚本如下：
+ su - oracle -c "/home/oracle/script/startgg.sh"
+
+ 6.把启动信息放到/etc/inittab中，使用如下命令：
+ mkitab "startgg:2:wait:/etc/rc.startgg"
+
+
+ 关闭
+
+ 1.用oracle用户建立/home/oracle/script/stopmgr.sh ，文件内容如下：
+ sh date
+ stop mgr !
+
+ 2.chmod +x stopmgr.sh
+
+
+ 3.用oracle用户建立/home/oracle/script/stopgg.sh ，文件内如下：
+ /gg/ggs/ggsci paramfile /home/oracle/script/stopmgr.sh >> /home/oracle/script/ggstopoutput
+
+ 4.chmod +x stopgg.sh
+
+ 5.在/etc下建立文件rc.stopgg，脚本如下：
+ su - oracle -c "/home/oracle/script/stopgg"
+
+ 6.把启动信息放到/etc/inittab中，使用如下命令：
+ mkitab "startgg:2:wait:/etc/rc.stopgg"
+
+
+

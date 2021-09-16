@@ -1,0 +1,59 @@
+starttest
+# oracle set
+
+ su - oracle -c <<EOF
+ lsnrctl start
+
+ export ORACLE_SID=his
+ sqlplus /nolog
+ conn /as sysdba
+ startup
+ exit
+ EOF
+
+ su - oracle -c <<EOF
+ export ORACLE_SID=chis
+ sqlplus /nolog
+ conn /as sysdba
+ startup
+ exit
+ EOF
+
+ su - oracle -c <<EOF
+ export ORACLE_SID=orcl
+ sqlplus /nolog
+ conn /as sysdba
+ startup
+ exit
+ EOF 
+
+================================================
+stoptest
+# oracle set
+
+ su - oracle -c <<EOF
+ lsnrctl stop
+
+ export ORACLE_SID=his
+ sqlplus /nolog
+ conn /as sysdba
+ shutdown immediate
+ exit
+ EOF
+
+ su - oracle -c <<EOF
+ export ORACLE_SID=chis
+ sqlplus /nolog
+ conn /as sysdba
+ shutdown immediate
+ exit
+ EOF
+
+ su - oracle -c <<EOF
+ export ORACLE_SID=orcl
+ sqlplus /nolog
+ conn /as sysdba
+ shutdown immediate
+ exit
+ EOF
+

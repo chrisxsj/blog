@@ -1,0 +1,24 @@
+
+select object_id,object_name from dba_objects where object_name='INDEX';
+object_id: 25536
+
+alter session set events 'immediate trace name treedump level 24515';
+
+level 2:
+root    2
+branch   1
+leaf       0
+
+index block layout:
+block header(cache and txn layer)
+common header (branch and leaf)
+row piece info
+
+nrow 587  :leaf 上总共有587条记录
+rrow 587  : leaf上真正有效的记录（delete删除了）
+
+
+
+!!!index root block ： segment_header +1
+
+select header_file,header_blocks from dba_segments where segment_name='INDEX_TEST';

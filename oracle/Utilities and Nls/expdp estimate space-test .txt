@@ -1,0 +1,79 @@
+ESTIMATE
+
+ Default: BLOCKS
+
+ Purpose
+
+ Specifies the method that Export will use to estimate how much disk space each table in the export job will consume (in bytes). The estimate is printed in the log file and displayed on the client's standard output device. The estimate is for table row data only; it does not include metadata.
+
+ Syntax and Description
+ ESTIMATE=[BLOCKS | STATISTICS]
+
+
+ •BLOCKS - The estimate is calculated by multiplying the number of database blocks used by the source objects, times the appropriate block sizes.
+
+
+ •STATISTICS - The estimate is calculated using statistics for each table. For this method to be as accurate as possible, all tables should have been analyzed recently. (Table analysis can be done with either the SQL ANALYZE statement or the DBMS_STATS PL/SQL package.)
+
+
+Restrictions
+
+If the Data Pump export job involves compressed tables, the default size estimation given for the compressed table is inaccurate when ESTIMATE=BLOCKS is used. This is because the size estimate does not reflect that the data was stored in a compressed form. To get a more accurate size estimate for compressed tables, use ESTIMATE=STATISTICS.
+
+
+ESTIMATE_ONLY
+Default: n
+Purpose
+Instructs Export to estimate the space that a job would consume, without actually performing the export operation.
+Syntax and Description
+
+ESTIMATE_ONLY={y | n}
+
+
+
+If ESTIMATE_ONLY=y, then Export estimates the space that would be consumed, but quits without actually performing the export operation.
+=========================================================
+expdp system/oracle full=y estimate=blocks estimate_only=y
+expdp hr/hr directory=dpdata estimate=blocks estimate_only=y
+
+
+$ nohup sh /home/oracle/script/expdp_test.sh > /home/oracle/script/expdp_test.log &
+
+ 使用ESTIMATE_ONLY 的时候，不能加 dumpfile 参数，否则会报如下错：
+ ORA-39002: invalid operation
+ ORA-39201: Dump files are not supported for estimate only jobs
+Restrictions
+
+
+If the Data Pump export job involves compressed tables, the default size estimation given for the compressed table is inaccurate when ESTIMATE=BLOCKS is used. This is because the size estimate does not reflect that the data was stored in a compressed form. To get a more accurate size estimate for compressed tables, use ESTIMATE=STATISTICS.
+
+
+expdp system/oracle full=y COMPRESSION=METADATA_ONLY estimate=statistics estimate_only=y
+==============================================================
+
+[oracle@db ~]$ expdp hr/hr directory=my_dir estimate=blocks estimate_only=y
+
+ Export: Release 11.2.0.3.0 - Production on Fri Oct 16 21:56:20 2015
+
+ Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+ Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+ With the Partitioning, Automatic Storage Management, OLAP, Data Mining
+ and Real Application Testing options
+ Starting "HR"."SYS_EXPORT_SCHEMA_01":  hr/******** directory=my_dir estimate=blocks estimate_only=y
+ Estimate in progress using BLOCKS method...
+ Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+ .  estimated "HR"."TEST_RESUM1"                             13 MB
+ .  estimated "HR"."COUNTRIES"                               64 KB
+ .  estimated "HR"."DEPARTMENTS"                             64 KB
+ .  estimated "HR"."EMP"                                     64 KB
+ .  estimated "HR"."EMPLOYEES"                               64 KB
+ .  estimated "HR"."JOBS"                                    64 KB
+ .  estimated "HR"."JOB_HISTORY"                             64 KB
+ .  estimated "HR"."LOCATIONS"                               64 KB
+ .  estimated "HR"."REGIONS"                                 64 KB
+ .  estimated "HR"."TEMP"                                    64 KB
+ .  estimated "HR"."TESTTBS"                                 64 KB
+ Total estimation using BLOCKS method: 13.62 MB
+Job "HR"."SYS_EXPORT_SCHEMA_01" successfully completed at 21:56:27
+以上可以看出可以计算各个表的大小！！！

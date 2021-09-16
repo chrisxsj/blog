@@ -1,0 +1,28 @@
+Oracle® Database Utilities  11g Release 2 (11.2) 》19 Using LogMiner to Analyze Redo Log Files >Supplemental Logging
+
+The process of logging these additional columns is called supplemental logging.
+A supplemental log group is the set of additional columns to be logged when supplemental logging is enabled. There are two types of supplemental log groups that determine when columns in the log group are logged:
+
+•Unconditional supplemental log groups: The before-images of specified columns are logged any time a row is updated, regardless of whether the update affected any of the specified columns. This is sometimes referred to as an ALWAYS log group.
+•Conditional supplemental log groups: The before-images of all specified columns are logged only if at least one of the columns in the log group is updated.
+Supplemental log groups can be system-generated or user-defined.
+
+In addition to the two types of supplemental logging, there are two levels of supplemental logging, as described in the following sections:
+•Database-Level Supplemental Logging
+•Table-Level Supplemental Logging
+
+补充日志不是独立的日志，是对重做记录中变更矢量的补充信息，增加了变更矢量记载的记录量
+
+Oracle中insert、delete命令在默认情况下产生的重做记录足以表明被修改的行的每个字段在被修改前后的值是什么，insert，变更前行不存在，产生的重做记录会记载新行的每个字段的值，delete，变更后不存在，但是由于重做记录也要负责产生撤销数据块的变更，所以行被删除之前的各字段的值也记录在撤销数据块的变更矢量中，也就是insert和delete命令的重做记录中，能找到整行的所有信息。
+
+update不同于insert和delete一定会涉及一行的所有字段，常常只是更改一个或几个字段，处于对性能的考虑，Oracle没必要把修改的字段的值也保存在变更矢量中，事实上是在撤销块的比昂矢量中只记载被修改的字段的更改前的值，而在数据块的变更矢量中则记载了被修改的字段的新值，同一行中其他没有被修改的字段，不会记载其修改前的值，因为没有被修改。
+
+例如：update scott.emp set sal=1 where empno=7369 ;
+
+为了支持实例恢复和介质恢复，其重做记录只需要记载sal字段的值为1即可，在常规的重做记录中完全不会出现empno为7369的信息
+如果启用了补充日志，数据块的变更矢量的记载可以变为sal字段的值为1,并且再额外的记录该行被修改之前第一个字段empno的值是7369以及sal为800(修改之前的值)
+
+ ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
+ ALTER DATABASE drop SUPPLEMENTAL LOG DATA;
+
+

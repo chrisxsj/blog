@@ -1,0 +1,6 @@
+cache fusion：通过高速的private interconnect,在实例间进行数据块传递，他是rac最核心的工作机制，他把所欲呕实例的sga虚拟成一个大的sga区。 
+
+
+CACHE FUSION的组成
+GCS：专职数据块的传递
+GES：负责锁管理

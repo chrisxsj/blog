@@ -1,0 +1,811 @@
+opdg--hang/locking
+
+分析问题 和 判断原因
+
+分辨一个hang or locking问题
+什么叫做 hang or locking ？
+
+真正的database hang 问题表现为：
+1.数据库不允许user 连接
+2.数据库不工作
+3.select 1 from dual 不产生输出。
+4.create table 完不成。
+
+
+locking问题表现为：
+一个或者多个session完全不能正常运行。
+你可以从下面的情况中发现 hang or lock的情况：
+1.基准测试benchmark、testing
+2.用户的抱怨。
+3.systemstate or hanganalyze 显示有被卡住（stuck）的session
+4.查询被hang住
+5.session消耗了大量的cpu
+6.在alert日志中出现ora-00060错误
+
+这些问题可能会在如下情况之后出现：
+1.schema change
+2.数据库参数改变
+3.应用程序改变
+4.数据库升级
+
+
+澄清问题
+明确的问题陈述（problem statement）很关键。你需要清晰准确的描述问题。
+
+为了澄清问题，你必须尽可能的知道如下事情：
+
+1.受影响的users
+2.导致该问题的event的顺序
+3.该问题是在哪里被注意到的？是怎么被注意到的？
+4.该问题的意义，或者说重要性（significance）
+5.什么在working（工作or 运行）
+6.什么是预想的或者说可以接受的结果？
+7.试图解决该问题，你做了什么尝试？
+
+
+验证问题
+本诊断过程的目标是保证：
+a database hang or lock is actually the query at the root of the performance problem
+基于这一点，你需要收集数据并验证问题的存在性。
+
+为了验证问题的存在性，你必须收集hang or locking的证据
+
+比如：
+SQL> set timing on
+SQL> SELECT 1 from dual;
+如果该查询不返回结果，表明这是真正的hang
+
+为了解决问题，所需要的关于诊断信息的更进一步的案例和建议将会在DATA COLLECTION阶段讨论。
+
+一旦数据被收集，你将会review该数据，以判断该问题是db hang or locking的问题，还是一个其他方面的问题。
+
+
+Next Step - Data Collection
+在本步骤中，我们将会收集数据以确认database hang 归因于 database，而不是database 之外的原因。
+注意：请在database hang 的时候收集数据。
+
+收集 操作系统性能数据
+os data是需要的，以便用来查看数据库所在主机的整体性能。
+
+使用工具的自动收集
+1. OS Watcher (OSW) (Preferred Method)
+   osw就是一些定时去执行的os 命令的集合，这些命令包括vmstat，iostat，top等等。
+  可以使用oswg进行图形化的分析
+ 
+2. LTOM （The Lite Onboard Monitor）
+  这是一个java程序，被设计用来作为一个实时诊断平台，该平台部署于客户处。
+  LTOM不同于其他的的支持工具，因为它是proactive在 （先发制人的） 而不是reactive.（反应式的）
+  LTOM提供实时自动的问题检测和数据收集。LTOM非常适合于瞬间的和不可预料的性能问题。
+ 
+3. Enterprise Manager
+  General-->Performance
+  EM对实时分析很适合，但是，需要进行屏幕捕捉以便后续的分析。
+ 
+ 
+手工
+osw比手工方法更适合进行信息收集，但是，当你不能自动收集的时候，请参考如下的mos文章进行手工收集：
+How to use OS Commands to Diagnose Database Performance Issues? (Doc ID 224176.1)
+
+Gather Hanganalyze and SystemState --收集 hang分析和系统状态
+
+ 关于hanganalze：
+  Hanganalyze 使用内部的内核调用来确定一个session 是否在等待一个资源，并报告组塞着和等待者之间的关系。
+  除此之外，Hanganalyze决定了 哪些processes 被做dump，并且 基于 执行的Hanganalyze的level， 还可能对这些进程（processes）执行自动的processstate和errorstacks 
+
+“HANGANALYZE"命令从oracle db 816开始就有了，在oracle  9i，该命令得到了增强---提供了 rac环境中 cluster范围内的基于一个单独的快照（on a single shot）的信息
+这意味着该命令会生成cluster中所有session的信息，而不管从哪个instance上发出该HANGANALYZE命令。
+
+HANGANALYZE的语法：
+ALTER SESSION SET EVENTS 'immediate trace name HANGANALYZE level <level>';
+ORADEBUG hanganalyze <level>
+ORADEBUG -g def hanganalyze <level> (Cluster wide syntax)
+
+The <level> sets the amount of additional information that will be extracted from the processes
+found by HANGANALYZE (ERROSTACK dump) based on the "STATE" of the node.
+The levels are defined as follows:
+10 Dump all processes (IGN state)
+5 Level 4 + Dump all processes involved in wait chains (NLEAF state)
+4 Level 3 + Dump leaf nodes (blockers) in wait chains (LEAF,LEAF_NW,IGN_DMP state)
+3 Level 2 + Dump only processes thought to be in a hang (IN_HANG state)
+1-2 Only HANGANALYZE output, no process dump at all
+
+不建议使用高于level 3的HANGANALYZE，这是因为高于level 3的 HANGANALYZE 将会大量产生trace file，将会对io子系统产生压力。
+
+注意：在有些情况（case）下，hanganalyze 看起来 被挂起（hung）。 当所有的processes被dump后，hanganalyze才返回结果。
+
+分辨非集群环境中 hanganalyze 在working的方法的是：
+监控user_dump_destination下的trace file的大小。 若是文件在变大，这说明hanganalyze没有被挂起（hung）
+
+
+分辨 集群环境中 hanganalyze 在working的方法的是：
+监控background_dump_destination下 “DIAG” trace file的大小。
+
+关于Systemstate
+system state 是 dump 发生时的 实例上所有进程的 进程状态的集合。
+system state dump 对确定进程间的关系（interaction）是非常有用的。
+system state dump 会报告被各个进程（process）持有的资源（resource）
+
+SYSTEMSTATE syntax:
+ALTER SESSION SET EVENTS 'immediate trace name SYSTEMSTATE level <level>';
+ORADEBUG dump systemstate <level>
+ORADEBUG -g all dump systemstate <level> (Cluster wide syntax)
+
+The levels are defined as follows:
+1 Very basic process information only
+2 process + session state objects
+10 Most common level - includes state object trees for all processes
+Level +
+256 Adding 256 to the level will try to dump short stack info for each process.
+
+*** IMPORTANT ***
+Dumping short stacks in the systemstate dump is an enhancement that has been
+included in patchsets 9.2.0.6 and 10.1.0.4. It is also included in base release 10.2.0.1.
+Short stacks are produced reasonably quickly on Solaris and Linux but on other
+platforms including short stacks in dumps can take a very long time. Hence it is
+advisable to test if the overhead is acceptable before using this option.
+Typical levels are 266 (Solaris or Linux) and 10 (other platforms)
+
+Automatically Gathering Hanganalyze and Systemstate dumps using Tools
+使用工具自动收集Hanganalyze和 Systemstate
+1. LTOM - Transient Hang Conditions
+2. HANGFG - Simplified Data Collection
+
+
+Non-Clustered Environment: Manual Steps for Gathering Hanganalyze and Systemstate dumps
+非集群环境下：手工收集Hanganalyze和Systemstate dump
+1. Database Version 8.1.7 - 9.2.x
+2. Database Version 10.1 and higher
+开三个不同的sqlplus 的session，分别称之为： SQL1, SQL2, and SQL3.
+
+A. export ORACLE_SID=PROD ## Replace PROD with the SID you want to trace
+B. Using SQL*Plus connect as SYSDBA using the following command:
+   sqlplus -prelim / as sysdba
+   Do this 3 times in 3 separate windows, creating 3 sqlplus sessions (SQL1, SQL2,and SQL3)
+C. In SQL1 execute the following:
+   SQL1> oradebug setmypid
+   SQL1> oradebug unlimit
+   SQL1> oradebug hanganalyze 3
+D. In SQL2 execute the following:
+   SQL2> oradebug setmypid
+   SQL2> oradebug unlimit
+   SQL2> oradebug dump systemstate 266
+E. Wait at least 2 minutes to give time to identify process state changes.
+F. In SQL1 execute the following:
+   SQL1> oradebug hanganalyze 3
+G. In SQL3 execute the following:
+   SQL3> oradebug setmypid
+   SQL3> oradebug unlimit
+SQL3> oradebug dump systemstate 266
+NOTE:
+  Systemstate level 258 and 266 are only available in patchsets 9.2.0.6, 10.1.0.4 and
+base release 10.2.0.1 and higher. If you are not on one of these releases, use level
+10 in place of the level suggested above.
+  If you are using systemstate level 266 and it is taking much longer than expected
+to generate the dump file, then end this systemstate dump and try level 258.
+
+
+Verify that 3 new trace files were created in the user_dump_destination. Examine the files
+to ensure that one file contains 2 hanganalyze dumps and each of the other two files
+contains a systemstate dump.
+
+NOTE: It is advisable not to use levels higher than 3 due to the potentially large number of trace files
+that may be produced (and could overwhelm the I/O subsystem). Since HANGANALYZE will be
+mostly used to diagnose "true hangs", a level 3 will dump the processes that are involved in a the
+hang condition - this usually involves fewer than 4 processes.
+
+NOTE: Ensure that the database has a very large MAX_DUMP_FILE_SIZE or trace files may get
+truncated. Also ensure that the DUMP_DEST parameters point to where there is plenty of disk space.
+
+
+Clustered Environment: Manual Steps for Gathering Hanganalyze and Systemstate dumps
+1. Database Version 9.0.1 - 9.2.x
+2. Database Version 10.1 and higher
+The trace files will be written to the "diag" background process trace file in the background_dump_destination on each node.
+
+Identify the SID you want to trace
+export ORACLE_SID=PROD
+Replace PROD with the SID you want to trace
+B. Using SQL*Plus connect as "/ AS SYSDBA" using the following command:
+sqlplus -prelim / as sysdba
+C. Execute the following:
+SQL> oradebug setmypid
+SQL> oradebug unlimit
+SQL> oradebug -g all hanganalyze 3
+SQL> oradebug -g all dump systemstate 266
+D. Wait at least 2 minutes to give time to identify process state changes.
+E. Execute the following:
+SQL> oradebug -g all hanganalyze 3
+SQL> oradebug -g all dump systemstate 266
+确认两个节点上的background_dump_destination路径下的diag trace 文件被更新。
+检查每个diag trace file 以确保含有2个 hanganalyze dumps 和1 个 systemstate dump
+
+NOTE: It is advisable not to use levels higher than 3 due to the potentially large number of trace files
+that may be produced (and could overwhelm the I/O subsystem). Since HANGANALYZE will be
+mostly used to diagnose "true hangs", a level 3 will dump the processes that are involved in a the
+hang condition - this usually involves fewer than 4 processes.
+NOTE: Ensure that the database has a very large MAX_DUMP_FILE_SIZE or trace files may get
+truncated. Also ensure that the DUMP_DEST parameters point to where there is plenty of disk space.
+
+Gather V$ View Data
+以下提供了一组查询，以便在database hang的时候去执行这些查询。
+SPOOL v_views.log;
+set linesize 130
+col "Parameter" form a50
+col "Session Value" form a30
+col "Instance Value" form a30
+select a.ksppinm "Parameter",
+b.ksppstvl "Session Value",
+c.ksppstvl "Instance Value"
+from x$ksppi a, x$ksppcv b, x$ksppsv c
+where a.indx = b.indx and a.indx = c.indx
+order by 1;
+SELECT class, value, name
+FROM v$sysstat;
+SELECT sid, id1, id2, type, lmode, request
+FROM v$lock;
+SELECT l.latch#, n.name, h.pid, l.gets, l.misses, l.immediate_gets, l.immediate_misses, l.sleeps
+FROM v$latchname n, v$latchholder h, v$latch l
+WHERE l.latch# = n.latch#
+AND l.addr = h.laddr(+);
+SELECT *
+FROM v$session_wait
+ORDER BY sid;
+/* repeat last query 3 times - we want to see who's repeatedly waiting*/
+SPOOL OFF;
+
+
+下一步：分析。
+确认os的资源使用。
+需要由充足的cpu和memory 资源给oracle processes使用。
+或者说，非oracle processes 正在使用大量的cpu or  memory资源，这不是Oracle hang的问题。
+ 检查cpu消耗。
+   1. Are CPU resources scarce?
+    全部的cpu使用率 (USER + SYS) 应该小于 90%
+        Batch or reporting applications can use higher CPU utilization to maximize throughput, 
+        but generally OLTP must have some headroom to permit a stable response time
+    每个cpu的运行队列大小应小于4
+    运行队列大小是cpu使用率问题的绝好的指示器（indicator）.一般来说，当每个cpu上的运行队列大于等于4时，
+    系统可能会经历性能问题。每个cpu的运行队列大小 指出了 平均在一个cpu上等待的进程的个数，
+    每个cpu的运行队列大小可以用做cpu 资源缺乏的标准。
+    
+    依据你收集os 数据的方法的不同，检查cpu的使用率。
+    Enterprise Manager
+    OS Watcher：使用oswg图形化 osw数据
+    LTOM
+   如果cpu没有使用饱和，那么继续进行下面的内存使用率检查。否则在下面的步骤中，检查是否是Oracle processes 使用大部分的cpu
+   
+   2. What processes are using most of the CPU?
+   
+   OSW：
+   第一、进入$OSW_HOME/archive/目录，再进入top命令的目录---oswtop
+   第二、确定cpu使用率紧张的时段对应的是哪个top file，然后再定位到那个top file中是哪几个process进程的cpu使用率高
+   
+   是Oracle Processes 使用了大量的cpu么？
+   如果是Oracle processes使用了大部分的cpu，你已经分辨出一个oracle 性能问题，而不是 hang/locking问题。   请点击 slow database tab 页以获得性能调整的支持。
+   如果不是oracle processes使用了大量的cpu，那么该问题是在oracle之外的问题。
+   
+   检查内存使用
+   当系统中内存短缺时，数据库性能会变得很慢，不可预料，有时类似于数据库hang。
+   回答下面的2个问题来确定 os上是否存在内存问题。
+   
+   1. Is there a memory shortage?
+   Memory Utilization (% or free KB):
+   Memory Page Scan Rate (pages/s): 当每秒上百次时，很可能是内存短缺。
+   Swap Utilization (% or free KB):与平时的基线做对比看此时的swap使用率是否正常。
+   
+   Enterprise Manager
+   
+   OS Watcher
+   第一：使用oswg建立内存图标
+   第二：检查图标中的"Memory: Available Swap" and "Memory: Scan Rate"
+   
+   LTOM Profiler
+
+   如果内存不短缺，那么继续去验证database 是否hang。否则，用下面的步骤，找到使用内存高的进程
+   
+   2. What is using most of the memory?
+   
+   Enterprise Manager
+   
+   OSWatcher
+   第一：到$OSW_HOME/archive/oswps下。
+   第二：找到发生问题时间段内的ps文件
+   第三：检查上一步找到的文件。
+   zzz ***Thu Feb 8 15:00:08 PST 2007
+F S UID  PID PPID C PRI NI ADDR SZ WCHAN STIME TTY TIME CMD
+8 R oracle 21150 1 0 79 20 ? 241 14:43:19 pts/5 0:00 /usr/bin/ksh ./OSWatcher.sh
+8 S oracle 14258 1 0 40 20 ? 44958 ? Jan 25 ? 0:01 ora_q001_DB10gR2
+8 O oracle 4057 4055 0 69 20 ? 151 15:00:08 pts/5 0:00 ps -elf
+8 S oracle 28748 1 0 40 20 ? 34961 ? 16:19:40 ? 0:00 ora_d000_DB9iR2
+8 R oracle 19003 19002 27 77 20 ? 439930 14:41:33 ? 5:49 oracleDB10gR2 (DESCRIPTION=(LOCAL=Y
+8 S oracle 8842 1 0 40 20 ? 4017 ? Dec 26 ? 0:41 /u01/app/oracle/product/DB10gR2/bin
+8 S oracle 4048 4045 0 59 20 ? 173 ? 15:00:08 pts/5 0:00 iostat -xn 1 3
+
+对上面的SZ列进程排序，以检查是哪个进程用的内存高。（SZ列包括映射的共享内存，因此必须减去sga的大小）
+
+是oracle进程使用了大量内存么?
+第一：是
+第二：不是。
+
+确认 database  hang
+数据库可能表现为hang，实际上是很slow。因此数据库tuning 是需要的。
+也有很多例子是 数据库表现为hang，其实只是一些session hang。
+本步骤将会帮助确认数据库是面临真正的hang的条件，被卡住or locking的条件，or database slow
+
+"True" Hang
+"True" Hang在oracle database中被定义为：内部死锁 or 两个或多个processes的循环依赖。
+当处理dml lock（比如TM锁）时，oracle 能检测到依赖，并回滚其中一个进程以打破依赖的条件。
+另一个方面，当内部内核级别资源（比如latch or pin）发生死锁，oracle 通常不能自动检测并解决死锁。
+
+1. Compare Hanganalyze Outputs
+
+在hanganalyze的trace file中， the "CYCLE" section报告了session 处于死锁条件下的process依赖。
+CYCLE 被视为"true" hangs。下面的是一个例子:
+Cycle 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<17/472/0x80057dd8/6674/library cache lock> <--- sid 17, ospid 6674: blocker/waiter
+-- <13/7/0x800580f4/6676/library cache lock> <--- sid 13, ospid 6676: blocker/waiter
+-- <21/204/0x8005a644/5813/library cache lock> <--- sid 21, ospid 5813: blocker/waiter
+
+如果你的hanganalyze输出文件中有 "CYCLE" section,那么database 处于 hang state
+第一：记下 sid和ospid，以便在the Determine a Cause>Data Collection and Determine a Cause>Analysis steps步骤去使用。
+第二：进行下一步以便获得额外的数据。
+
+如果你的hanganalyze输出文件中没有 "CYCLE" section，请转到 下面的"Stuck or Locked Sessions" step 
+
+2. Additional Data
+
+"Stuck" or "Locked" Sessions
+oracle  使用 enqueue 作为一个锁机制来管理对共享资源的访问。
+对共享资源的定义如下：可以是 一个 table  definition，一个transaction，可以在session之间共享的structure。
+当冲突发生时，oracle会通过将其他的session置为waiting模式 来 序列化 process，直到组塞者进程完成。
+1. Compare Hanganalyze Outputs
+在hanganalyze的trace file中，the "OPEN CHAIN" section 报告了卷入wait chain中的sessions。
+一个wait chain 意味着：一个session正在阻塞一个或者多个其他session。
+Open Chains 代表着 被卡住的or 锁住的session，见下面的例子：
+Hanganalyze #1
+
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<16/44773/0x265f15c/1948/SQL*Net message from client> <--sid 16, ospid 1948:blocker
+-- <12/5/0x265fad4/2112/enqueue> <--sid 12, ospid 2112:waiter
+-- <13/14/0x265fdfc/2076/enqueue> <--sid 13, ospid 2076:waiter
+Chain 2 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<19/3/0x2660124/2392/No Wait>
+
+Hanganalyze #2
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<16/44773/0x265f15c/1948/SQL*Net message from client> <--sid 16, ospid 1948: blocker
+-- <12/5/0x265fad4/2112/enqueue> <--sid 12, ospid 2112:waiter
+-- <13/14/0x265fdfc/2076/enqueue> <--sid 13, ospid 2076:waiter
+Chain 2 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<19/3/0x2660124/2392/No Wait>
+
+
+Hanganalyze #3
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<16/44773/0x265f15c/1948/SQL*Net message from client> <--sid 16, ospid 1948:blocker
+-- <12/5/0x265fad4/2112/enqueue> <--sid 12, ospid 2112:waiter
+-- <13/14/0x265fdfc/2076/enqueue> <--sid 13, ospid 2076:waiter
+-- <19/3/0x2660124/2392/enqueue> <--sid 19, ospid 2392:waiter
+
+若是下面的情况成立，那么数据库正在经历着一个locking的情况：
+A."OPEN CHAIN" section中的一个或多个chain有超过一个的session。最少的是一个blocker 和一个waiter。
+上面例子中的chain 1满足该条件
+
+B.在多次hanganalyze 的输出中，一个或多个chain之间的阻塞者session是同一个，一个等待者session 可以被加到chain中，并且chain 依然还是处于wait状态。
+
+如果你的hanganalyze输出显示出locking 条件：
+第一：记下阻塞者 和 等待者的 sid和ospid ，以便在
+Determine a Cause>Data Collection and Determine a Cause>Analysis steps 中使用。
+第二：转到"Collect Additional Data" step（即：下一步）以便为被开卡住的session收集更多的data
+
+2.Collect Additional Data
+在本步骤中，你会对open chain中的 一些session 去执行errorstack dump。
+该session的 ospid 会被errorstack dump命令用到。
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<16/44773/0x265f15c/1948/SQL*Net message from client> <--sid 16, ospid 1948:blocker
+-- <12/5/0x265fad4/2112/enqueue> <--sid 12, ospid 2112:waiter
+-- <13/14/0x265fdfc/2076/enqueue>
+-- <19/3/0x2660124/2392/enqueue> 
+
+在收集errorstack之前，先确认应该针对哪个chain下手！若是在"OPEN CHAIN" section 中有多个chain，
+在最长的3个或者4个chains中进行下面的steps。
+你需要对选中进行errorstack的chain中的阻塞者session和第一个等待者session做 errorstack。
+在上面的例子中，ospid 1948是阻塞者，ospid 2112是第一个等待者。因此，你要对1948和2112做 errorstack dump
+
+如果一个进程正阻塞着很多其他session（通常多余10个），
+a "FOUND" section 通常会出现在 hanganalyze trace file中，出现的位置在"OPEN CHAINS" section之前。
+看下面的例子。 如果"FOUND" section 出现在你的hanganalyze trace file中，请比较多个hanganalyze 的文件中的每个session。
+如果一个阻塞者在多个hanganalyze的文件中的"FOUND" section 部分都出现，那么请用ospid来收集 errorstack信息。
+Found 34 objects waiting for <sid/sess_srno/proc_ptr/ospid/wait_event>
+<131/754/0x9fc1e8/576293/No Wait>
+Found 17 objects waiting for <sid/sess_srno/proc_ptr/ospid/wait_event>
+<245/2343/0xa19f48/575938/latch free>
+Found 24 objects waiting for <sid/sess_srno/proc_ptr/ospid/wait_event>
+<144/2183/0xa0c9b8/575457/latch free>
+
+以下介绍根据不同的database 版本来进行errorstack的不同方法
+
+Database Version 8.1.7 - 9.2.x:
+Database Version 10.1:
+A. Identify the SID you want to trace
+  export ORACLE_SID=PROD
+Replace PROD with the SID you want to trace
+B. Using SQL*Plus connect as "/ AS SYSDBA" using the following command:
+   sqlplus -prelim / as sysdba
+C. Using the ospid execute the following commands
+  Once for the blocking session on each chain in the "OPEN CHAIN" section that you decided to focus on.
+  Once for the first waiting session on each chain in the "OPEN CHAIN" section that you decided to focus on.
+  Once for each blocker in the "FOUND" section that remains the same between hanganalyze outputs.
+SQL> oradebug setospid <ospid>
+SQL> oradebug unlimit
+SQL> oradebug dump errorstack 3
+
+多个trace file 会生成在user_dump_destination中。
+每一个用来执行errorstack的session都有一个trace file
+
+若是db有 被卡住的 or 被锁的session：
+第一：记下阻塞者和 等待者的 sid和ospid，以便 Determine a Cause>Data Collection and Determine a Cause>Analysis steps.使用
+第二：对非集群环境，确认新的trace file 被写入到user_dump_destination下。确认该文件包括errorstack dump信息
+第三：对于集群环境，确认每个rac 节点上的 diag后台进程的trace file被更新。检查每个diag trace file 确认包括errorstack dump信息。
+第四：继续下面的 "Next Step - Determine a Cause"步骤。
+
+若db中没有 被卡住的 or 被锁的session，请转到"Slow Database" step.
+
+Slow Database
+一个严重的性能问题会很轻易的被误认为是database hang。这个情况常发生在严重的contention以至于看起来像dattabase 完全 hung了。
+
+在hanganalyze trace file中，the "OPEN CHAIN" section 报告了 卷入到wait chain中的sessions。
+一个wait chain 的含义是 一个session 正在阻塞（block）一个或者多个其他的session。
+Open Chains 代表着 被卡住的or 锁住的session，见下面的例子：
+Hanganalyze #1
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<13/23/0x2660124/1776/No Wait>
+Chain 2 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<16/8/0x265f7ac/1888/SQL*Net message from client>
+-- <15/20/0x265fad4/296/enqueue>
+-- <12/5/0x265fdfc/1804/enqueue>
+
+Hanganalyze #2
+Open chains found:
+Chain 1 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<18/3839/0x265ee34/2004/SQL*Net message from client>
+-- <19/23/0x265f15c/1876/enqueue>
+Chain 2 : <sid/sess_srno/proc_ptr/ospid/wait_event> :
+<12/5/0x265fdfc/1804/No Wait>
+
+在任何给定的时刻，在数据库中，会有阻塞者和等待者。关键是确定这些阻塞者和等待者被卡住超过了可接受的时间。
+上面的wait_event is "No Wait"的，表示没有等待的session，因此此类的"No Wait"的 chain可以被忽略。
+
+如果阻塞者session 在多个 hanganalyze trace file 之间该表，那就表示该chain没有卡住。
+在 Hanganalyze #1, the blocking session is sid 16. 
+在 Hanganalyze #2, the blocking session is sid 12.
+
+若是Hanganalyze 输出中显示 符合 slow database的条件，请点击Slow Database tab去进行database tuning
+
+Next Step - Determine a Cause
+在进行下一步（Determine a Cause > Overview）之前，确认下面的都已经完成：
+
+非集群环境：
+  第一：一个新的trace file被写入到user_dump_destination下，该trace file包括 2个 hanganalyze dumps和一个process state dump.
+  第二：一个或者多个新的trace file被写入到user_dump_destination下，该trace file 包括errorstack dump
+  第三：v_views.log文件被建立
+  
+集群环境：
+  第一：diag后台进程 trace file 被更新，内容包括2个 hanganalyze dumps和一个process state dump.
+  第二：diag后台进程 trace file 被更新，内容包括1个或者多个errorstack dump
+  第三：v_views.log文件被建立
+
+提交sr
+
+
+Hang/Locking > Determine a Cause >Data Collection
+
+"True" Database Hang
+不需要额外的收集信息，请直接转到Determine a Cause > Analysis step步骤中。
+
+"Stuck" or "Locked" Sessions
+为了进一步诊断被卡住的session，你有几个选项，选择其中一个：
+Use previously generated trace files  ------------->不需要额外的收集信息，请直接转到Determine a Cause > Analysis step步骤中。
+
+Execute Queries on V$ Views
+下面的查询提示你收入SIDLISt，请使用上面步骤得到的sid
+SPOOL v_lock.log;
+set linesize 200
+column SID format 9999
+column EVENT format a30
+column P1 format a30
+column P2 format a30
+column P3 format a30
+column WAIT_T format 9999
+select SID,EVENT,P1TEXT||' '||P1 P1,P2TEXT||' '||P2 P2,P3TEXT||' '||P3 P3,SECONDS_IN_WAIT
+SEC_IN_WAIT
+from v$session_wait
+where sid in (&SIDLIST);
+--example sidlist entry: 100,118,125
+set linesize 80
+select s.username, s.sid, s.module, t.sql_text
+from v$session s, v$sql t
+where s.sql_address =t.address and s.sql_hash_value =t.hash_value
+and s.sid in (&SIDLIST);
+--example sidlist entry: 100,118,125
+set linesize 200
+SELECT DECODE(request,0,'Holder: ','Waiter: ')||sid sess,
+id1, id2, lmode, request, type
+FROM V$LOCK
+WHERE (id1, id2, type) IN
+(SELECT id1, id2, type FROM V$LOCK WHERE request>0)
+ORDER BY id1, request;
+SPOOL OFF;
+
+请确认v_lock.log被建立起来。
+
+Use OEM (10gR2)
+不说oem这种方式
+
+Use utllockt.sql Script
+See My Oracle Support Note 166534.1 for more information.---该文章我的mos账号无权访问。。。
+
+
+Next Step - Analyze
+几个概念：
+OSPID
+Active SQL
+Wait Event
+CallStack ：一个session调用的function的列表（list），用CallStack在mos搜索，以找到已经被分辨的问题。
+
+Identify Blocker and Waiter Data Using Errorstack
+
+The Errorstack dump 包含 a "call stack" and a "process state" dump。
+process state information 是我们关心的信息。
+The process state is broken down into sections called state objects which are identified with "SO:"
+
+SO 的type是在标有SO的第二行的开头：---注意：so的type在白鳝的《oracle rac日记》的第21页有记载。
+
+1. OSPID
+OSPID 可以在"process" state object中被发现。见下面的例子。 OSPID以蓝色标出。当排错完成后，OSPID需要被kill sessions。
+(process) shows that the state object is of type process
+ospid: 25765 shows that the ospid is equal to 25765
+SO: 0x3661bd0c, type: 2, owner: (nil), flag: INIT/-/-/0x00
+(process) Oracle pid=16, calls cur/top: 0x3672bb94/0x3672bb94, flag: (0) -
+int error: 0, call error: 0, sess error: 0, txn error 0
+(post info) last post received: 0 0 0
+last post received-location: No post
+last process to post me: none
+last post sent: 0 0 0
+last post sent-location: No post
+last process posted by me: none
+(latch info) wait_event=0 bits=0
+Process Group: DEFAULT, pseudo proc: 0x3664d528
+O/S info: user: oracle, term: pts/0, ospid: 25765
+OSD pid info: Unix process pid: 25765, image: username@machine.name.com (TNS V1-v3)
+
+2. Wait Event
+
+(session) 
+shows that the state object is of type process
+sid: 118 shows that the sid for this session is 118. This is used to ensure that you are looking at the correct session.
+
+sql: 0x3076f3f8 
+shows that the address of the SQL for this session is 3076f3f8. This will be used to find the Active SQL in the next step.
+
+waiting for 'enq: TM - contention' 
+shows that the wait event for this session is enq: TM - contention.
+This will be used when determining the type of lock associated with the hang or lock situation that you are troubleshooting.
+
+name|mode=544d0006 
+shows the value for P1 if the wait event is an enqueue. P1 is a hexadecimal
+value that represents the lock type and lock mode (lmode). See My Oracle
+Support Note 34566.1 for details on obtaining the lock type and lock mode from
+P1. My Oracle Support Note 29787.1 provides details on the lock types and lock modes.
+
+WAITEVENT: "enqueue" Reference Note (Doc ID 34566.1) 
+VIEW: "V$LOCK" Reference Note (Doc ID 29787.1)
+
+
+SO: 0x366dd1b4, type: 4, owner: 0x3661bd0c, flag: INIT/-/-/0x00
+(session) sid: 118 trans: 0x354e1fb0, creator: 0x3661bd0c, flag: (41) USR/-
+BSY/-/-/-/-/-
+DID: 0001-0010-000010E9, short-term DID: 0000-0000-00000000
+txn branch: (nil)
+oct: 26, prv: 0, sql: 0x3076f3f8, psql: 0x32a2c520, user: 54/SCOTT
+O/S info: user: oracle, term: pts/0, ospid: 25764, machine: machine.name.com
+program: sqlplus@machine.name.com (TNS V1-V3)
+application name: SQL*Plus, hash value=3669949024
+waiting for 'enq: TM - contention' blocking sess=0x0x366c7f14 seq=39 wait_time=0
+seconds since wait started=11900
+name|mode=544d0006, object #=c7cc, table/partition=0
+
+
+
+3. Active SQL
+活动的sql可以在"Library Object Lock" state object找到。 对分辨卷入到hang or lock中的 object，活动的sql是很有用的。
+
+当检查sql时，有几个问题需要注意：
+
+ What objects are involved?
+ What are the object types?
+ Is the SQL DDL or DML?
+ Do these objects have any dependencies? If so, what are they?
+ Are there triggers involved?
+ Is the SQL part of a package or procedure?
+ What part of the application is involved?
+ etc...
+ 
+ 看下面的例子，下面blue字体表示这是 与分辨active sql有关的data。
+ 
+ 为了在 "Library Object Lock" state object中找到active的sql，请使用sql address进行搜索。
+ 搜索的sql address在 上一步（Wait Event）的 "session" state object中。在前一个例子中的sql address是0x3076f3f8
+ 当执行搜索时，请不要带前面的0x，在该例子中，你使用的搜索关键字是3076f3f8，一旦你用这个sql address 找到Library Object Handle
+ 你应该看 以“name=”开头的那一行，name=后边的就是 active的sql
+ 
+ LIBRARY OBJECT LOCK   shows that the state object is of type Library Object Lock
+ 
+ LIBRARY OBJECT HANDLE: handle=3076f3f8   
+ shows that the Library Object Handle address is 3076f3f8. 
+ This address is the same as the SQL address found in the "session" state object. 
+ This is use to verify that this is the state object containing the active SQL
+ 
+ name=lock table emp in exclusive mode
+ show that the active SQL is "lock table emp in exclusive mode".
+ 
+ 下面的是例子：
+ 
+ SO: 0x2f041b48, type: 53, owner: 0x366dd1b4, flag: INIT/-/-/0x00
+LIBRARY OBJECT LOCK: lock=2f041b48 handle=3076f3f8 mode=N
+call pin=(nil) session pin=(nil) hpc=0000 hlc=0000
+htl=0x2f041b94[0x30c3e358,0x324497a4] htb=0x30c3e358 ssga=0x30c3de24
+user=366dd1b4 session=366dd1b4 count=1 flags=[0000] savepoint=0x460964fc
+LIBRARY OBJECT HANDLE: handle=3076f3f8 mtx=0x3076f4ac(1) cdp=1
+name=lock table emp in exclusive mode
+hash=01e8abf8cabca30a0249f91737e32c8f timestamp=03-27-2007 14:39:28
+namespace=CRSR flags=RON/KGHP/TIM/PN0/SML/KST/DBN/MTX/[120100d0]
+kkkk-dddd-llll=0000-0001-0001 lock=N pin=0 latch#=1 hpc=0002 hlc=0002
+lwt=0x3076f454[0x3076f454,0x3076f454] ltm=0x3076f45c[0x3076f45c,0x3076f45c]
+pwt=0x3076f438[0x3076f438,0x3076f438] ptm=0x3076f440[0x3076f440,0x3076f440]
+ref=0x3076f474[0x3076f474,0x3076f474] lnd=0x3076f480[0x3076f480,0x3076f480]
+
+4. CallStack
+   CallStack trace 可以在errorstack 或者 processstate 输出中找到。
+   在该trace file中，搜索”Call Stack Trace“即可。下面的是一个例子；
+   
+   当在mos上搜索时，Call Stack 是很有用的。
+   
+   当执行搜索时，你不需要使用所有的函数。只需要输入其中的一些函数名作为搜索标准的一部分即可。
+   一般情况下，请忽略以 kse 或者 ksd 开头的函数。从 kse 或者 ksd 开头的函数后面的前5个函数开始搜索。
+   在找到任何已经分辨并且匹配你正在解决的问题之前，你可能会尝试多种搜索的组合。
+   
+   ----- Call Stack Trace -----
+calling call entry argument values in hex
+location type point (? means dubious value)
+-------------------- -------- -------------------- ----------------------------
+ksedst()+27 call ksedst1() 1 ? 1 ?
+ksedmp()+557 call ksedst() 1 ? 8409404 ? AC007B ? 18 ?
+C0246C4 ? 6 ?
+ksdxfdmp()+1382 call 0C969FDE 3 ? 1 ? BBA5021 ? 6F64736E ?
+312B2928 ? 373134 ?
+ksdxcb()+1321 call 00000000 BFFFC3B0 ? 11 ? 3 ?
+BFFFC310 ? BFFFC360 ?
+sspuser()+102 call 00000000 1 ? 2000 ? 0 ? 0 ? 0 ? 0 ?
+00A767A0 signal 00000000 C ? BFFFC838 ? BFFFC8B8 ?
+ntprd()+150 call sntpread() CCAAE88 ? CCAB4A0 ? CCAA030 ?
+CCADB9E ? CCAA09C ? 0 ?
+nsprecv()+416 call 00000000 CCA9F08 ? CCADB9E ? CCAA09C ?
+0 ? 0 ? A ?
+nsrdr()+155 call nsprecv() CCA9BF8 ? BFFFD540 ?
+CCA1AC4 ?
+nsdo()+1417 call nsrdr() CCA9BF8 ? CCA1AC4 ?
+nsbrecv()+51 call nsdo() CCA19A8 ? 55 ? CCA1AC4 ? 0 ?
+BFFFD7FC ? 0 ? 3 ?
+nioqrc()+373 call nsbrecv() CCA19A8 ? CCA1AC4 ?
+BFFFD7FC ? 0 ?
+__PGOSF86_opikndf2( call 00000000 CC6B5C4 ? 0 ? BFFFED90 ? 1 ?
+)+740 0 ? 0 ?
+opitsk()+511 call 00000000 CC6B5C4 ? 2 ? BFFFED90 ? 1 ?
+0 ? 0 ?
+opiino()+821 call opitsk() 0 ? 0 ?
+opiodr()+835 call 00000000 3C ? 4 ? BFFFF830 ?
+opidrv()+466 call opiodr() 3C ? 4 ? BFFFF830 ? 0 ?
+sou2o()+91 call opidrv() 3C ? 4 ? BFFFF830 ?
+opimai_real()+117 call sou2o() BFFFF814 ? 3C ? 4 ?
+BFFFF830 ?
+main()+111 call opimai_real() 2 ? BFFFF860 ?
+__libc_start_main() call 00000000 2 ? BFFFF924 ? BFFFF930 ?
++211 A81C66 ? BBAFF4 ? 0 ?
+
+Identify Blocker and Waiter Data using V$view output
+
+1. Wait Event
+   Wait Event 可以在v$lock中被分辨。从v$session_wait查询的结果中寻找。
+   
+   P1--当等待事件是一个enqueue时，p1显示了lock 的name|mode 的值。
+   10g及其之后，p1的值是十进制的，将其转换为十六进制之后，得到lock mode
+   lock type 可以从wait event name中获得。
+   name|mode 1414332419
+   1414332419转为十六进制后是--544d0003 
+---select to_char(1414332419,'xxxxxxxx') from dual; --返回 544d0003
+---转为ascii值
+---0x54 --->T
+---0x4d --->M
+
+   544d 代表 lock name ，即TM锁
+   0003 代表 lock mode   lock mode=3
+注意：ascii与十六进制的转换：http://www.cnblogs.com/ciey/archive/2010/01/05/1639969.html
+
+   
+ 2. Active SQL
+    从v$lock中可以看到sql
+Identify Blocker and Waiter Data using OEM (10gR2)
+
+
+
+"True" Database Hang
+列举几个会导致database hang的等待事件：
+
+1. library cache pin
+Library cache pins are used to manage library cache concurrency. 
+Pinning an object causes the heaps to be loaded into memory (if not already loaded). 
+PINS can be acquired in NULL, SHARE or EXCLUSIVE modes and can be considered like a special form of lock.
+A wait for a "library cache pin" implies some other session holds that PIN in an incompatible mode.
+
+2. library cache lock
+The library cache lock controls the concurrency between clients of the library cache by
+acquiring a lock on the object handle so that one client can prevent other clients from
+accessing the same object or the client can maintain a dependency for a long time (no
+other client can change the object).
+This lock is also gotten to locate an object in the library cache.
+
+3. row cache lock
+This event is used to wait for a lock on a data dictionary cache specified by "cache id". 
+If one is running in shared mode (Parallel Server), the LCK0 is signalled to get the row
+cache lock for the foreground waiting on this event. The LCK0 process will get the lock
+asynchronously. In exclusive mode the foreground process will try to get the lock.
+
+
+Search My Oracle Support
+搜索也是有技巧的。
+
+
+WAITEVENT: "library cache pin" Reference Note (Doc ID 34579.1)
+
+
+"Stuck" or "Locked" Sessions
+
+列举几个会导致"Stuck" or "Locked" Sessions的等待事件：
+1. enqueue
+Enqueues are local locks that serialize access to various resources. This wait event
+indicates a wait for a lock that is held by another session (or sessions) in an incompatible
+mode to the requested mode.
+
+2. library cache lock
+The library cache lock controls the concurrency between clients of the library cache by
+acquiring a lock on the object handle so that one client can prevent other clients from
+accessing the same object or the client can maintain a dependency for a long time (no
+other client can change the object). This lock is also gotten to locate an object in the
+library cache.
+
+3. library cache load lock
+This event is used when a database object is loaded. The load lock is always gotten in
+Exclusive mode, so that no other process can load the same object. If the load lock is
+busy the session will wait on this event until the lock becomes available.
+
+4. library cache pin
+Library cache pins are used to manage library cache concurrency. Pinning an object
+causes the heaps to be loaded into memory (if not already loaded). PINS can be acquired
+in NULL, SHARE or EXCLUSIVE modes and can be considered like a special form of lock.
+A wait for a "library cache pin" implies some other session holds that PIN in an
+incompatible mode.
+
+5. row cache lock
+This event is used to wait for a lock on a data dictionary cache specified by "cache id". If
+one is running in shared mode (Parallel Server), the LCK0 is signaled to get the row cache
+lock for the foreground waiting on this event. The LCK0 process will get the lock asynchronously. 
+In exclusive mode the foreground process will try to get the lock.
+
+Search My Oracle Support
+
+Open a Service Request with Oracle Support Services

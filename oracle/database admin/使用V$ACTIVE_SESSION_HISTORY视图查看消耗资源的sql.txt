@@ -1,0 +1,57 @@
+--查找最近一分钟内，最消耗CPU的sql语句   
+SELECT sql_id,   
+    count(*),   
+    round(count(*) / sum(count(*)) over(), 2) pctload  
+FROM V$ACTIVE_SESSION_HISTORY  
+WHERE sample_time > sysdate - 1 / (24 * 60)  
+    AND session_type <> 'BACKGROUND'  
+    AND session_state = 'ON CPU'  
+GROUP BY sql_id  
+ORDER BY count(*) desc;  
+  
+--查找最近一分钟内，最消耗I/O的sql语句  
+SELECT ash.sql_id,  
+    count(*)  
+FROM V$ACTIVE_SESSION_HISTORY ASH,V$EVENT_NAME EVT  
+WHERE ash.sample_time > sysdate -1/(24*60)  
+    AND ash.session_state = 'WAITING'  
+    AND ash.event_id = evt.event_id  
+    AND evt.wait_class = 'USER I/O'  
+GROUP BY ash.sql_id  
+ORDER BY count(*) desc;  
+  
+--查找最近一分钟内，最消耗CPU的session  
+SELECT session_id,  
+    count(*)  
+    FROM V$ACTIVE_SESSION_HISTORY  
+WHERE session_state = 'ON CPU'  
+    AND sample_time > sysdate -1/(24*60)  
+GROUP BY session_id  
+ORDER BY count(*) desc;  
+  
+--查找最近一分钟内，最消耗资源的sql语句  
+SELECT ash.sql_id,  
+    sum(decode(ash.session_state,'ON CPU',1,0)) "CPU",  
+    sum(decode(ash.session_state,'WAITING',1,0)) -  
+    sum(decode(ash.session_state,'WAITING',decode(en.wait_class,'USER I/O',1,0),0)) "WAIT",  
+    sum(decode(ash.session_state,'WAITING',decode(en.wait_class,'USER I/O',1,0),0)) "IO",  
+    sum(decode(ash.session_state,'ON CPU',1,1)) "TOTAL"  
+    FROM V$ACTIVE_SESSION_HISTORY ASH,V$EVENT_NAME EN  
+WHERE SQL_ID is not null and en.event#=ash.event# and ash.sample_time > sysdate -1/(24*60)  
+GROUP BY ash.sql_id  
+ORDER BY sum(decode(ash.session_state,'ON CPU',1,1)) desc;  
+  
+--查找最近一分钟内，最消耗资源的session  
+SELECT ash.session_id,  
+    ash.session_serial#,  
+    ash.user_id,  
+    ash.program,  
+    sum(decode(ash.session_state,'ON CPU',1,0)) "CPU",  
+    sum(decode(ash.session_state,'WAITING',1,0)) -  
+    sum(decode(ash.session_state,'WAITING',decode(en.wait_class,'USER I/O',1,0),0)) "WAITING",  
+    sum(decode(ash.session_state,'WAITING',decode(en.wait_class,'USER I/O',1,0),0)) "IO",  
+    sum(decode(ash.session_state,'ON CPU',1,1)) "TOTAL"  
+FROM V$ACTIVE_SESSION_HISTORY ASH,V$EVENT_NAME EN  
+WHERE en.event# = ash.event# and ash.sample_time > sysdate -1/(24*60)  
+GROUP BY ash.session_id,ash.user_id,ash.session_serial#,ash.program  
+ORDER BY sum(decode(ash.session_state,'ON CPU',1,1));  

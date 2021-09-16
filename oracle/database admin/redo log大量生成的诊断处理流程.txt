@@ -1,0 +1,114 @@
+redo log大量生成的诊断处理流程
+标签： 归档日志大量生成诊断原因
+2014-11-18 17:18 1800人阅读 评论(0) 收藏 举报
+分类：
+Oracle DB（721）  
+版权声明：本文为博主原创文章，未经博主允许不得转载。
+redo log大量生成的诊断处理流程
+本文是原创文章，转载请注明出处：
+http://blog.csdn.net/msdnchina/article/details/41249705
+1.获得归档日志暴增时段的一个归档日志：可以查询v$archived_log视图，结合completion_time列进行定位
+2.对该归档日志进行转储dump
+
+[html] view plain copy
+
+ALTER SYSTEM DUMP LOGFILE '/u01/oracle/V7323/dbs/arch1_76.dbf';   
+   --请将路径修改成当时的redo归档的路径
+
+  以上命令会在user_dump_dest中生成一个trace文件，请将该trace文件传到linux中（root用户or oracle用户均可）
+
+3.
+[html] view plain copy
+
+[root@hosta ~]# grep -A2 "^REDO RECORD" his_ora_29032886_dump_arch.trc > redo.log   
+4.
+[html] view plain copy
+
+[root@hosta ~]# grep OBJ: redo.log |awk -F "OBJ:" '{print $2}'|awk '{print $1}'|sort -n|uniq -c |sort -n -r  
+2038012 4294967295  <----出现了2038012次。  
+    107 60635  
+     60 60464  
+     30 59848  
+     29 62992  
+     29 60669  
+      9 59810  
+      8 60706  
+      8 59842  
+OBJ：4294967295，这个是undo的redo记录，出现了2038012次，也就是说：产生redo最多的为undo操作
+[html] view plain copy
+
+[root@hosta ~]# grep OBJ: redo.log |awk -F "OBJ:" '{print $2}' | more  
+4294967295 SCN:0x0001.96090e1b SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e1e SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e1f SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e20 SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e21 SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e22 SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e23 SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e24 SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e25 SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e26 SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e27 SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e28 SEQ:  1 OP:5.4  
+4294967295 SCN:0x0001.96090e29 SEQ:  1 OP:5.2  
+4294967295 SCN:0x0001.96090e29 SEQ:  2 OP:5.4  
+
+注意上面的最后一列：op，这是操作的标志码
+
+[html] view plain copy
+
+OP:5.2 Undo Header  
+OP:5.4 Commit  
+
+5.
+[html] view plain copy
+
+[root@hosta ~]# grep -A2 "^CHANGE #" his_ora_29032886_dump_arch.trc > redo_c.log   
+6.
+[html] view plain copy
+
+[root@hosta ~]# grep OBJ: redo_c.log |awk -F "OBJ:" '{print $2}'|awk '{print $1}'|sort -n|uniq -c |sort -n -r  
+   ---这是对object_id按照出现的次数进行倒序排列，举例：
+[html] view plain copy
+
+[root@hosta ~]# grep OBJ: redo_c.log |awk -F "OBJ:" '{print $2}'|awk '{print $1}'|sort -n|uniq -c |sort -n -r  
+3057384 4294967295  
+1018128 15  
+    279 60669  
+    174 60635  
+这是说明：OBJ：4294967295 出现了3057384次；
+          OBJ：15 出现了1018128次。
+OBJ：4294967295，这个是undo的redo记录.
+OBJ：15,可以用如下的语句查询出来：select object_name from dba_objects where object_id='15';
+以上就可以定位到是哪个object_name 导致的redo log暴增。
+
+下面来确认一下，是何种操作导致的redo log暴增：
+[html] view plain copy
+
+[root@hosta ~]# grep OBJ: redo_c.log | more  
+CHANGE #1 TYP:0 CLS:15 AFN:1 DBA:0x00400009 OBJ:4294967295 SCN:0x0001.96090e1b SEQ:  1 OP:5.2  
+CHANGE #2 TYP:0 CLS:16 AFN:1 DBA:0x0040000a OBJ:4294967295 SCN:0x0001.96090e1a SEQ:  1 OP:5.1  
+CHANGE #3 TYP:2 CLS: 1 AFN:1 DBA:0x0040006a OBJ:15 SCN:0x0001.96090e1b SEQ:  1 OP:11.5  
+CHANGE #1 TYP:0 CLS:15 AFN:1 DBA:0x00400009 OBJ:4294967295 SCN:0x0001.96090e1e SEQ:  1 OP:5.4  
+CHANGE #1 TYP:0 CLS:15 AFN:1 DBA:0x00400009 OBJ:4294967295 SCN:0x0001.96090e1f SEQ:  1 OP:5.2  
+CHANGE #2 TYP:0 CLS:16 AFN:1 DBA:0x0040000a OBJ:4294967295 SCN:0x0001.96090e1e SEQ:  1 OP:5.1  
+CHANGE #3 TYP:2 CLS: 1 AFN:1 DBA:0x0040006a OBJ:15 SCN:0x0001.96090e1f SEQ:  1 OP:11.5  
+CHANGE #1 TYP:0 CLS:15 AFN:1 DBA:0x00400009 OBJ:4294967295 SCN:0x0001.96090e20 SEQ:  1 OP:5.4  
+CHANGE #1 TYP:0 CLS:15 AFN:1 DBA:0x00400009 OBJ:4294967295 SCN:0x0001.96090e21 SEQ:  1 OP:5.2  
+CHANGE #2 TYP:0 CLS:16 AFN:1 DBA:0x0040000a OBJ:4294967295 SCN:0x0001.96090e20 SEQ:  1 OP:5.1  
+CHANGE #3 TYP:2 CLS: 1 AFN:1 DBA:0x0040006a OBJ:15 SCN:0x0001.96090e21 SEQ:  1 OP:11.5  
+
+注意上面的最后一列：op，这是操作的标志码
+
+[html] view plain copy
+
+OP:5.1 Undo Recorder  
+OP:5.2 Undo Header  
+OP:5.4 Commit  
+OP:11.5 Update Row Piece,也就是update操作，根据obj:15,就能确认是哪个对象上的update  
+
+
+
+参考文章：
+http://www.traveldba.com/archives/479
+http://blog.csdn.net/duanbeibei/article/details/6091507

@@ -1,0 +1,156 @@
+1
+在OS启动时，可以设置oracle和os一起启动或关闭。oracle自带dbstart和dbshut命令。它们会读取oratab文件
+
+[oracle@prod1 bin]$ cd $ORACLE_HOME/bin
+#查看启动和关闭脚本是否存在
+[oracle@prod1 bin]$ ls dbstart 
+dbstart
+[oracle@prod1 bin]$ ls dbshut 
+dbshut
+
+修改dbstart、dbshut命令
+
+[oracle@prod1 bin]$ vi dbstart 
+ORACLE_HOME_LISTNER=$ORACLE_HOME
+[oracle@prod1 bin]$ vi dbshut 
+ORACLE_HOME_LISTNER=$ORACLE_HOME
+
+
+修改oratab文件
+PROD为ORACLE_SID
+/u01/app/oracle/product/11.2.0/db_1为ORACLE_HOME
+Y表示允许数据库自动启动或关闭
+[oracle@prod1 bin]$ vi /etc/oratab 
+PROD:/u01/app/oracle/product/11.2.0/db_1:Y
+
+
+2
+自启动方法
+
+创建脚本,脚本被放在/etc/init.d目录中
+
+#!/bin/bash
+# chkconfig: 2345 96 11
+# description:Startup Script for oracle Databases
+#/etc/rc.d/init.d/oradbstart
+export ORACLE_BASE=/u01/app/oracle/
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_home
+export ORACLE_SID=orcl
+export PATH=$PATH:$ORACLE_HOME/bin
+
+case "$1" in
+
+'start')
+su - oracle -c "$ORACLE_HOME/bin/lsnrctl start"
+su - oracle -c "$ORACLE_HOME/bin/dbstart"
+touch /var/lock/subsys/oracle
+;;
+
+'stop')
+su - oracle -c "$ORACLE_HOME/bin/lsnrctl stop"
+su - oracle -c "$ORACLE_HOME/bin/dbshut"
+rm -f /var/lock/subsys/oracle
+;;
+
+'reload|restart')
+$0 stop
+$1 start
+;;
+
+esac
+
+
+
+现在，我要对这段脚本做一个关键解释：
+
+第一：# chkconfig: 2345 99 10 虽是一行注释，但是确实关键的必不可少的一行，除非你不用chkconfig命令来自动生成符号连接文件，而是完全采用手工创建。否则没有这一行，执行chkconfig系统将会报出oracle没有chkconfig服务权限的错误。
+
+第二：su - oracle -c $ORACLE_HOME/bin/dbstart和touch /var/lock/subsys/oracle这两行的作用是首先执行dbstart脚本启动oracle，然后在服务活动列表目录中创建一个与oracle这个服务同名的一个文件，表示这个服务是活动的，也就是被启动的。
+
+第三：su - oracle -c $ORACLE_HOME/bin/dbshut 和rm -f /var/lock/subsys/oracle这两行的作用是首先执行dbshut脚本关闭oracle，然后从服务活动列表目录中删除那个与oracle同名的那个文件，表示这个服务不是活动的，也就是已经被关闭。
+
+
+那么为什么要做touch /var/lock/subsys/oracle和rm -f /var/lock/subsys/oracle这两步呢？原因是跟Linux系统的机制有关的：Linux的判别一个服务是否被启动的依据是在/var/lock/subsys/目录下是否有与服务名相同的文件，若有则表示这个服务已经被启动了，在系统关闭的时候，Linux会把这里面列出的服务全部关闭，并删掉与服务同名的文件。若一个服务被启动了，但却在这个目录里没有那个服务的同名文件，则不会关闭那个服务。
+
+
+那么为什么要做touch /var/lock/subsys/oracle和rm -f /var/lock/subsys/oracle这两步呢？原因是跟Linux系统的机制有关的：Linux的判别一个服务是否被启动的依据是在/var/lock/subsys/目录下是否有与服务名相同的文件，若有则表示这个服务已经被启动了，在系统关闭的时候，Linux会把这里面列出的服务全部关闭，并删掉与服务同名的文件。若一个服务被启动了，但却在这个目录里没有那个服务的同名文件，则不会关闭那个服务。
+
+网上的文章均将这个地方设置错了，所以会发现，Oracle可以随系统启动了，但却没有随系统关闭。
+
+分析了/etc/rc.d/rc.local后才发现这个原理的。
+
+经过试验，果然如此。再分析MySQL的启动与关闭脚本也是这样做的，最终恍然大悟。原来如此。这个地方请大家注意了。
+
+最后，就是将这个脚本注册成为一个系统服务就可以了，方法有二：
+
+其一：先给脚本分配可以被执行的权限。执行下面命令:
+
+代码如下:
+
+#su - root
+
+chown oracle:oinstall /etc/init.d/oracle
+
+chmod 775 /etc/init.d/oracle
+
+再创建符号链接文件。
+
+chkconfig --add --level 35 /etc/init.d/oracle,执行这个命令就需要你在脚本中写上
+
+# chkconfig: 2345 99 10 了。这样当这个命令被执行的时候，会去oracle文件中寻找这行注释，并解析这行注释，根据解析结果分别在/etc/rc.d/rc2.d；/etc/rc.d/rc3.d；/etc/rc.d/rc4.d；/etc/rc.d/rc5.d中创建符号连接文件S99oracle文件，这个文件是系统启动时要执行的，其实这个文件是指向/etc/init.d/oracle的，启动的时候系统向这个文件发送一个start参数，也就执行了oracle文件中的start分支了。
+
+另外还会在/etc/rc.d/rc0.d；/etc/rc.d/rc1.d；/etc/rc.d/rc6.d中创建K10oracle文件，这个文件时系统关闭时要执行的，其实这个文件也是指向/etc/init.d/oracle的，关闭的时候系统向这个文件发送一个stop参数，也就执行了oracle文件中的stop分支了。
+
+我想你应该明白# chkconfig: 2345 99 10 中这些数字的含义了吧：
+
+指出2，3，4，5级别启动这个服务，99是在相应的/etc/rc.d/rcN.d(N为前面指定的级别，这里是2345)目录下生成的链接文件的序号(启动优先级别)S99oracle，10为在除前面指出的级别对应的/etc/rc.d/rcN.d(N为除2345之外的级别)目录生成的链接文件的序号(服务停止的优先级别)K10oracle。至于为什么在这些目录中创建文件和文件的命名规则，这就要您对Linux的系统启动流程有一个熟悉的了解了，在这就不详谈了。
+
+其二：若您想尝试一下手动创建符号连接文件的乐趣，请执行如下命令：
+
+代码如下:
+
+#su - root
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc2.d/S99oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc3.d/S99oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc4.d/S99oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc5.d/S99oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc0.d/K10oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc1.d/K10oracle
+
+ln -s /etc/init.d/oracle/etc/rc.d/rc6.d/K10oracle
+
+其实手动这样操作作用效果和执行chkconfig --add oracle是一样的。
+
+到此，所有设置就完成了，下面进行一下测试：
+
+#cd /etc/init.d
+
+sh oracle start 或者service oracle start
+
+执行后，看看/var/log目录下的oraclelog文件，里面是不是有脚本的启动分支输出信息呢？
+
+sh oracle stop或者service oracle stop
+
+执行后，看看/var/log目录下的oraclelog文件，里面是不是有脚本的关闭分支输出信息呢？
+
+若看到信息，表示您设置成功了。若没有，请再仔细设置一遍，并注意文件的权限问题。 
+
+
+==================
+从 Oracle 数据库11g 版本 2 (11.2) 开始, 不推荐使用用于自动化数据库启动和关闭的 dbstart 和 dbshut 脚本。建议使用oracle restart功能。
+硬件或软件导致计算机重启后，oracle restart可以自动重启数据库、侦听器、oracle 自动存储管理 (oracle ASM) 和其他 Oracle 组件。并且其提供了SRVCTL实用程序用于管理组件
+
+https://docs.oracle.com/cd/E11882_01/server.112/e25494/restart.htm#ADMIN12721
+其实就是安装grid infrastructure，单机可以实现自启动。当然单机也可以使用ASM
+
+grid的安装可以for standalone 也可以for cluster
+https://docs.oracle.com/cd/E11882_01/install.112/e47689/oraclerestart.htm#LADBI999
+
+
+

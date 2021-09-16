@@ -1,0 +1,34 @@
+1 Introduction to Oracle Clusterware
+ http://docs.oracle.com/cd/E11882_01/rac.112/e41959/intro.htm#CWADD1111
+
+ 对于日志目录的解释如下：
+ 对于11.2 CRS，主要的日志有下面这些：
+ <GRID_HOME>/log/<host>/alert<node>.log ：这是CRS 的 alert log，CRS 的启动/停止，核心进程(crsd, ocssd etc.)的启动/停止，对于一些资源的检查异常都会记录下来。
+
+ <GRID_HOME>/log/<host>/crsd : 这是CRSD的日志，记录了CRSD 监控的资源的启动、停止以及异常，比如数据库实例、ASM、监听、磁盘组、VIP等。
+ <GRID_HOME>/log/<host>/cssd: 这是OCSSD进程的日志，记录了节点间的通讯情况，如果有网络心跳或者Voting disk的异常，或者OCSSD进程异常终止，都会记录下来。
+ <GRID_HOME>/log/<host>/evmd：这是事件监控(event monitor)进程的日志。
+ <GRID_HOME>/log/<host>/ohasd：这是OHASD进程的日志，有的时候CRS无法启动，可能需要查看这个日志。
+ <GRID_HOME>/log/<host>/mdnsd：DNS相关的日志
+ <GRID_HOME>/log/<host>/gipcd：进程间或者节点间通讯的日志
+ <GRID_HOME>/log/<host>/gpnpd: 关于GPNP（Grid Plug & Play Profile ）的日志
+ <GRID_HOME>/log/<host>/gnsd(可选):Grid Naming Service 的日志
+ <GRID_HOME>/log/<host>/ctssd: 时间同步服务的日志。
+
+ <GRID_HOME>/log/<host>/agent/ohasd:
+ <GRID_HOME>/log/<host>/agent/ohasd/oraagent_grid: 启动/停止/检查/清除ora.asm, ora.evmd, ora.gipcd, ora.gpnpd, ora.mdnsd等资源。
+ <GRID_HOME>/log/<host>/agent/ohasd/orarootagent_root：启动/停止 /检查/清除 ora.crsd, ora.ctssd, ora.diskmon, ora.drivers.acfs, ora.crf (11.2.0.2)等资源。
+ <GRID_HOME>/log/<host>/agent/ohasd/oracssdagent_root: 启动/停止/检查 ocssd进程。
+ <GRID_HOME>/log/<host>/agent/ohasd/oracssdmonitor_root：监控cssdagent进程。
+
+ <GRID_HOME>/log/<host>/agent/crsd:
+ <GRID_HOME>/log/<host>/agent/crsd/oraagent_grid: 启动/停止/检查/清除 asm, ora.eons, ora.LISTENER.lsnr, SCAN listeners, ora.ons, diskgroup 等资源
+ <GRID_HOME>/log/<host>/agent/crsd/oraagent_oracle: 启动/停止/检查/清除 service, database 等资源
+ <GRID_HOME>/log/<host>/agent/crsd/orarootagent_root : 启动/停止/检查/清除 GNS, VIP, SCAN VIP and network 等资源. 
+<GRID_HOME>/log/<host>/agent/crsd/scriptagent_grid: 定制的应用服务的日志。
+
+
+
+
+
+

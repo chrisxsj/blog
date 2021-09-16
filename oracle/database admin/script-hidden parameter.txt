@@ -1,0 +1,36 @@
+以下是一个查询隐含参数的脚本
+
+vi $ORACLE_HOME/rdbms/admin/hidden.sql
+
+col p_name for a40
+col p_DESCRIPTION for a50
+col p_value for a30
+set linesize 10000
+set pagesize 200
+SELECT   i.ksppinm p_name,
+    i.ksppdesc p_description,
+    CV.ksppstvl p_VALUE,
+    CV.ksppstdf isdefault,
+    DECODE (BITAND (CV.ksppstvf, 7),1, 'MODIFIED',4, 'SYSTEM_MOD', 'FALSE')
+    ismodified,
+    DECODE (BITAND (CV.ksppstvf, 2), 2, 'TRUE', 'FALSE') isadjusted
+    FROM   sys.x$ksppi i, sys.x$ksppcv CV
+    WHERE       i.inst_id = USERENV ('Instance')
+    AND CV.inst_id = USERENV ('Instance')
+    AND i.indx = CV.indx
+    AND upper(i.ksppinm) LIKE upper('%&p%')
+    ORDER BY   REPLACE (i.ksppinm, '_', '');
+
+
+
+@?/rdbms/admin/hidden.sql
+enter a p value
+
+---------------------------------------------------------------------------------
+eg:  redo
+eg:  bucket
+
+_db_block_hash_latch
+_db_block_hash_chain
+_db_block_hash_bucket
+_db_block_buffers

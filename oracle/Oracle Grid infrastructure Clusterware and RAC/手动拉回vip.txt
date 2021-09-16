@@ -1,0 +1,27 @@
+srvctl relocate
+Relocates the named service names from one named instance to another named instance. The srvctl relocate command works on only one source instance and one target instance at a time, relocating a service from a single source instance to a single target instance. The target instance must be on the preferred or available list for the service. The relocated service is temporary until you modify the configuration. The srvctl modify command described permanently changes the service configuration.
+Table E-39 srvctl relocate Summary
+Command	Description
+srvctl relocate service	Relocates the named service names from one named instance to another named instance
+
+--手工relocate1号节点的服务至2号节点
+ srvctl relocate service -d APTS -s service32 -i APTS1  -t APTS2
+将服务、vip relocate至1号节点
+ servctl relocate service -d APTS -s service32 -i APTS2 -t APTS1
+
+--手工relocate vip资源到1号节点
+srvctl relocate vip -i <vip名> -n <目标节点名>
+srvctl relocate vip -i his1-vip -n his1 
+
+--srvctl config
+同时需要通过
+[grid@rac1 ~]$ srvctl config network -k 1
+Network exists: 1/192.168.1.0/255.255.255.0/bond0, type static
+确定你的在OCR配置的物理网卡的子网掩码
+
+
+--srvctl  modify
+修改VIP 信息
+#cd /oracle/bin/bin
+#./srvctl modify nodeapps -n db1 -A 10.55.125.101/255.255.255.0/eth0
+#./srvctl modify nodeapps -n db2 -A 10.55.125.100/255.255.255.0/eth0

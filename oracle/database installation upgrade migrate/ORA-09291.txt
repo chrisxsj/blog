@@ -1,0 +1,39 @@
+Cannot Recognize Remote Mapped Drive ORA-09291 (Doc ID 337413.1)		
+	To Bottom
+
+
+In this Document
+	Symptoms
+
+	Cause
+
+	Solution
+
+This document is being delivered to you via Oracle Support's Rapid Visibility (RaV) process and therefore has not been subject to an independent technical review.
+Applies to: 
+Oracle Database - Enterprise Edition - Version 9.2.0.1 to 10.2.0.1 [Release 9.2 to 10.2]
+Information in this document applies to any platform.
+Symptoms
+1) On startup the following errors occur:
+==================================================================
+ORA-16032: parameter LOG_ARCHIVE_DEST_2 destination string cannot be translated
+ORA-09291: sksachk: invalid device specified for archive destination
+OSD-04018: Unable to access the specified directory or device.
+O/S-Error: (OS 3) The system cannot find the path specified.
+================================================================== 
+Cause
+A service should not directly access local or network resources through mapped drive letters.
+Additionally, a service should not use the WNetXXXXXXX APIs to add, remove, or query any mapped
+drive letters. Although the WNetXXXXXXX APIs may return successfully, the results will be
+incorrect. A service (or any process that is running in a different security context) that must
+access a remote resource should use the Universal Naming Convention (UNC) name to access the
+resource.
+
+http://support.microsoft.com/default.aspx?scid=kb;en-us;Q180362 
+Solution
+On Windows XP and on Microsoft Windows Server 2003, each logon session receives its own set of
+drive letters, A through Z. Therefore, redirected drives cannot be shared between processes that
+are running under different user accounts. Additionally, a service (or any process that is running
+in its own logon session) cannot access the drive letters that are established in a different
+logon session. However, drive letters that are mapped from a service that is running under the
+local System account are visible to all logon sessions. 

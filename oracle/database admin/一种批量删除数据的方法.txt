@@ -1,0 +1,58 @@
+一种批量删除数据的方法
+
+
+
+详细信息
+   这两天碰见一个比较紧急的生产问题，由于还在处理中，所以暂时不能给出整体描述，但其中涉及的一个问题就是删除一张大表中的过期历史数据，针对不同的类型的表可能有不同的解决方法，比如若是按照时间做的分区表，drop partition删除分区的操作可能是效率最快的、最简单的，若是一张普通表则需要有一些索引键值为删除条件，但需要注意的是最好做批量删除，且一次删除量不要太多，因为delete操作会将数据前镜像保存在UNDO回滚表空间，由于占用过多、事务过大、执行时间过长、UNDO空间过小等一系列问题存在，就有可能会影响正常的交易操作，这话题不是今天的主题。
+
+   删除历史数据可以使用存储过程，也可以写一个程序来做，区别是存储过程是直接在数据库中操作，少了客户端和数据库交互的环节，若是需要一些复杂的校验逻辑，可能写程序要更方便一些，但也不是绝对的，可能有人认为存储过程更好，无论什么方式，能解决问题才是最重要。
+
+   eygle大神曾经提供过一个用于批量删除数据的存储过程，在这引用下，版权还是eygle的：
+http://www.eygle.com/archives/2005/04/oracleoeouaeeae.html
+强调的就是：分批删除，逐次提交！
+
+create or replace procedure delBigTab
+  (
+    p_TableName       in    varchar2,
+    p_Condition       in    varchar2,
+    p_Count        in    varchar2
+  )
+  as
+   pragma autonomous_transaction;
+   n_delete number:=0;
+  begin
+   while 1=1 loop
+     EXECUTE IMMEDIATE
+       'delete from '||p_TableName||' where '||p_Condition||' and rownum <= :rn'
+     USING p_Count;
+     if SQL%NOTFOUND then
+        exit;
+     else
+              n_delete:=n_delete + SQL%ROWCOUNT;
+     end if;
+     commit;
+   end loop;
+   commit;
+   DBMS_OUTPUT.PUT_LINE('Finished!');
+   DBMS_OUTPUT.PUT_LINE('Totally '||to_char(n_delete)||' records deleted!');
+  end;
+  /
+
+这是一可以有参数输入的存储过程，分别是：
+p_TableName：待删除表的表名，
+p_Condition：删除条件，
+p_Count：一次删除的记录条数，rownum，
+而且用了自治事务pragma autonomous_transaction，存储过程使用commit结尾。整个逻辑很清晰和透彻，想必各位稍微看看都能明白。
+
+   这篇文章中(http://blog.csdn.net/xyjnzy/article/details/6194177)还介绍了另一种更精细的方法，判断日志是否已经归档了，避免数据删除快于日志归档的速度，如果发现尚未完成切换，则sleep一下，等待切换完成，再做下一次删除。
+
+   针对我这个需求，有一些可以改动的地方，由于这张表是一个按照NUMBER值做hash的哈希分区表，所以从效率上看，还可以精确至每个hash分区来做删除，这点是建荣给的建议，另外例子中自治事务我觉得也是可以不用的，因此针对SQL语句可以改为如下：
+deletefromtable partition (p1) where insert_time<sysdate and rownum <= :rn;
+即指定分区名称(这可以作为另一个参数)，然后可以通过手工执行，依次用rn=100、1000、5000、10000等几个值来选择从时间和删除量可接受的范围。
+
+   总结一下：
+1.如果使用存储过程，或许可以不用自治事务。
+2.可以将partition作为另一个参数。
+3.由于这张表数据量太大，即使使用索引条件做count(*)操作时间都很久，因此暂时未知符合条件需要删除的记录条数，因此需要根据测试和时间需求，明确rownum使用的可行条数，选择小值则可能循环次数要多，选择大值则可能循环次数少，总之务必要分批删除、批量提交，避免delete子句对UNDO表空间的过大影响。
+
+以上只是提供了删除历史记录的一种存储过程操作的方法，以及针对我的需求做的一些改进，至于会采用何种方法，可能还会根据得到的信息，有其他需要改进的地方，可能还会使用程序的方法，可能会使用这种存储过程，待完成后会再做总结了。

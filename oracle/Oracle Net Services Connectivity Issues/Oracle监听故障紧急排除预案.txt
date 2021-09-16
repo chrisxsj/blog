@@ -1,0 +1,17 @@
+Oracle监听故障紧急排除预案
+1.备份并清理清理监听日志:
+  备份命令:cp listener.log listener_back171018.log
+  清理命令:cat /dev/null > listener.log
+2.ps -ef | grep lsnr
+确认有几个监听器,正常情况下,应该是只有一个监听器才对.kill掉最近时间的那个监听器,然后检查lsnrctl status,若是不行,把剩下的那个监听器也kill掉,然后执行如下命令:
+srvctl start listener -n 主机名
+3.检查crsd.log有无报错时间点的输出
+4.检查备份出来的listener_back171018.log有无异常输出.
+5.10gR2的单机的话,在listener.ora中加入如下一行:
+  SUBSCRIBE_FOR_NODE_DOWN_EVENT_<listener_name>=OFF
+  然后lsnrctl stop <listener_name>
+  然后lsnrctl start <listener_name>
+  来源:10g Listener: High CPU Utilization - Listener May Hang (文档 ID 284602.1)
+6.若是有第三方集群软件,比如Veritas的StorageFoundation,请使用检查第三方集群软件的日志,
+  比如StorageFoundation的/var/VRTSvcs/log/engine_A.log
+7.os log

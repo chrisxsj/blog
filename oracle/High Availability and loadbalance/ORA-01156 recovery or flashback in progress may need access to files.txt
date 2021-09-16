@@ -1,0 +1,9 @@
+SQL> alter database drop standby logfile group 8
+*
+ERROR at line 1:
+ORA-01156: recovery or flashback in progress may need access to files
+
+关闭mrp进程
+alter database recover managed standby database cancel;
+
+

@@ -1,0 +1,85 @@
+How to Calculate the Size of the Database (Doc ID 1360446.1) To BottomTo Bottom
+
+
+
+In this Document
+
+
+
+ Goal
+
+ Solution
+
+
+
+
+
+
+Applies to:
+ Oracle Database - Enterprise Edition - Version 8.1.7.4 to 11.2.0.4 [Release 8.1.7 to 11.2]
+Information in this document applies to any platform.
+
+Goal
+
+How to calculate the total size of an Oracle database.
+
+
+
+
+Solution
+
+Size of datafiles in MB 
+
+select sum(bytes)/(1024*1024) from dba_data_files;
+
+
+
+
+  Size of tempfiles in MB 
+
+select sum(bytes)/(1024*1024) from dba_temp_files;
+
+
+
+
+Size of redo logs in MB 
+
+Not accounting for mirrored redolog files:
+
+select sum(bytes)/(1024*1024) from v$log;
+
+
+
+
+To get the used-up space of your datafiles 
+
+This will give you the total used-up space inside the database in MB.
+
+select sum(bytes)/(1024*1024) from dba_segments;
+
+
+
+
+
+
+
+
+
+Total Size of the database
+
+
+
+Also accounting for controlfiles and mirrored redolog files.
+
+select a.data_size+b.temp_size+c.redo_size+d.cont_size "total_size"
+from ( select sum(bytes) data_size
+       from dba_data_files ) a,
+     ( select nvl(sum(bytes),0) temp_size
+       from dba_temp_files ) b,
+     ( select sum(bytes) redo_size
+       from sys.v_$logfile lf, sys.v_$log l
+       where lf.group# = l.group#) c,
+     ( select sum(block_size*file_size_blks) cont_size
+       from v$controlfile ) d;
+
+

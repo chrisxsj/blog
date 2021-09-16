@@ -1,0 +1,9 @@
+expdp \'/ as sysdba\'  parfile=VEH_PRINT.par
+
+
+directory=exp
+dumpfile=VEH_PRINT20171111.dmp
+logfile=VEH_PRINT.expdp
+tables=TRFF_APP.VEH_PRINT
+flashback_scn=15681559876624
+QUERY=TRFF_APP.VEH_PRINT:"WHERE glbm LIKE '3701%' or glbm LIKE (SELECT UNISTR(REPLACE('\9C81','\U','\'))||'A%' FROM DUAL)"

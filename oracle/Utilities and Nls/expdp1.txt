@@ -1,0 +1,62 @@
+http://blog.csdn.net/lichangzai/article/details/38295551
+
+
+需要配合schema使用
+
+
+命令行下转义符的处理
+Windows平台:
+    D:\> expdp system/manager DIRECTORY=my_dir DUMPFILE=exp_tab.dmp LOGFILE=exp_tab.log SCHEMAS=scott
+     INCLUDE=TABLE:\"IN ('EMP', 'DEPT')\"
+  
+    在Windows平台下，需要对象双引号进行转义，使用转义符\
+Unix平台:
+    在未使用parfile文件的情形下，所有的符号都需要进行转义，包括括号，双引号，单引号等
+    expdp sec/sec directory=dump_dir dumpfile=sec.dmp logfile=sec.log EXCLUDE=TABLE:\"IN\(\'T1\',\'T2\'\)\"
+
+
+
+
+使用PARFILE参数规避不同操作系统中特殊字符的转义
+为了规避不同操作系统上特殊字符转义带来的麻烦，我们可以使用PARFILE参数规避一下这个难题。
+ora10g@secDB /expdp$ vi sec.par
+userid=sec/sec
+directory=dump_dir
+dumpfile=sec.dmp
+logfile=sec.log
+EXCLUDE=TABLE:"IN('T1','T2')"
+~
+
+create directory dpdata as '/tmp/dpdata/';
+
+expdp \'/ as sysdba\' parfile=/tmp/dp/hr_exclude2.par
+
+parfile
+directory=dpdata
+dumpfile=hr_exclude2_%U.dmp
+logfile=hr_exclude_emp2.log
+schemas=hr
+include=table:"in('EMPLOYEES','DEPARTMENTS')"
+include=index:"in('EMP_SALARY_IDX','DEPT_ID_PK')"
+parallel=2
+
+
+
+expdp '/ as sysdba' parfile=D:\dpdump\emp_lob.par
+directory=dpdump
+dumpfile=emp%U.dmp
+logfile=empexp.log
+job_name=emp_job
+tables=hr.employees
+QUERY=hr.employees:"where salary<10000"
+
+注意：exlude 的参数不要加用户名 如： HR.EMPLOYEES改为EMPLOYEES
+
+注意：All object types for the given mode of export will be included except those specified in an EXCLUDE statement.
+If an object is excluded, all of its dependent objects are also excluded. For example, excluding a table will also exclude all indexes and triggers on the table.
+
+
+
+query
+如果不指定对象名，则是所有对象生效。
+query="where rownum<300"    --导出用户下所有表的前300行数据
