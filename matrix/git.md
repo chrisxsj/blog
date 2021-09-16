@@ -63,8 +63,9 @@ git config --global user.name "Chris"
 colone仓库
 
 ```sh
-git clone git@gitee.com:chrisxian/blog.git
+git clone git@gitee.com:chrisxian/blog.git 
 # clone的自动关联远程仓库
+# 只是为了clone小的话，用--depth=1只获取最新的commit即可
 ```
 
 创建本地仓库，命令示例

@@ -16,22 +16,28 @@ chrisx
 
 ref [仓库体积过大，如何减小？](https://gitee.com/help/articles/4232#article-header0)
 
-但是更多的时候我们是希望对版本库（.git）进行瘦身，而不是删除文件。git长时间使用后会发现版本库(.git)变的越来越大。
-主要原因是commit过多和commit的历史中add了大文件。此时可以通过清空版本库减小整个仓库大小
+<!--
+## 查看存储库中的大文件
 
-ref [git-verify-pack ](https://www.git-scm.com/docs/git-verify-pack)
+git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -15 | awk '{print$1}')"
+
+## 改写历史，去除大文件
+
+git filter-branch --tree-filter 'rm -f path/to/large/files' --tag-name-filter cat -- --all
+git push origin --tags --force
+git push origin --all --force
+
+注意：下方命令中的 path/to/large/files 是大文件所在的路径，千万不要弄错！
+-->
+
+有没有办法把这个文件从历次提交中彻底地移除呢？而不是移除文件。
 
 ----
 
 [toc]
 
-## 查看存储库中的大文件
 
-git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -15 | awk '{print$1}')"
-
-
-
-1. 清空版本库
+##　１.清空所有历史记录
 
 ```sh
 git checkout --orphan new_branch    #进入 仓库，创建一个孤立的分支，从而启动一个新的历史记录。此时checkout在新分支上
@@ -41,26 +47,6 @@ git branch -D master  #删除 master 分支
 git branch -m master  #更改当前分支为 master 分支
 git push -f origin master #强制更新远程存储库
 ```
-
-<!--
-chris@hg-cx:/mnt/c/data/gitee/work$ git commit -m 'cx'
-
-*** Please tell me who you are.
-
-Run
-
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-
-to set your account's default identity.
-Omit --global to set the identity only in this repository.
-
-fatal: empty ident name (for <chris@hg-cx.localdomain>) not allowed
-===
-git config -l
-git config --global user.email "xianshijie0@163.com"
-git config --global user.name "chrisx"
--->
 
 2. 删除本地仓库，重新克隆仓库
 
