@@ -1,4 +1,4 @@
-# git_rm
+# git_verify-pack
 
 **作者**
 
@@ -12,20 +12,24 @@ chrisx
 
 仓库体积过大，如何减小?
 
-如用户在使用过程中不小心将较大的二进制文件加入仓库，那么仓库大小很快就会超过规定的配额，用户可以通过对仓库进行历史改写瘦身
+如用户在使用过程中不小心将较大的二进制文件加入仓库，那么仓库大小很快就会超过规定的配额，用户可以通过去除仓库中的大文件进行瘦身
 
 ref [仓库体积过大，如何减小？](https://gitee.com/help/articles/4232#article-header0)
 
 但是更多的时候我们是希望对版本库（.git）进行瘦身，而不是删除文件。git长时间使用后会发现版本库(.git)变的越来越大。
 主要原因是commit过多和commit的历史中add了大文件。此时可以通过清空版本库减小整个仓库大小
 
-ref [orphan](https://git-scm.com/docs/git-checkout)
+ref [git-verify-pack ](https://www.git-scm.com/docs/git-verify-pack)
 
 ----
 
 [toc]
 
-## 清空版本库（.git）
+## 查看存储库中的大文件
+
+git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -15 | awk '{print$1}')"
+
+
 
 1. 清空版本库
 
