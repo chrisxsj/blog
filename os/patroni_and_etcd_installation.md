@@ -124,7 +124,6 @@ reply_time       | 2021-09-03 16:35:20.716193+08
 
 集群正常需要存活节点存活节点n/2+1（去掉小数位）
 
-
 目前看etcd 6节点和5节点在仲裁上能力是一样的。
 
 download [etcd](https://github.com/etcd-io/etcd)。安装 ref [etcd docs](https://etcd.io/docs/latest)

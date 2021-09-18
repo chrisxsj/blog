@@ -1,0 +1,886 @@
+
+<html lang="en"><head><title>PDR Report for DB: highgo, Snaps: 18-19</title>
+<style type="text/css">
+body.awr {font:bold 10pt Arial,Helvetica,Geneva,sans-serif;color:black; background:White;}
+pre.awr  {font:8pt Courier;color:black; background:White;}
+h1.awr   {font:bold 20pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;border-bottom:1px solid #cccc99;margin-top:0pt; margin-bottom:0pt;padding:0px 0px 0px 0px;}
+h2.awr   {font:bold 18pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;margin-top:4pt; margin-bottom:0pt;}
+h3.awr {font:bold 16pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;margin-top:4pt; margin-bottom:0pt;}
+li.awr {font: 8pt Arial,Helvetica,Geneva,sans-serif; color:black; background:White;}
+th.awrnobg {font:bold 8pt Arial,Helvetica,Geneva,sans-serif; color:black; background:White;padding-left:4px; padding-right:4px;padding-bottom:2px}
+th.awrbg {font:bold 8pt Arial,Helvetica,Geneva,sans-serif; color:White; background:#0066CC;padding-left:4px; padding-right:4px;padding-bottom:2px}
+td.awrnc {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;}
+td.awrc    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;}
+td.awrnclb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;}
+td.awrncbb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;border-right: thin solid black;}
+td.awrncrb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-right: thin solid black;}
+td.awrcrb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-right: thin solid black;}
+td.awrclb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-left: thin solid black;}
+td.awrcbb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-left: thin solid black;border-right: thin solid black;}
+a.awr {font:bold 8pt Arial,Helvetica,sans-serif;color:#663300; vertical-align:top;margin-top:0pt; margin-bottom:0pt;}
+td.awrnct {font:8pt Arial,Helvetica,Geneva,sans-serif;border-top: thin solid black;color:black;background:White;vertical-align:top;}
+td.awrct   {font:8pt Arial,Helvetica,Geneva,sans-serif;border-top: thin solid black;color:black;background:#FFFFCC; vertical-align:top;}
+td.awrnclbt  {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-top: thin solid black;border-left: thin solid black;}
+td.awrncbbt  {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;border-right: thin solid black;border-top: thin solid black;}
+td.awrncrbt {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-top: thin solid black;border-right: thin solid black;}
+td.awrcrbt     {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-right: thin solid black;}
+td.awrclbt     {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-left: thin solid black;}
+td.awrcbbt   {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-left: thin solid black;border-right: thin solid black;}
+table.tdiff {  border_collapse: collapse; } 
+.hidden   {position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
+.pad   {margin-left:17px;}
+.doublepad {margin-left:34px;}
+</style></head><body class="awr">
+<h1 class="awr">
+PERFORMANCE DIAGNOSIS REPORT
+
+</h1>
+<p />
+<table border="1" width="500" summary="This table displays database instance information">
+<tr><th class="awrbg" scope="col">DB Name</th><th class="awrbg" scope="col">DB Id</th><th class="awrbg" scope="col">Startup Time</th><th class="awrbg" scope="col">Release</th></tr>
+<tr><td scope="row" class='awrnc'>highgo</td><td align="right" class='awrnc'>13330</td><td class='awrnc'>2021-09-17 15:56:59</td><td class='awrnc'>HighGo Database 6 Rel</td></tr>
+</table>
+<p />
+<p />
+<table border="1" width="500" summary="This table displays host information">
+<tr><th class="awrbg" scope="col">Host Name</th><th class="awrbg" scope="col">Platform</th><th class="awrbg" scope="col">Cores</th><th class="awrbg" scope="col">Memory (GB)</th></tr>
+<tr><td scope="row" class='awrnc'>8cfba0c9a15f</td><td class='awrnc'>x86_64-pc-linux-gn</td><td align="right" class='awrnc'>8</td><td align="right" class='awrnc'>7.647</td></tr>
+</table>
+<p /> 
+<table border="1" width="500" summary="This table displays snapshot information">
+<tr><th class="awrnobg" scope="col"></th><th class="awrbg" scope="col">Snap Id</th><th class="awrbg" scope="col">Snap Time</th></tr>
+<tr><td scope="row" class='awrnc'>Begin Snap:</td><td align="right" class='awrnc'>18</td><td align="center" class='awrnc'>2021-09-18 09:58:01+08</td></tr>
+<tr><td scope="row" class='awrc'>End Snap:</td><td align="right" class='awrc'>19</td><td align="center" class='awrc'>2021-09-18 10:58:01+08</td></tr>
+<tr><td scope="row" class='awrnc'>Elapsed:</td><td class='awrnc'>&#160;</td><td align="center" class='awrnc'> 01:00:00</td></tr>
+<tr><td scope="row" class='awrc'>DB Time:</td><td class='awrc'>&#160;</td><td align="center" class='awrc'> 00:00:01</td></tr>
+</table>
+<p />  
+<h3 class="awr"><a class="awr" name="99999"></a>Report Summary</h3>
+<p />Load Profile<p />
+<table border="1" width="500" summary="This table displays load profile">
+<tr><th class="awrnobg" scope="col"></th><th class="awrbg" scope="col">count</th><th class="awrbg" scope="col">Per Second</th><th class="awrbg" scope="col">Per Transaction</th></tr>
+<tr><td scope="row" class='awrc'>Transactions:</td><td align="right" class='awrc'>123</td><td align="right" class='awrc'>0.03</td><td align="right" class='awrc'>1.00</td></tr>
+<tr><td scope="row" class='awrnc'>Rollback:</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Blocks fetched:</td><td align="right" class='awrc'>5541</td><td align="right" class='awrc'>1.54</td><td align="right" class='awrc'>45.05</td></tr>
+<tr><td scope="row" class='awrnc'>Blocks hit:</td><td align="right" class='awrnc'>5537</td><td align="right" class='awrnc'>1.54</td><td align="right" class='awrnc'>45.02</td></tr>
+<tr><td scope="row" class='awrc'>Tuples returned:</td><td align="right" class='awrc'>88096</td><td align="right" class='awrc'>24.47</td><td align="right" class='awrc'>716.23</td></tr>
+<tr><td scope="row" class='awrnc'>Tuples fetched:</td><td align="right" class='awrnc'>905</td><td align="right" class='awrnc'>0.25</td><td align="right" class='awrnc'>7.36</td></tr>
+<tr><td scope="row" class='awrc'>Tuples inserted:</td><td align="right" class='awrc'>135</td><td align="right" class='awrc'>0.04</td><td align="right" class='awrc'>1.10</td></tr>
+<tr><td scope="row" class='awrnc'>Tuples updated:</td><td align="right" class='awrnc'>24</td><td align="right" class='awrnc'>0.01</td><td align="right" class='awrnc'>0.20</td></tr>
+<tr><td scope="row" class='awrc'>Tuples deleted:</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+<tr><td scope="row" class='awrnc'>Conflict tablespace:</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Conflict lock:</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+<tr><td scope="row" class='awrnc'>Conflict snapshot:</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Conflict bufferpin:</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+<tr><td scope="row" class='awrnc'>Conflict deadlock:</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Temp files:</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+<tr><td scope="row" class='awrnc'>Temp bytes:</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Deadlocks:</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+<tr><td scope="row" class='awrnc'>Block read time(s):</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td><td align="right" class='awrnc'>0.00</td></tr>
+<tr><td scope="row" class='awrc'>Block write time(s):</td><td align="right" class='awrc'>0</td><td align="right"class='awrc'>0.00</td><td align="right" class='awrc'>0.00</td></tr>
+</table>
+<p />
+<p />Top 10 Timed Foreground Events<p />
+<ul>
+</ul>
+<table border="1" summary="Top 10 Timed Foreground Events"><tr><th class="awrbg" scope="col">Event</th><th class="awrbg" scope="col">Time(s)</th><th class="awrbg" scope="col">% wait time</th><th class="awrbg" scope="col">Wait Class</th></tr>
+<tr><td scope="row" class='awrc'>Extension</td><td align="right" class='awrc'>3539.960</td><td align="right" class='awrc'>52.268</td><td align="right" class='awrc'>Extension</td></tr>
+<tr><td scope="row" class='awrnc'>ClientRead</td><td align="right" class='awrnc'>3232.660</td><td align="right" class='awrnc'>47.731</td><td align="right" class='awrnc'>Client</td></tr>
+<tr><td scope="row" class='awrc'>DataFileSync</td><td align="right" class='awrc'>0.010</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>IO</td></tr>
+<tr><td scope="row" class='awrnc'>WALSync</td><td align="right" class='awrnc'>0.010</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>IO</td></tr>
+<tr><td scope="row" class='awrc'>SLRUFlushSync</td><td align="right" class='awrc'>0.010</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>IO</td></tr>
+<tr><td scope="row" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td></tr>
+<tr><td scope="row" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td></tr>
+<tr><td scope="row" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td></tr>
+<tr><td scope="row" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td><td align="right" class='awrc'>&nbsp;</td></tr>
+<tr><td scope="row" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td><td align="right" class='awrnc'>&nbsp;</td></tr>
+</table><p />
+<a class="awr" name="top"></a>
+<h2 class="awr">
+Main Report
+</h2>
+<ul>  
+<li class="awr"><a class="awr" href="#99999">Report Summary</a></li>
+<li class="awr"><a class="awr" href="#21">Wait Events Statistics</a></li>
+<li class="awr"><a class="awr" href="#22">SQL Statistics</a></li>
+<li class="awr"><a class="awr" href="#23">Instance Activity Statistics</a></li>
+<li class="awr"><a class="awr" href="#24">IO Stats</a></li>
+<li class="awr"><a class="awr" href="#30">Segment Statistics</a></li>
+</ul>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="21"></a>
+<h2 class="awr">
+Wait Events Statistics
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#1500">LWLock Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1510">Lock Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1520">BufferPin Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1540">Client Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1550">Extension Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1560">IPC Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1570">Timeout Wait Statistics</a></li>
+<li class="awr"><a class="awr" href="#1580">IO Wait Statistics</a></li>
+</ul> 
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1500"></a>
+<h3 class="awr">LWLock Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>ShmemIndexLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>OidGenLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>XidGenLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ProcArrayLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SInvalReadLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SInvalWriteLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALBufMappingLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALWriteLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ControlFileLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>CheckpointLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>CLogControlLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SubtransControlLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>MultiXactGenLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>MultiXactOffsetControlLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>MultiXactMemberControlLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>RelCacheInitLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>CheckpointerCommLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TwoPhaseStateLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TablespaceCreateLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>BtreeVacuumLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>AddinShmemInitLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>AutovacuumLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>AutovacuumScheduleLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SyncScanLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>RelationMappingLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>AsyncCtlLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>AsyncQueueLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SerializableXactHashLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SerializableFinishedListLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SerializablePredicateLockListLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>OldSerXidLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SyncRepLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>BackgroundWorkerLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DynamicSharedMemoryControlLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>AutoFileLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReplicationSlotAllocationLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ReplicationSlotControlLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>CommitTsControlLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>CommitTsLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReplicationOriginLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>MultiXactTruncationLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>OldSnapshotTimeMapLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>BackendRandomLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalRepWorkerLock</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>CLogTruncationLock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>clog</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>commit_timestamp</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>subtrans</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>multixact_offset</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>multixact_member</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>async</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>oldserxid</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>wal_insert</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>buffer_content</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>buffer_io</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>replication_origin</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>replication_slot_io</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>proc</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>buffer_mapping</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>lock_manager</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>predicate_lock_manager</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>parallel_query_dsa</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>tbm</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>parallel_append</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1510"></a>
+<h3 class="awr">Lock Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>relation</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>extend</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>page</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>tuple</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>transactionid</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>virtualxid</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>speculative_token</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>object</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>userlock</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>advisory</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1520"></a>
+<h3 class="awr">BufferPin Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>BufferPin</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1540"></a>
+<h3 class="awr">Client Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>ClientRead</td><td align="right" class='awrc'>3232.660</td><td align="right" class='awrc'>47.731</td></tr>
+<tr><td scope="row" class='awrnc'>ClientWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LibPQWalReceiverConnect</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LibPQWalReceiverReceive</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SSLOpenServer</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WalReceiverWaitStart</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WalSenderWaitForWAL</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WalSenderWriteData</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+</table><p /> 
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1550"></a>
+<h3 class="awr">Extension Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>Extension</td><td align="right" class='awrc'>3539.960</td><td align="right" class='awrc'>52.268</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1560"></a>
+<h3 class="awr">IPC Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrnc'>BgWorkerShutdown</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>BgWorkerStartup</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>BtreePage</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ExecuteGather</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/Batch/Allocating</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/Batch/Electing</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/Batch/Loading</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/Build/Allocating</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/Build/Electing</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/Build/HashingInner</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/Build/HashingOuter</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/GrowBatches/Allocating</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/GrowBatches/Deciding</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/GrowBatches/Electing</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/GrowBatches/Finishing</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/GrowBatches/Repartitioning</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/GrowBuckets/Allocating</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Hash/GrowBuckets/Electing</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Hash/GrowBuckets/Reinserting</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LogicalSyncData</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalSyncStateChange</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>MessageQueueInternal</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>MessageQueuePutMessage</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>MessageQueueReceive</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>MessageQueueSend</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ParallelFinish</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ParallelBitmapScan</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ParallelCreateIndexScan</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ProcArrayGroupUpdate</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ClogGroupUpdate</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReplicationOriginDrop</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ReplicationSlotDrop</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SafeSnapshot</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SyncRep</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1570"></a>
+<h3 class="awr">Timeout Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>BaseBackupThrottle</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>PgSleep</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>RecoveryApplyDelay</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1580"></a>
+<h3 class="awr">IO Wait Statistics</h3>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>BufFileRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>BufFileWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ControlFileRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ControlFileSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ControlFileSyncUpdate</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ControlFileWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ControlFileWriteUpdate</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>CopyFileRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>CopyFileWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DataFileExtend</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>DataFileFlush</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DataFileImmediateSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>DataFilePrefetch</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DataFileRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>DataFileSync</td><td align="right" class='awrc'>0.010</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DataFileTruncate</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>DataFileWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>DSMFillZeroWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LockFileAddToDataDirRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LockFileAddToDataDirSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LockFileAddToDataDirWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LockFileCreateRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LockFileCreateSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LockFileCreateWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LockFileReCheckDataDirRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalRewriteCheckpointSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LogicalRewriteMappingSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalRewriteMappingWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>LogicalRewriteSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalRewriteWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>RelationMapRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>RelationMapSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>RelationMapWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReorderBufferRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ReorderBufferWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReorderLogicalMappingRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ReplicationSlotRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReplicationSlotRestoreSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>ReplicationSlotSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>ReplicationSlotWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SLRUFlushSync</td><td align="right" class='awrc'>0.010</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SLRURead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SLRUSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SLRUWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SnapbuildRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>SnapbuildSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SnapbuildWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TimelineHistoryFileSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TimelineHistoryFileWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TimelineHistoryRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TimelineHistorySync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TimelineHistoryWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TwophaseFileRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TwophaseFileSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TwophaseFileWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALBootstrapSync</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALBootstrapWrite</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALCopyRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALCopySync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALCopyWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALInitSync</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALInitWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALRead</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALSenderTimelineHistoryRead</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WALSyncMethodAssign</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WALWrite</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+</table><p />
+<a class="awr" href="#21">Back to Wait Events Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+
+<a class="awr" name="23"></a>
+<h2 class="awr">
+Instance Activity Statistics
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#1200">Key Instance Activity Stats</a></li>
+</ul> 
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="1200"></a>
+<h3 class="awr">Key Instance Activity Stats</h3>
+<ul>
+<li class="awr"> Ordered by statistic name</li>
+</ul>
+<table border="1" summary="This table displays different time model statistics. For each statistic, time and % of DB time are displayed"><tr><th class="awrbg" scope="col">Statistic Name</th><th class="awrbg" scope="col">Time (s)</th><th class="awrbg" scope="col">% of Wait Time</th></tr>
+<tr><td scope="row" class='awrc'>ArchiverMain</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>AutoVacuumMain</td><td align="right" class='awrnc'>3539.370</td><td align="right" class='awrnc'>20.000</td></tr>
+<tr><td scope="row" class='awrc'>BgWriterHibernate</td><td align="right" class='awrc'>3469.840</td><td align="right" class='awrc'>19.607</td></tr>
+<tr><td scope="row" class='awrnc'>BgWriterMain</td><td align="right" class='awrnc'>70.060</td><td align="right" class='awrnc'>0.396</td></tr>
+<tr><td scope="row" class='awrc'>CheckpointerMain</td><td align="right" class='awrc'>3537.500</td><td align="right" class='awrc'>19.990</td></tr>
+<tr><td scope="row" class='awrnc'>LogicalLauncherMain</td><td align="right" class='awrnc'>3540.000</td><td align="right" class='awrnc'>20.004</td></tr>
+<tr><td scope="row" class='awrc'>LogicalApplyMain</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>PgStatMain</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>RecoveryWalAll</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>RecoveryWalStream</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>SysLoggerMain</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WalReceiverMain</td><td align="right" class='awrnc'>0.000</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>WalSenderMain</td><td align="right" class='awrc'>0.000</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>WalWriterMain</td><td align="right" class='awrnc'>3539.950</td><td align="right" class='awrnc'>20.003</td></tr>
+</table><p />
+<a class="awr" href="#23">Back to Instance Activity Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+
+<a class="awr" name="22"></a>
+<h2 class="awr">
+SQL Statistics
+</h2> 
+<ul> 
+<li class="awr"><a class="awr" href="#400">SQL ordered by Elapsed Time</a></li>
+<li class="awr"><a class="awr" href="#500">SQL ordered by CPU Time</a></li>
+<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O Wait Time</a></li>
+<li class="awr"><a class="awr" href="#600">SQL ordered by Gets</a></li>
+<li class="awr"><a class="awr" href="#700">SQL ordered by Reads</a></li>
+<li class="awr"><a class="awr" href="#800">SQL ordered by Executions</a></li>
+<li class="awr"><a class="awr" href="#99997">Complete List of SQL Text</a></li>
+</ul> 
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="400"></a>
+<h3 class="awr">SQL ordered by Elapsed Time</h3>
+<ul>
+<li class="awr"> Resources reported for PL/SQL code includes the resources used by all SQL     statements called by the code. </li>
+<li class="awr"> % Total DB Time is the Elapsed Time of the SQL statement divided     into the Total Database Time multiplied by 100 </li>
+<li class="awr"> %Total - Elapsed Time  as a percentage of Total DB time </li>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by elapsed time"><tr><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col">Executions </th><th class="awrbg" scope="col">Elapsed Time per Exec (s) </th><th class="awrbg" scope="col">%Total</th><th class="awrbg" scope="col">%CPU</th><th class="awrbg" scope="col">%IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>0.000343</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000343</td><td align="right" class='awrc'>28.244777</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#5369174141658212883">5369174141658212883</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrsql se...</td></tr>
+<tr><td align="right" class='awrnc'>0.000234</td><td align="right" class='awrnc'>69</td><td align="right" class='awrnc'>0.000003</td><td align="right" class='awrnc'>19.213686</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#13788780102241533183">13788780102241533183</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0.000149</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000149</td><td align="right" class='awrc'>12.288205</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2519790426702611784">2519790426702611784</a></td>
+<td class='awrc'>
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrwait s...</td></tr>
+<tr><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>10.799474</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>9.763119</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>0.000059</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000059</td><td align="right" class='awrnc'>4.893897</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select (now()-(select max(snap...</td></tr>
+<tr><td align="right" class='awrc'>0.000046</td><td align="right" class='awrc'>3</td><td align="right" class='awrc'>0.000015</td><td align="right" class='awrc'>3.824642</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2603407752977933069">2603407752977933069</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>0.000039</td><td align="right" class='awrnc'>4</td><td align="right" class='awrnc'>0.000010</td><td align="right" class='awrnc'>3.240665</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#13960876190409897396">13960876190409897396</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select pg_stat_file(pg_relatio...</td></tr>
+<tr><td align="right" class='awrc'>0.000028</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000028</td><td align="right" class='awrc'>2.319460</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrnc'>0.000023</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000023</td><td align="right" class='awrnc'>1.908209</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#10090624593480497321">10090624593480497321</a></td>
+<td class='awrnc'>&#160;
+</td> 
+<td class='awrnc'>insert into _pg_pdr_.pdrdb sel...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="500"></a>
+<h3 class="awr">SQL ordered by CPU Time</h3>
+<ul>
+<li class="awr"> Resources reported for PL/SQL code includes the resources used by all SQL     statements called by the code. </li>
+<li class="awr"> %Total - CPU Time      as a percentage of Total DB CPU </li>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by CPU time"><tr><th class="awrbg" scope="col">CPU    Time (s)</th><th class="awrbg" scope="col">Executions </th><th class="awrbg" scope="col">CPU per  Exec (s)</th><th class="awrbg" scope="col">%Total</th><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col">%CPU</th><th class="awrbg" scope="col">%IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>0.000343</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000343</td><td align="right" class='awrc'>28.244777</td><td align="right" class='awrc'>0.000343</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#5369174141658212883">5369174141658212883</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrsql se...</td></tr>
+<tr><td align="right" class='awrnc'>0.000234</td><td align="right" class='awrnc'>69</td><td align="right" class='awrnc'>0.000003</td><td align="right" class='awrnc'>19.213686</td><td align="right" class='awrnc'>0.000234</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#13788780102241533183">13788780102241533183</a></td>
+<td class='awrnc'>
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0.000149</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000149</td><td align="right" class='awrc'>12.288205</td><td align="right" class='awrc'>0.000149</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2519790426702611784">2519790426702611784</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrwait s...</td></tr>
+<tr><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>10.799474</td><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>9.763119</td><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>0.000059</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000059</td><td align="right" class='awrnc'>4.893897</td><td align="right" class='awrnc'>0.000059</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select (now()-(select max(snap...</td></tr>
+<tr><td align="right" class='awrc'>0.000046</td><td align="right" class='awrc'>3</td><td align="right" class='awrc'>0.000015</td><td align="right" class='awrc'>3.824642</td><td align="right" class='awrc'>0.000046</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2603407752977933069">2603407752977933069</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>0.000039</td><td align="right" class='awrnc'>4</td><td align="right" class='awrnc'>0.000010</td><td align="right" class='awrnc'>3.240665</td><td align="right" class='awrnc'>0.000039</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#13960876190409897396">13960876190409897396</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select pg_stat_file(pg_relatio...</td></tr>
+<tr><td align="right" class='awrc'>0.000028</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000028</td><td align="right" class='awrc'>2.319460</td><td align="right" class='awrc'>0.000028</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrnc'>0.000023</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000023</td><td align="right" class='awrnc'>1.908209</td><td align="right" class='awrnc'>0.000023</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#10090624593480497321">10090624593480497321</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrdb sel...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="550"></a>
+<h3 class="awr">SQL ordered by User I/O Wait Time</h3>
+<ul>
+<li class="awr"> Resources reported for PL/SQL code includes the resources used by all SQL     statements called by the code. </li>
+<li class="awr"> %Total - User I/O Time as a percentage of Total User I/O Wait time </li>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by user I/O time"><tr><th class="awrbg" scope="col">User I/O Time (s)</th><th class="awrbg" scope="col">Executions </th><th class="awrbg" scope="col">UIO per  Exec (s)</th><th class="awrbg" scope="col">%Total</th><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col">%CPU</th><th class="awrbg" scope="col">%IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000002</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4390283800491518311">4390283800491518311</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>select version()</td></tr>
+<tr><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000028</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000059</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>select (now()-(select max(snap...</td></tr>
+<tr><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#7158950290853674152">7158950290853674152</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>CREATE EXTENSION pg_stat_state...</td></tr>
+<tr><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#13885143590984450343">13885143590984450343</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>SELECT name FROM  (SELECT pg_c...</td></tr>
+<tr><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#12761185375305951704">12761185375305951704</a></td>
+<td class='awrnc'>
+</td>
+<td class='awrnc'>select * from pg_stat_replicat...</td></tr>
+<tr><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#10465153433155212590">10465153433155212590</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>create table _pg_pdr_.pdrtable...</td></tr>
+<tr><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#9942891346827722823">9942891346827722823</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>create table _pg_pdr_.pdrdb (s...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="600"></a>
+<h3 class="awr">SQL ordered by Gets</h3>
+<ul>
+<li class="awr"> Resources reported for PL/SQL code includes the resources used by all SQL     statements called by the code. </li>
+<li class="awr"> %Total - Buffer Gets   as a percentage of Total Buffer Gets </li>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by buffer gets"><tr><th class="awrbg" scope="col">Buffer Gets </th><th class="awrbg" scope="col">Executions</th><th class="awrbg" scope="col">Gets     per Exec  </th><th class="awrbg" scope="col">%Total</th><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col"> %CPU</th><th class="awrbg" scope="col">  %IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>71</td><td align="right" class='awrc'>69</td><td align="right" class='awrc'>1.028986</td><td align="right" class='awrc'>31.140351</td><td align="right" class='awrc'>0.000234</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#13788780102241533183">13788780102241533183</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>38</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>38.000000</td><td align="right" class='awrnc'>16.666667</td><td align="right" class='awrnc'>0.000343</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#5369174141658212883">5369174141658212883</a></td>
+<td class='awrnc'>
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrsql se...</td></tr>
+<tr><td align="right" class='awrc'>35</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>35.000000</td><td align="right" class='awrc'>15.350877</td><td align="right" class='awrc'>0.000131</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>28</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>28.000000</td><td align="right" class='awrnc'>12.280702</td><td align="right" class='awrnc'>0.000149</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#2519790426702611784">2519790426702611784</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrwait s...</td></tr>
+<tr><td align="right" class='awrc'>26</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>26.000000</td><td align="right" class='awrc'>11.403509</td><td align="right" class='awrc'>0.000119</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>6</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>6.000000</td><td align="right" class='awrnc'>2.631579</td><td align="right" class='awrnc'>0.000059</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select (now()-(select max(snap...</td></tr>
+<tr><td align="right" class='awrc'>5</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>5.000000</td><td align="right" class='awrc'>2.192982</td><td align="right" class='awrc'>0.000028</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrnc'>5</td><td align="right" class='awrnc'>3</td><td align="right" class='awrnc'>1.666667</td><td align="right" class='awrnc'>2.192982</td><td align="right" class='awrnc'>0.000046</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#2603407752977933069">2603407752977933069</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>3</td><td align="right" class='awrc'>4</td><td align="right" class='awrc'>0.750000</td><td align="right" class='awrc'>1.315789</td><td align="right" class='awrc'>0.000039</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#13960876190409897396">13960876190409897396</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>select pg_stat_file(pg_relatio...</td></tr>
+<tr><td align="right" class='awrnc'>3</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>3.000000</td><td align="right" class='awrnc'>1.315789</td><td align="right" class='awrnc'>0.000014</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#17491593016786933588">17491593016786933588</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select (now()-make_interval(da...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="700"></a>
+<h3 class="awr">SQL ordered by Reads</h3>
+<ul>
+<li class="awr"> %Total - Physical Reads as a percentage of Total Disk Reads </li>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by physical reads"><tr><th class="awrbg" scope="col">Physical Reads</th><th class="awrbg" scope="col">Executions</th><th class="awrbg" scope="col">Reads     per Exec  </th><th class="awrbg" scope="col">%Total</th><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col">%CPU</th><th class="awrbg" scope="col">%IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>0</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000002</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4390283800491518311">4390283800491518311</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>select version()</td></tr>
+<tr><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000028</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrc'>0</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000059</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>select (now()-(select max(snap...</td></tr>
+<tr><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000131</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrc'>0</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000119</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#7158950290853674152">7158950290853674152</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>CREATE EXTENSION pg_stat_state...</td></tr>
+<tr><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#13885143590984450343">13885143590984450343</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>SELECT name FROM  (SELECT pg_c...</td></tr>
+<tr><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#12761185375305951704">12761185375305951704</a></td>
+<td class='awrnc'>
+</td>
+<td class='awrnc'>select * from pg_stat_replicat...</td></tr>
+<tr><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>100.000000</td><td align="right" class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#10465153433155212590">10465153433155212590</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>create table _pg_pdr_.pdrtable...</td></tr>
+<tr><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>100.000000</td><td align="right" class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#9942891346827722823">9942891346827722823</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>create table _pg_pdr_.pdrdb (s...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="800"></a>
+<h3 class="awr">SQL ordered by Executions</h3>
+<ul>
+<li class="awr"> %CPU   - CPU Time      as a percentage of Elapsed Time </li>
+<li class="awr"> %IO    - User I/O Time as a percentage of Elapsed Time</li>
+</ul>
+<table border="1" summary="This table displays top SQL by number of executions"><tr><th class="awrbg" scope="col">Executions </th><th class="awrbg" scope="col">Rows Processed</th><th class="awrbg" scope="col">Rows per Exec</th><th class="awrbg" scope="col">Elapsed  Time (s)</th><th class="awrbg" scope="col"> %CPU</th><th class="awrbg" scope="col">  %IO</th><th class="awrbg" scope="col">   SQL Id</th><th class="awrbg" scope="col">SQL Module</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td align="right" class='awrc'>69</td><td align="right" class='awrc'>69</td><td align="right" class='awrc'>1.000000</td><td align="right" class='awrc'>0.000234</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#13788780102241533183">13788780102241533183</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>4</td><td align="right" class='awrnc'>4</td><td align="right" class='awrnc'>1.000000</td><td align="right" class='awrnc'>0.000039</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#13960876190409897396">13960876190409897396</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select pg_stat_file(pg_relatio...</td></tr>
+<tr><td align="right" class='awrc'>3</td><td align="right" class='awrc'>3</td><td align="right" class='awrc'>1.000000</td><td align="right" class='awrc'>0.000046</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#2603407752977933069">2603407752977933069</a></td>
+<td class='awrc'>&#160;
+</td> 
+<td class='awrc'>insert into _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>2</td><td align="right" class='awrnc'>2.000000</td><td align="right" class='awrnc'>0.000003</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#16041747003622875283">16041747003622875283</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select datname from pg_databas...</td></tr>
+<tr><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000119</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#4049456227103168881">4049456227103168881</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrsql wh...</td></tr>
+<tr><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td><td align="right" class='awrnc'>0.000028</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#2175545062314194503">2175545062314194503</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>delete from _pg_pdr_.pdrwait w...</td></tr>
+<tr><td align="right" class='awrc'>1</td><td align="right" class='awrc'>32</td><td align="right" class='awrc'>32.000000</td><td align="right" class='awrc'>0.000343</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#5369174141658212883">5369174141658212883</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>insert into _pg_pdr_.pdrsql se...</td></tr>
+<tr><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>1.000000</td><td align="right" class='awrnc'>0.000002</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#4390283800491518311">4390283800491518311</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select version()</td></tr>
+<tr><td align="right" class='awrc'>1</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td><td align="right" class='awrc'>0.000131</td><td class='awrc'>100.000000</td><td class='awrc'>0.000000</td><td scope="row" class='awrc'><a class="awr" href="#16912078453863534344">16912078453863534344</a></td>
+<td class='awrc'>&#160;
+</td>
+<td class='awrc'>delete from _pg_pdr_.pdrtable ...</td></tr>
+<tr><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>1</td><td align="right" class='awrnc'>1.000000</td><td align="right" class='awrnc'>0.000059</td><td class='awrnc'>100.000000</td><td class='awrnc'>0.000000</td><td scope="row" class='awrnc'><a class="awr" href="#14191057915492426194">14191057915492426194</a></td>
+<td class='awrnc'>&#160;
+</td>
+<td class='awrnc'>select (now()-(select max(snap...</td></tr>
+</table><p />
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="99997"></a>
+<p /> 
+<h3 class="awr">Complete List of SQL Text</h3><p />
+<table border="1" summary="This table displays the text of the SQL statements which have been
+      referred to in the report"> 
+<tr><th class="awrbg" scope="col">SQL Id</th><th class="awrbg" scope="col">SQL Text</th></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="5369174141658212883"></a>5369174141658212883</td><td class='awrnc'>insert into _pg_pdr_.pdrsql select $1,now(),$2 userid,statisticpgss.* from ( 				select 				dbid,queryid,min(query) query, 				sum(calls) calls,sum(total_time) total_time,min(min_time) min_time,max(max_time) max_time, 				sum(total_time)/sum(calls) mean_time,sum(stddev_time) stddev_time,sum(rows) pgssrows, 				sum(shared_blks_hit) shared_blks_hit,sum(shared_blks_read) shared_blks_read, 				sum(shared_blks_written) shared_blks_written,sum(local_blks_hit) local_blks_hit, 				sum(local_blks_read) local_blks_read,sum(local_blks_dirtied) local_blks_dirtied, 				sum(local_blks_written) local_blks_written,sum(temp_blks_read) temp_blks_read, 				sum(temp_blks_written) temp_blks_written,sum(blk_read_time) blk_read_time, 				sum(blk_write_time) blk_write_time from public.pg_stat_statements 				where calls > $3 				group by 				dbid,queryid 				) statisticpgss</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="13788780102241533183"></a>13788780102241533183</td><td class='awrc'>insert into _pg_pdr_.pdrtable select $1, now(), $2,$3,$4,							$5,$6,$7,$8,$9,							$10,$11,$12,$13,$14,							$15,$16,$17,$18,$19,							$20,$21,$22,$23</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="2519790426702611784"></a>2519790426702611784</td><td class='awrnc'>insert into _pg_pdr_.pdrwait select $1,now(),* from public.pg_wait_sampling_profile</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="16912078453863534344"></a>16912078453863534344</td><td class='awrc'>delete from _pg_pdr_.pdrtable where snap_id = $1</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="4049456227103168881"></a>4049456227103168881</td><td class='awrnc'>delete from _pg_pdr_.pdrsql where snap_id = $1</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="14191057915492426194"></a>14191057915492426194</td><td class='awrc'>select (now()-(select max(snap_ts) from _pg_pdr_.pdrdb)) < interval $1 						or ((now()-(select max(snap_ts) from _pg_pdr_.pdrdb) > interval $2) and 							((now()-pg_postmaster_start_time()) > interval $3))</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="2603407752977933069"></a>2603407752977933069</td><td class='awrnc'>insert into _pg_pdr_.pdrtable select $1, now(), $2,$3,$4,							$5,$6,$7,$8,$9,							$10,$11,$12,$13,$14,							$15,$16,$17,$18,$19,							$20,$21,$22,$23</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="13960876190409897396"></a>13960876190409897396</td><td class='awrc'>select pg_stat_file(pg_relation_filepath($1))</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="2175545062314194503"></a>2175545062314194503</td><td class='awrnc'>delete from _pg_pdr_.pdrwait where snap_id = $1</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="10090624593480497321"></a>10090624593480497321</td><td class='awrc'>insert into _pg_pdr_.pdrdb select $1, now(), pg_postmaster_start_time(), $2, $3, $5, $7, $8, $9,						$10,$11,$12,$13,$14,						$15,$16,$17,$18,$19,						$20,$21,$22,$23,$24,						$25,$26,$27</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="4390283800491518311"></a>4390283800491518311</td><td class='awrnc'>select version()</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="7158950290853674152"></a>7158950290853674152</td><td class='awrc'>CREATE EXTENSION pg_stat_statements schema public</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="13885143590984450343"></a>13885143590984450343</td><td class='awrnc'>SELECT name FROM  (SELECT pg_catalog.lower(name) AS name FROM pg_catalog.pg_settings   UNION ALL SELECT $1   UNION ALL SELECT $2) ss  WHERE substring(name,$3,$4)=$5
+LIMIT $6</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="12761185375305951704"></a>12761185375305951704</td><td class='awrc'>select * from pg_stat_replication</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="10465153433155212590"></a>10465153433155212590</td><td class='awrnc'>create table _pg_pdr_.pdrtable (snap_id int8, snap_ts timestamptz, databaseid oid, tableid oid,numscans int8,tuples_returned int8,			tuples_fetched int8,tuples_inserted int8,tuples_updated int8,tuples_deleted int8,tuples_hot_updated int8,n_live_tuples int8,			n_dead_tuples int8,changes_since_analyze int8,blocks_fetched int8,blocks_hit int8,vacuum_timestamp int8,			vacuum_count int8,autovac_vacuum_timestamp int8,autovac_vacuum_count int8,analyze_timestamp int8,			analyze_count int8,autovac_analyze_timestamp int8,autovac_analyze_count int8)</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="9942891346827722823"></a>9942891346827722823</td><td class='awrc'>create table _pg_pdr_.pdrdb (snap_id int8,snap_ts timestamptz,dbstart_ts timestamptz,databaseid oid,dbname text,dbsysinfo text,dbidentifier int8,n_xact_commit int8,n_xact_rollback int8,n_blocks_fetched int8,				n_blocks_hit int8,n_tuples_returned int8,n_tuples_fetched int8,n_tuples_inserted int8,n_tuples_updated int8,n_tuples_deleted int8,				last_autovac_time int8,n_conflict_tablespace int8,n_conflict_lock int8,n_conflict_snapshot int8,n_conflict_bufferpin int8,				n_conflict_startup_deadlock int8,n_temp_files int8,n_temp_bytes int8,n_deadlocks int8,n_block_read_time int8,n_block_write_time int8)</td></tr>
+<tr><td scope="row" class='awrnc'><a class="awr" name="17491593016786933588"></a>17491593016786933588</td><td class='awrnc'>select (now()-make_interval(days=>$1))>(select min(snap_ts) from _pg_pdr_.pdrdb)</td></tr>
+<tr><td scope="row" class='awrc'><a class="awr" name="16041747003622875283"></a>16041747003622875283</td><td class='awrc'>select datname from pg_database where datistemplate=$1</td></tr>
+
+</table> 
+<p />   
+<a class="awr" href="#22">Back to SQL Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />  
+<a class="awr" name="24"></a>
+<h2 class="awr">
+IO Stats
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#8760">IOStat by Function summary</a></li>
+<li class="awr"><a class="awr" href="#8770">IOStat by Filetype summary</a></li>
+<li class="awr"><a class="awr" href="#8780">IOStat by Function/Filetype summary</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="8760"></a>
+<h3 class="awr">IOStat by Function summary</h3>
+<ul>
+<li class="awr"> 'Data' columns suffixed with M,G,T,P are in multiples of 1024      </li>
+<li class="awr"> ordered by (Data Read + Write) desc</li>
+</ul>  
+<table border="1" summary="This table displays the IO Statistics for different functions. IO stats includes amount of reads and writes, requests per second, data per second, wait count and average wait time"><tr><th class="awrbg" scope="col">Function Name</th><th class="awrbg" scope="col">Read Data</th><th class="awrbg" scope="col">Read per sec</th><th class="awrbg" scope="col">Read Total%</th><th class="awrbg" scope="col">Write Data</th><th class="awrbg" scope="col">Write Reqs</th><th class="awrbg" scope="col">Write per sec</th><th class="awrbg" scope="col">Write Total%</th></tr>
+<tr><td scope="row" class='awrc'>FILENODE</td><td class='awrc'>0 K</td><td class='awrc'>0.000 K</td><td class='awrc'>0.000</td><td align="right" class='awrc'>0 K</td><td class='awrc'>32 K</td><td class='awrc'>0.000 K</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Buffer Cache</td><td class='awrc'>1.781 M</td><td class='awrc'>0.507 K</td><td class='awrc'>100.000</td><td align="right" class='awrc'>0 K</td><td class='awrc'>32 K</td><td class='awrc'>0.000 K</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>TOTAL:</td><td class='awrc'>1.781 M</td><td class='awrc'>0.507 K</td><td class='awrc'>100.000</td><td align="right" class='awrc'>0 K</td><td class='awrc'>64 K</td><td class='awrc'>0.000 K</td><td align="right" class='awrc'>100.000</td></tr>
+</table><p />
+<a class="awr" href="#24">Back to IO Stats</a> 
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="8770"></a>
+<h3 class="awr">IOStat by Memory summary</h3>
+<ul>
+<li class="awr"> 'Data' columns suffixed with M,G,T,P are in multiples of 1024      </li>
+<li class="awr"> Small Read and Large Read are average service times, in milliseconds </li>
+<li class="awr"> Ordered by (Data Read + Write) desc</li>
+</ul>
+<table border="1" summary="This table displays IO Statistics for different file types, such as data files, control files, log files and temp files. IO Statistics include amount of reads and writes, requests per second, data per second, wait count and average wait time"><tr><th class="awrbg" scope="col">Memory</th><th class="awrbg" scope="col">Read Data</th><th class="awrbg" scope="col">Read per sec</th><th class="awrbg" scope="col">Read Total%</th><th class="awrbg" scope="col">Write Data</th><th class="awrbg" scope="col">Write Reqs</th><th class="awrbg" scope="col">Write per sec</th><th class="awrbg" scope="col">Write Total%</th></tr>
+<tr><td scope="row" class='awrc'>Shared</td><td class='awrc'>1.781 M</td><td align="right" class='awrc'>0.507 K</td><td class='awrc'>100.000</td><td class='awrc'>0 K</td><td align="right" class='awrc'>32 K</td><td class='awrc'>0.000 K</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>Local</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0.000</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0 K</td><td class='awrnc'>0.000 K</td><td align="right" class='awrnc'>0.000</td></tr>
+<tr><td scope="row" class='awrc'>Temp</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0.000</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0 K</td><td class='awrc'>0.000 K</td><td align="right" class='awrc'>0.000</td></tr>
+<tr><td scope="row" class='awrnc'>TOTAL:</td><td class='awrnc'>1.781 M</td><td align="right" class='awrnc'>0.507 K</td><td class='awrnc'>100.000</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>32 K</td><td class='awrnc'>0.000 K</td><td align="right" class='awrnc'>100.000</td></tr>
+</table><p />  
+<a class="awr" href="#24">Back to IO Stats</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="8780"></a>
+<h3 class="awr">IOStat by Reltype summary</h3>
+<ul>
+<li class="awr"> 'Data' columns suffixed with M,G,T,P are in multiples of 1024      </li>
+<li class="awr"> Ordered by (Data Read + Write) desc for each function</li>
+</ul>
+<table border="1" summary="IOStat by Function/Filetype summary. . 'Data' columns suffixed with M,G,T,P are in multiples of 1024 . Ordered by (Data Read + Write) desc for each function"><tr><th class="awrbg" scope="col">Reltype</th><th class="awrbg" scope="col">Read Data</th><th class="awrbg" scope="col">Read per sec</th><th class="awrbg" scope="col">Total%</th><th class="awrbg" scope="col">Buffer Read</th><th class="awrbg" scope="col">Buffer read per sec</th><th class="awrbg" scope="col">Disk Read</th><th class="awrbg" scope="col">Disk Read per sec</th></tr> 
+<tr><td scope="row" class='awrc'>
+Relation
+</td><td class='awrc'>33.352 M</td><td align="right" class='awrc'>9.487 K</td><td class='awrc'>77.044</td><td class='awrc'>33.320 M</td><td align="right" class='awrc'>9.478 K</td><td class='awrc'>32 K</td><td class='awrc'>0.009 K</td></tr>
+<tr><td scope="row" class='awrnc'>
+ Index
+</td><td class='awrnc'>9.938 M</td><td align="right" class='awrnc'>2.827 K</td><td class='awrnc'>22.956</td><td class='awrnc'>9.938 M</td><td align="right" class='awrnc'>2.827 K</td><td class='awrnc'>0 K</td><td class='awrnc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrc'>
+Sequence
+</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0.000</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0 K</td><td class='awrc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrnc'>
+ View
+</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0.000</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0 K</td><td class='awrnc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrc'>
+Material view
+</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>.0.000</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0 K</td><td class='awrc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrnc'>
+ Combine
+</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0.000</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0 K</td><td class='awrnc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrc'>
+TOAST
+</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0.000</td><td class='awrc'>0 K</td><td align="right" class='awrc'>0.000 K</td><td class='awrc'>0 K</td><td class='awrc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrnc'>
+ Foreign
+</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0.000</td><td class='awrnc'>0 K</td><td align="right" class='awrnc'>0.000 K</td><td class='awrnc'>0 K</td><td class='awrnc'>0.000 K</td></tr>
+<tr><td scope="row" class='awrc'>
+TOTAL:
+</td><td class='awrc'>43.289 M</td><td align="right" class='awrc'>12.313 K</td><td class='awrc'>100.000</td><td class='awrc'>43.258 M</td><td align="right" class='awrc'>12.304 K</td><td class='awrc'>32 K</td><td class='awrc'>0.009 K</td></tr>
+</table><p />
+<a class="awr" href="#24">Back to IO Stats</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="30"></a>
+<h2 class="awr">
+Segment Statistics
+</h2>  
+<ul>  
+<li class="awr"><a class="awr" href="#4000">Segments by Logical Reads</a></li>
+<li class="awr"><a class="awr" href="#4100">Segments by Physical Reads</a></li>
+<li class="awr"><a class="awr" href="#4140">Segments by Table Scans</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="4000"></a>
+<h3 class="awr">Segments by Logical Reads</h3>
+<table border="1" summary="This table displays top segments by logical reads. Owner, tablespace name, object type, logical read, etc. are displayed for each segment"><tr><th class="awrbg" scope="col">DBID</th><th class="awrbg" scope="col">Database</th><th class="awrbg" scope="col">Relation</th><th class="awrbg" scope="col">Obj. Type</th><th class="awrbg" scope="col">Logical Reads</th><th class="awrbg" scope="col">%Total</th></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>1259</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>3485</td><td align="right" class='awrc'>62.894787</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2659</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>354</td><td align="right" class='awrnc'>6.388739</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2662</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>308</td><td align="right" class='awrc'>5.558563</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2655</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>186</td><td align="right" class='awrnc'>3.356795</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>24924</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>147</td><td align="right" class='awrc'>2.652951</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>1249</td><td class='awrnc'>TABLE</td><td align="right" class='awrnc'>147</td><td align="right" class='awrnc'>2.652951</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2687</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>123</td><td align="right" class='awrc'>2.219816</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2679</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>122</td><td align="right" class='awrnc'>2.201769</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2616</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>90</td><td align="right" class='awrc'>1.624256</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2619</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>70</td><td align="right" class='awrc'>1.263310</td></tr>
+</table><p /> 
+<a class="awr" href="#30">Back to Segment Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="4100"></a>
+<h3 class="awr">Segments by Physical Reads</h3>
+<table border="1" summary="This table displays top segments by physical reads. Owner, tablespace name, object type, physical reads, etc. are displayed for each segment "><tr><th class="awrbg" scope="col">DBID</th><th class="awrbg" scope="col">Database</th><th class="awrbg" scope="col">Relation</th><th class="awrbg" scope="col">Obj. Type</th><th class="awrbg" scope="col">Physical Reads</th><th class="awrbg" scope="col">%Total</th></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>24924</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>2</td><td align="right" class='awrc'>50.000000</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>24912</td><td class='awrnc'>TABLE</td><td align="right" class='awrnc'>2</td><td align="right" class='awrnc'>50.000000</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2690</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2704</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2616</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>24930</td><td class='awrnc'>TOAST</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>3455</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2605</td><td class='awrnc'>TABLE</td><td align="right" class='awrnc'>0</td><td align="right" class='awrnc'>0.000000</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2653</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2688</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>0</td><td align="right" class='awrc'>0.000000</td></tr>
+</table><p />
+<a class="awr" href="#30">Back to Segment Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="4140"></a>
+<h3 class="awr">Segments by Table Scans</h3> 
+<table border="1" summary="This table displays top segments by table scans. Owner, tablespace name, object type, table scans, etc. are displayed for each segment"><tr><th class="awrbg" scope="col">DBID</th><th class="awrbg" scope="col">Database</th><th class="awrbg" scope="col">Relation</th><th class="awrbg" scope="col">Obj. Type</th><th class="awrbg" scope="col">Table Scans</th><th class="awrbg" scope="col">%Total</th></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>1259</td><td class='awrc'>TABLE</td><td align="right" class='awrc'>240</td><td align="right" class='awrc'>27.272728</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2659</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>147</td><td align="right" class='awrnc'>16.704546</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2662</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>124</td><td align="right" class='awrc'>14.090909</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2661</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>64</td><td align="right" class='awrnc'>7.272727</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2687</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>63</td><td align="right" class='awrc'>7.159091</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2655</td><td class='awrnc'>INDEX</td><td align="right" class='awrnc'>63</td><td align="right" class='awrnc'>7.159091</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2679</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>62</td><td align="right" class='awrc'>7.045455</td></tr>
+<tr><td class='awrnc'>13330</td><td class='awrnc'>highgo</td><td class='awrnc'>2601</td><td class='awrnc'>TABLE</td><td align="right" class='awrnc'>61</td><td align="right" class='awrnc'>6.931818</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2696</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>24</td><td align="right" class='awrc'>2.727273</td></tr>
+<tr><td class='awrc'>13330</td><td class='awrc'>highgo</td><td class='awrc'>2653</td><td class='awrc'>INDEX</td><td align="right" class='awrc'>9</td><td align="right" class='awrc'>1.022727</td></tr>
+</table><p /> 
+<a class="awr" href="#30">Back to Segment Statistics</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+
+End of Report

@@ -8,24 +8,25 @@
 #    (2)直接使用bash 脚本名调用
 # 5、调整检测逻辑，在流复制备机运行时，不创建任何文件
 # 6、调整读取密码文件逻辑，密码文件同一个用户有多行时，进取一行
+# 7、增加冗余备份功能，修正非默认表空间的备份路径
 #############################################################################################
 source ~/.bash_profile
 #需要修改的参数
-hguser=sysdba                                       #安全版换成sysdba或其他权限足够的用户
+hguser=highgo                                       #安全版换成sysdba或其他权限足够的用户
 defdb=highgo                                        #备份使用的数据库名称，默认使用highgo
 PORT=5866                                           #数据库端口
 num=3                                               #备份保留数量
-archdir=/opt/dbbak/archive                          #归档文件存放路径
-PGHOME=/opt/HighGo4.5.2-see                         #数据库安装目录，末尾不要带“/”
-master_db_cluster=/opt/HighGo4.5.2-see/data         #数据文件路径，默认指向$PGHOME/data
-backup_db_cluster=/opt/dbbak                        #备份存放路径
+archdir=/hgdbbak/highgo602/archive                  #归档文件存放路径
+PGHOME=/opt/HighGo6.0.2-cluster                     #数据库安装目录，末尾不要带“/”
+master_db_cluster=/opt/HighGo6.0.2-cluster/data     #数据文件路径，默认指向$PGHOME/data
+backup_db_cluster=/hgdbbak/highgo602/dbbak          #备份存放路径
 bakhost=localhost                                   #服务器ip，本地使用localhost即可
 issm=no                                             #是否为SM机环境，如果不是，且crontab可用，此处填写no
-baktime=23:00                                       #如果issm是no，这个不生效
+baktime=16:26                                       #如果issm是no，这个不生效
 istar=no                                            #是否将备份打包为tar包
 iscompressed=no                                     #是否将备份进行压缩，需要先设置istar为yes，使用gz压缩
 #冗余备份选项
-re_bak=yes                                          #是否启用冗余备份，yes/no
+re_bak=no                                          #是否启用冗余备份，yes/no
 rebak_dir=/rebak/dbbak                              #备份文件存放路径，本地及远程存储均按实际路径填写
 rearch_dir=/rebak/arch                              #冗余归档目录
 rebak_num=4                                         #冗余备份保留份数
@@ -158,13 +159,13 @@ function dbbak(){
     fi
     echo "`date  '+%Y-%m-%d %H:%M:%S'` pg_basebackup will go now">> $backup_db_cluster/$logfile
     if [ -d $master_db_cluster ];then
-        tbs=(`$PGHOME/bin/psql -U $hguser -h $bakhost -Atc "select pg_catalog.pg_tablespace_location(oid) FROM pg_catalog.pg_tablespace;" -p $PORT $defdb |sed '/^$/d'|grep -v "$master_db_cluster"`)
+        tbs=(`$PGHOME/bin/psql -U $hguser -h $bakhost -Atc "select pg_catalog.pg_tablespace_location(oid) FROM pg_catalog.pg_tablespace;" -p $PORT $defdb |sed '/^$/d'`) #0831删除|grep -v "$master_db_cluster"
         if [ ${#tbs[*]} -gt 0 ];then
             for i in ${tbs[@]}
             do 
                 j=${i##*/}
-                str=$str" -T "$i"=$backup_db_cluster/$bakname/nodefault/$j"
-                echo "`date  '+%Y-%m-%d %H:%M:%S'` Tablespace $i remaps to $backup_db_cluster/$bakname/nodefault/$j" >>$backup_db_cluster/$logfile
+                str=$str" -T "$i"=$backup_db_cluster/$bakname/nodefault/$j"  #0831将nodefault改为base，0916因自定义表空间冲突改回。
+                echo "`date  '+%Y-%m-%d %H:%M:%S'` Tablespace $i remaps to $backup_db_cluster/$bakname/nodefault/$j" >>$backup_db_cluster/$logfile 
             done
         else
             echo "`date  '+%Y-%m-%d %H:%M:%S'` There do not have tablespace out of "$master_db_cluster" in this cluster ......" >>$backup_db_cluster/$logfile
