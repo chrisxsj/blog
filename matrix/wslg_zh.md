@@ -23,8 +23,11 @@ wslg支持中文
 locale  #查看当前系统语言环境
 sudo apt-get install -y language-pack-zh-hans   # 安装中文语言支持
 locale -a   #查看已安装的语言环境
-sudo locale-gen zh_CN.UTF-8 # 设置中文语言环境
 
+#设置中文语言环境
+sudo vi /etc/default/locale
+
+LANG=zh_CN.UTF-8
 ```
 
 ## Fcitx框架，包括小企鹅输入法
@@ -38,8 +41,6 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export DefaultIMModule=fcitx
-
-
 fcitx &  # 运行fcitx，可将启动命令写入环境变量文件
 
 fcitx-config-gtk3   #输入法设置界面

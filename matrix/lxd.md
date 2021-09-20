@@ -10,6 +10,8 @@ sudo snap install lxd
 
 ## Getting started with LXD
 
+sudo lxd init
+
 sudo lxc image list images: centos/7/   #查找网络镜像
 
 sudo lxc launch images:1b8f8e664d3e c7  #创建

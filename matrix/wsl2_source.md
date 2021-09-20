@@ -61,7 +61,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 2. 更换源
 
 ```sh
-cp /etc/apt/sources.list /etc/apt/sources.list.bak  #备份
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak  #备份
 
 sudo vi /etc/apt/sources.list   #替换源
 
