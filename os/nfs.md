@@ -1,3 +1,75 @@
+# nfs
+
+**作者**
+
+Chrisx
+
+**日期**
+
+2021-09-23
+
+**内容**
+
+nfs配置使用,How to configure NFS in RHEL 7
+
+----
+
+[toc]
+
+## 服务器
+
+```sh
+yum install nfs-utils rpcbind
+
+systemctl enable nfs-server
+systemctl enable rpcbind
+systemctl enable nfs-lock
+
+systemctl start rpcbind
+systemctl start nfs-server
+systemctl start nfs-lock
+systemctl start nfs-idmap
+
+systemctl status nfs
+
+mkdir /backup
+
+cat /etc/exports
+/backup        192.168.6.11(rw,no_root_squash,sync)
+ 
+exportfs -r
+```
+
+如果启用了防火墙，则添加规则
+
+```sh
+firewall-cmd --add-service=nfs  --permanent
+firewall-cmd --add-service=mountd --permanent
+firewall-cmd --add-service=rpc-bind --permanent
+firewall-cmd --reload
+
+```
+
+## 客户端
+
+```sh
+# showmount -e 192.168.6.13
+Export list for 192.168.6.13:
+/test 192.168.6.11
+ 
+如出现如下报错，说明firewalld没有放开端口。执行以上的firewall-cmd命令，将服务器加入防火墙即可
+clnt_create: RPC: Port mapper failure - Unable to receive: errno 113 (No route to host)
+ 
+mount -t nfs 192.168.6.13:/test /test
+vi /test/aa
+ 
+配置开机自动挂载
+vi /etc/fstab
+添加
+192.168.6.13:/test /test nfs  nodev,ro,rsize=32768,wsize=32768    0 0
+```
+
+<!--
 How to configure NFS in RHEL 7 SOLUTION 已验证 - 已更新 2018年十二月7日22:43 - English 环境
 	* Red Hat Enterprise Linux 7
 
@@ -46,53 +118,4 @@ Raw
 # firewall-cmd --add-service=rpc-bind --zone=internal --permanent
  
 From <https://access.redhat.com/solutions/974543>
-
- 
- 
-服务器
-# yum install nfs-utils rpcbind
- 
-#  systemctl enable nfs-server
-#  systemctl enable rpcbind
-#  systemctl enable nfs-lock
- 
- 
-#  systemctl start rpcbind
-#  systemctl start nfs-server
-#  systemctl start nfs-lock
-#  systemctl start nfs-idmap
- 
-# systemctl status nfs
- 
-mkdir /tmp
-mount /dev/sdb1 /mnt
- 
-[root@postgres yum.repos.d]# cat /etc/exports
-/test        192.168.6.11(rw,no_root_squash,sync)
- 
- 
- 
-exportfs -r
- 
- 
-# firewall-cmd --add-service=nfs  --permanent
-# firewall-cmd --add-service=mountd --permanent
-# firewall-cmd --add-service=rpc-bind --permanent
-firewall-cmd --reload
- 
- 
-客户端
-[root@hgdbt yum.repos.d]# showmount -e 192.168.6.13
-Export list for 192.168.6.13:
-/test 192.168.6.11
- 
-如出现如下报错，说明firewalld没有放开端口。执行以上的firewall-cmd命令，将服务器加入防火墙即可
-clnt_create: RPC: Port mapper failure - Unable to receive: errno 113 (No route to host)
- 
-mount -t nfs 192.168.6.13:/test /test
-vi /test/aa
- 
-配置开机自动挂载
-vi /etc/fstab
-添加
-192.168.6.13:/test /test nfs  nodev,ro,rsize=32768,wsize=32768    0 0
+-->

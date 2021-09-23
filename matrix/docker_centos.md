@@ -16,21 +16,30 @@ docker中使用centos
 
 [toc]
 
+## 镜像
+
+[centos镜像库](https://hub.docker.com/_/centos?tab=tags&page=1&ordering=last_updated)
+
+```sh
+sudo docker search centos #查找需要的镜像
+sudo docker pull centos:centos7.9.2009  #拉取镜像,具体镜像参考镜像库
+```
+
 ## 运行容器
 
 ```sh
-docker run --name=centos7.9 -p 1022:22 -itd centos:7.9.2009 /bin/bash
+docker run --name=c79 -p 1022:22 -itd centos:7.9.2009 /bin/bash
 
 or
 
-docker run --name centos7.9 --privileged=true --net subnet --ip 192.168.80.41 -p 1022:22 -itd centos:7.9.2009 /usr/sbin/init
+docker run --name c79 --privileged=true --net subnet --ip 192.168.80.41 -p 1022:22 -itd centos:7.9.2009 /usr/sbin/init
 
 ```
 
 ## 进入容器
 
 ```sh
-docker exec -it centos7.9 /bin/bash
+docker exec -it c79 /bin/bash
 
 ```
 

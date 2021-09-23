@@ -1,4 +1,4 @@
-# wsl2 docker
+# wsl2_docker
 
 **作者**
 
@@ -12,55 +12,60 @@ chrisx
 
 wsl2中安装使用docker
 
+ref [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
 ---
 
-ref [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+[toc]
 
 ## 安装
 
 download [docker](https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/)
 
 ```sh
-dpkg -i containerd.io_1.4.4-1_amd64.deb
-dpkg -i docker-ce-cli_20.10.6~3-0~ubuntu-focal_amd64.deb  
-dpkg -i docker-ce-rootless-extras_20.10.6~3-0~ubuntu-focal_amd64.deb
-dpkg -i docker-ce_20.10.6~3-0~ubuntu-focal_amd64.deb
+
+sudo apt-get update
+
+sudo apt-get install \
+   apt-transport-https \
+   ca-certificates \
+   curl \
+   gnupg \
+   lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+```
+
+## 配置服务自启动
+
+```sh
+sudo service docker start #手动启动命令，自启动配置讲此命令添加到~/.bashrc
+
 ```
 
 ## 测试
 
 ```sh
-chris@hg-cx:/mnt/c/Users/chris$ sudo docker pull hello-world
-Using default tag: latest
-latest: Pulling from library/hello-world
-b8dfde127a29: Pull complete
-Digest: sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519
-Status: Downloaded newer image for hello-world:latest
-docker.io/library/hello-world:latest
-chris@hg-cx:/mnt/c/Users/chris$ sudo docker run hello-world
 
-Hello from Docker!
-This message shows that your installation appears to be working correctly.
+sudo docker run hello-world
+```
 
-To generate this message, Docker took the following steps:
- 1. The Docker client contacted the Docker daemon.
- 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
-    (amd64)
- 3. The Docker daemon created a new container from that image which runs the
-    executable that produces the output you are currently reading.
- 4. The Docker daemon streamed that output to the Docker client, which sent it
-    to your terminal.
+## 镜像
 
-To try something more ambitious, you can run an Ubuntu container with:
- $ docker run -it ubuntu bash
+[centos镜像库](https://hub.docker.com/_/centos?tab=tags&page=1&ordering=last_updated)
 
-Share images, automate workflows, and more with a free Docker ID:
- https://hub.docker.com/
-
-For more examples and ideas, visit:
- https://docs.docker.com/get-started/
-
-chris@hg-cx:/mnt/c/Users/chris$
+```sh
+sudo docker search centos #查找需要的镜像
+sudo docker pull centos:centos7.9.2009  #拉取镜像,具体镜像参考镜像库
 ```
 
 ## 问题
