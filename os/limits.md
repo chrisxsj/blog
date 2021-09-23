@@ -36,7 +36,16 @@ highgo               hard    memlock         unlimited
 ```bash
 *       soft    nproc   1024000
 root    soft    nproc   unlimited
-#* soft nproc unlimited
+# nproc
+highgo    soft    nproc   2047
+highgo    hard    nproc   16384
 ```
 
 :warning: `nofile超过1048576的话，要先将sysctl的fs.nr_open设置为更大的值，并生效后才能继续设置nofile`
+
+## 配置检查
+
+```sh
+ulimit -a
+
+```

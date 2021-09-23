@@ -41,6 +41,7 @@ Unit File Commands:
   enable NAME...                  Enable one or more unit files
   disable NAME...                 Disable one or more unit files
 
+# 禁用
 systemctl status firewalld.service
 systemctl stop firewalld.service
 systemctl disable firewalld.service

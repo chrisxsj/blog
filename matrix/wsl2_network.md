@@ -45,23 +45,23 @@ wsl --shutdown ubuntu
 if !errorlevel! equ 0 (
     echo docker start success
     :: 看看我要的IP在不在
-    wsl -u root ip addr | findstr "192.168.80.172" > nul
+    wsl -u root ip addr | findstr "192.168.80.179" > nul
     if !errorlevel! equ 0 (
         echo wsl ip has set
     ) else (
         ::不在的话给安排上
-        wsl -u root ip addr add 192.168.8.172/24 broadcast 192.168.8.0 dev eth0 label eth0:1
-        echo set wsl ip success: 192.168.8.172
+        wsl -u root ip addr add 192.168.80.179/24 broadcast 192.168.8.0 dev eth0 label eth0:1
+        echo set wsl ip success: 192.168.80.179
     )
 
 
     ::windows作为wsl的宿主，在wsl的固定IP的同一网段也给安排另外一个IP
-    ipconfig | findstr "192.168.80.171" > nul
+    ipconfig | findstr "192.168.80.178" > nul
     if !errorlevel! equ 0 (
         echo windows ip has set
     ) else (
-        netsh interface ip add address "vEthernet (WSL)" 192.168.8.171 255.255.255.0
-        echo set windows ip success: 192.168.8.171
+        netsh interface ip add address "vEthernet (WSL)" 192.168.8.178 255.255.255.0
+        echo set windows ip success: 192.168.8.178
     )
 )
 pause

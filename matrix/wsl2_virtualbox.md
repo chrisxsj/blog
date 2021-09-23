@@ -16,6 +16,7 @@ wsl2中安装使用virtualbox
 
 ## 问题
 
+```sh
 [root@datanode2 ~]# virtualbox
 WARNING: The vboxdrv kernel module is not loaded. Either there is no module
          available for the current kernel (3.10.0-327.el7.x86_64) or it failed to
@@ -25,10 +26,14 @@ WARNING: The vboxdrv kernel module is not loaded. Either there is no module
 
          You will not be able to start VMs until this problem is fixed.
 
-解决方案
+```
 
+## 解决方案
+
+```sh
 yum install gcc perl make
 
 yum install kernel-devel
 
 rcvboxdrv setup
+```

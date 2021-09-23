@@ -31,7 +31,7 @@ This is a simple script which returns the number of Huge Pages required. Execute
 查看操作系统页面大小
 
 ```sh
-gepconf -a |grep PAGE_SIZE
+getconf -a |grep PAGE_SIZE
 ```
 
 :warning: 通常，内存超过64G，建议使用大页内存

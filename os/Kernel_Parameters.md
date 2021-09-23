@@ -37,8 +37,8 @@ vi kernel.sh
 #!/bin/bash
 page_size=`getconf PAGE_SIZE`
 phys_pages=`getconf _PHYS_PAGES`
-shmall=`expr $phys_pages \* 0.9`
-shmmax=`expr $phys_pages \* 0.6 \* $page_size`
+shmall=`echo "$phys_pages * 0.9" |bc`
+shmmax=`echo "$phys_pages * 0.6 * $page_size" |bc`
 
 # kernel内存使用。建议参数值比shared buffer大
 echo kernel.shmall = $shmall #此参数设置系统范围内共享内存总数量（以内存页PAGE_SIZE表示）。因此, SHMALL 始终大于(shmmax/PAGE_SIZE)。

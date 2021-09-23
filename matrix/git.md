@@ -52,7 +52,7 @@ cat ~/.ssh/id_rsa.pub
 
 ```sh
 git config --global user.email "xianshijie0@163.com"
-git config --global user.name "Chris"
+git config --global user.name "Chrisx"
 
 ```
 
