@@ -1,5 +1,21 @@
 
-# wsl2 network
+# wsl2_network
+
+**作者**
+
+Chrisx
+
+**日期**
+
+2021-05-12
+
+**内容**
+
+wsl2网络设置，设置固定iP
+
+----
+
+[toc]
 
 ## wsl2 ip
 
@@ -17,7 +33,6 @@ windows中可以使用localhost、127.0.0.1直接访问wsl2中的docker服务
 
 根据wsl在github上的issues中我们可以找到有人已经有办法解决了，原理是在启动系统的时候手动重新给win10 的vEthernet (WSL) 和 wsl2下的eth0 添加一个ipv4地址。
 那应该怎么做呢？
-根据wsl在github上的issues中我们可以找到有人已经有办法解决了，原理是在启动系统的时候手动重新给win10 的vEthernet (WSL) 和 wsl2下的eth0 添加一个ipv4地址。
 
 给wsl 中的ubuntu 设置ipv4 的ip 192.168.86.16，要在windows中访问wsl就用此ip
 
@@ -38,30 +53,30 @@ wsl2.bat
 setlocal enabledelayedexpansion
 
 ::不管三七二十一先停掉可能在跑的wsl实例
-wsl --shutdown ubuntu
+::wsl --shutdown ubuntu
 ::重新拉起来，并且用root的身份，启动ssh服务和docker服务
 ::wsl -u root service ssh start
 ::wsl -u root service docker start | findstr "Starting Docker" > nul
 if !errorlevel! equ 0 (
     echo docker start success
     :: 看看我要的IP在不在
-    wsl -u root ip addr | findstr "192.168.80.179" > nul
+    wsl -u root ip addr | findstr "192.168.6.11" > nul
     if !errorlevel! equ 0 (
         echo wsl ip has set
     ) else (
         ::不在的话给安排上
-        wsl -u root ip addr add 192.168.80.179/24 broadcast 192.168.8.0 dev eth0 label eth0:1
-        echo set wsl ip success: 192.168.80.179
+        wsl -u root ip addr add 192.168.6.11/24 broadcast 192.168.6.0 dev eth0 label eth0:1
+        echo set wsl ip success: 192.168.6.11
     )
 
 
     ::windows作为wsl的宿主，在wsl的固定IP的同一网段也给安排另外一个IP
-    ipconfig | findstr "192.168.80.178" > nul
+    ipconfig | findstr "192.168.6.9" > nul
     if !errorlevel! equ 0 (
         echo windows ip has set
     ) else (
-        netsh interface ip add address "vEthernet (WSL)" 192.168.8.178 255.255.255.0
-        echo set windows ip success: 192.168.8.178
+        netsh interface ip add address "vEthernet (WSL)" 192.168.6.9 255.255.255.0
+        echo set windows ip success: 192.168.6.9
     )
 )
 pause
