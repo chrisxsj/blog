@@ -34,8 +34,6 @@ $ gpinitstandby -n
 EXAMPLES
 *****************************************************
 
-
-
 Start an existing standby master host and synchronize the data with the 
 current primary master host: 
 

@@ -1,4 +1,4 @@
-# docker network
+# docker_network
 
 **作者**
 
@@ -66,7 +66,7 @@ docker网络类型如下
 1. 创建自定义网络
 
 ```sh
-docker network create --subnet=192.168.80.0/24 --gateway=192.168.80.254 subnet
+docker network create --subnet=192.168.8.0/24 --gateway=192.168.8.254 subnet
 
 docker network ls
 NETWORK ID     NAME        DRIVER       SCOPE
@@ -82,7 +82,7 @@ NETWORK ID     NAME        DRIVER       SCOPE
 如下两个示例
 
 ```sh
-docker run --name centos7.9 --net subnet --ip 192.168.80.41 -p 22:22 -itd centos:7.9.2009 /bin/bash
+docker run --name c79 --net subnet --ip 192.168.8.11 -p 1022:22 -p 5432:5432 -itd centos:7.9.2009 /bin/bash
 
 docker run --name  postgres13.2 --net subnet -v /opt/docker/postgres13.2:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres --ip 192.168.80.31 -p 5532:5432 -d postgres:13.2
 
@@ -93,12 +93,12 @@ docker run --name  postgres13.2 --net subnet -v /opt/docker/postgres13.2:/var/li
 一些应用程序，特别是遗留应用程序或监控网络流量的应用程序，希望直接连接到物理网络。在这种情况下，您可以使用macvlan网络驱动程序为每个容器的虚拟网络接口分配一个MAC地址，使其看起来像是直接连接到物理网络的物理网络接口。
 
 ```sh
-docker network create -d macvlan --subnet=192.168.8.0/24 --gateway=192.168.8.254 -o parent=eth0 mvnet
+docker network create -d macvlan --subnet=192.168.80.0/24 --gateway=192.168.80.254 -o parent=eth0 mvnet
 
-docker run --name=test -itd --net mvnet centos:7.9.2009 /bin/bash
+docker run --name=test -itd --net mvnet --ip 192.168.80.171  centos:7.9.2009 /bin/bash
 docker exec test ip addr show eth0
 docker exec -it test /bin/bash
 
 ```
 
-> 在宿主机内部可以使用192.168.80.31:5432连接数据库
+:warning: subnet网段需要与物理网段对应
