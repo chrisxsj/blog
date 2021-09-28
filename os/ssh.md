@@ -19,7 +19,7 @@ centos7.x ssh 允许root登录
 ## 安装
 
 ```sh
-yum install openssh-server
+yum install openssh-server openssh-clients
 
 ```
 

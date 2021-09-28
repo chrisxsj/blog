@@ -45,7 +45,7 @@ docker load < 20210910imaget11.tar   #镜像导入
 
 ```sh
 docker export 8cfba0c9a15f > 20210910containert11.tar   #容器导出
-docker import 20210910containert11.tar #容器导入
+docker import 20210910containert11.tar #容器导入,导入后会创建一个镜像，依据镜像启动容器
 
 ```
 

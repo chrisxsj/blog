@@ -43,8 +43,7 @@ rpm -q perl python tcl OpenSSL Kerberos OpenLDAP
 
 ```sh
 yum install make gcc gzip readline* zlib*
-rpm -q make gcc gzip readline readline-devel zlib zlib-devel
-
+yum install perl python tcl openssl openssl-devel kerberos openldap #可选
 ```
 
 suse参考[suse_readline](../os/suse_readline.md)
@@ -121,7 +120,7 @@ useradd -g postgres -m -s /bin/bash postgres
 **su - postgres**
 
 1) Configuration
-./configure --prefix=/opt/postgres --with-openssl
+./configure --prefix=/opt/postgres
 configure的常用配置参数
 -prefix=PREFIX指定安装路径，默认安装路径/usr/local/pgsql。
 -with-segsize=SEGSIZE设置段大小（Set the segment size），合理的调大有助于减少大表消耗。建议为2的幂值，更改需要initd。
@@ -154,6 +153,12 @@ If you built the world above, type instead:
 make install-world
 This also installs the documentation.
 
+**建议全部安装方式**
+
+```sh
+make world && make install-world
+```
+
 > 注意
 安装PostgreSQL插件，编译安装完成PostgreSQL二进制文件后，需要进一步编译PostgreSQL的自带插件，进入PostgreSQL源码文件中的contrib文件夹。如果没有编译安装扩展插件，只要当初用于编译pg的目录还在，就可以后期追加扩展插件.
 
@@ -161,12 +166,6 @@ This also installs the documentation.
 cd contrib
 gmake install
 执行完成后，扩展会将编译后的文件复制到$PGHOME/share/extension目录下。此时扩展并未安装到数据库中，如需要安装到数据库中，请参照《PostgreSQL插件安装和管理》。
-
-**建议全部安装方式**
-
-```sh
-make world && make install-world
-```
 
 ## Uninstallation
 

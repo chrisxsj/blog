@@ -50,3 +50,7 @@ systemctl start hgproxy.service
 psql -U sysdba -c 'select * from pg_stat_replication'   #110
 
 ```
+
+## hghac路径
+
+/opt/HighGo/tools/hghac/hghactl -c /opt/HighGo/tools/hghac/hghac-see.yaml list 
