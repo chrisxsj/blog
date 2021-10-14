@@ -73,3 +73,7 @@ postgres=# SELECT pg_walfile_name_offset('0/D015DF8'),( x'015DF8' )::int AS offs
 :warning: 请注意，上面的示例只是展示这个概念，但是最好使用函数pg_walfile_name() 从LSN获取确切的WAL文件名，因为WAL切换可能导致LSN “手动解码” 的错误结果。
 
 总而言之，给定一个特定的LSN，数据库能清楚地知道（而且必须清楚地知道）LSN所指的WAL文件段，以及在该文件中可以找到数据的确切偏移量。
+
+## LSN在集群中比较大小
+
+因为wal是不断累加的，因此lsn也是不断增大的。因此lsn越大，其数据越新。

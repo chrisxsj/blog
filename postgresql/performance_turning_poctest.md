@@ -79,9 +79,15 @@ analyze verbose;
 关闭安全配置
 
 ```sql
+v45x之前
 \c qh syssso
 select set_secure_level ('off');
 SELECT show_secure_param();
+
+v45x之后
+
+select set_secure_param('hg_sepofpowers','off');
+
 
 ```
 

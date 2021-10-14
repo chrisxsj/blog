@@ -67,3 +67,5 @@ sudo vi /etc/apt/sources.list   #替换源
 
 sudo apt-get update&& apt-get upgrade   #更新软件列表和系统软件包
 ```
+
+## 错误

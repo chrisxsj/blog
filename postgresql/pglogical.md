@@ -150,6 +150,12 @@ select pglogical.replication_set_remove_table ('default','test_pgl3');
 
 ```
 
+## forward_origins
+
+forward_origins – array of origin names to forward, currently only supported values are empty array meaning don’t forward any changes that didn’t originate on provider node, or “{all}” which means replicate all changes no matter what is their origin, default is “{all}”
+
+表示不转发非源于提供程序节点的任何更改。实现双向同步。
+
 ## 问题
 
 报错信息

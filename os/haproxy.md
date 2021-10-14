@@ -53,7 +53,6 @@ HAProxy维护一个内部路由表。在本博客中，我们将了解使用Post
 * xinetd服务守护程序。
 * HAProxy：它维护路由机制。
 
-
 ref[Configure HAProxy with PostgreSQL Using Built-in pgsql-check](https://www.percona.com/blog/2019/11/08/configure-haproxy-with-postgresql-using-built-in-pgsql-check/)
 
 在上一篇关于使用Xinetd配置HAProxy的博客中，我们讨论了使用PostgreSQL配置HAProxy的传统方法之一。在这里，我们简要地提到了HAProxy的内置pgsql检查健康检查选项的局限性。它缺乏检测和区分主备用和热备用的功能。它尝试建立与数据库实例的连接，如果连接请求正在进行，则将被视为成功检查，并且没有检查当前角色（主角色或备用角色）的规定。

@@ -58,7 +58,7 @@ ref [tuple_and_deadtuple](./tuple_and_deadtuple.md)
 
 FSM都以后缀fsm存储，在需要时他们会被加载到共享内存中。
 
-插件pg_freespacemap
+可使用插件pg_freespacemap查看表中页面的使用情况。数据库会自动判断使用那些有空闲的页面存储元祖数据。
 
 ### 提交日志
 
