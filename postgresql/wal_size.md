@@ -21,7 +21,23 @@ ref [WAL Configuration](https://www.postgresql.org/docs/13/wal-configuration.htm
 
 [toc]
 
-## 参数
+## wal写放大
+
+原因
+
+1. 全页写
+2. 频繁CTID变更
+3. 大量DML操作
+
+解决
+
+1. 增加checkpoint间隔，减少全页写次数
+2. 减少dml操作
+3. wal压缩
+
+## WAL空间大小
+
+参数
 
 通常情况下，pg_wal目录中的 WAL 段文件数量取决于min_wal_size、max_wal_size以及在之前的检查点周期中产生的 WAL 数量。
 

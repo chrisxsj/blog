@@ -10,7 +10,8 @@ Steps To Shutdown(stop)/Startup(start) CRS, OHAS, ASM, RDBMS & ACFS Services on 
  1 stop application
 
 
-3 ps -ef | grep "LOCAL=NO"| grep -v grep |awk '{print "kill -9 " $2}' 
+3 
+ps -ef |grep "LOCAL=NO"| grep -v grep |awk '{print "kill -9 " $2}'
 ps -ef | grep "LOCAL=NO"| grep -v grep |awk '{print "kill -9 " $2}' |sh
 
 2 make checkpoint
