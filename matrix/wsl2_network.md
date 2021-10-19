@@ -49,8 +49,18 @@ netsh interface ip add address "vEthernet (WSL)" 192.168.80.11 255.255.255.0
 wsl2.bat
 
 ```bat
-@echo off
-setlocal enabledelayedexpansion
+@ECHO OFF
+setlocal EnableDelayedExpansion
+color 3e
+title 添加服务配置
+
+::自动以管理员身份运行批处理(bat)文件
+PUSHD %~DP0 & cd /d "%~dp0"
+%1 %2
+mshta vbscript:createobject("shell.application").shellexecute("%~s0","goto :runas","","runas",1)(window.close)&goto :eof
+:runas
+  
+::填写自己的脚本
 
 ::不管三七二十一先停掉可能在跑的wsl实例
 ::wsl --shutdown ubuntu
@@ -79,7 +89,11 @@ if !errorlevel! equ 0 (
         echo set windows ip success: 192.168.6.9
     )
 )
-pause
+  
+echo 执行完毕,任意键退出
+  
+pause >nul
+exit
 
 ```
 
