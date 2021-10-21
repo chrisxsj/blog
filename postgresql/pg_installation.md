@@ -212,12 +212,34 @@ source ~/.bash_profile
 Before you can do anything, you must initialize a database storage area on disk. We call this a database cluster. (The SQL standard uses the term catalog cluster.) A database cluster is a collection of databases that is managed by a single instance of a running database server. After initialization, a database cluster will contain a database named postgres, which is meant as a default database for use by utilities, users and third party applications. The database server itself does not require the postgres database to exist, but many external utility programs assume it exists. Another database created within each cluster during initialization is called template1. As the name suggests, this will be used as a template for subsequently created databases; it should not be used for actual work.
 
 ```sh
-initdb -E UTF8 -D /opt/postgres/data --auth-host=md5 --auth-local=trust --wal-segsize=64 --locale=C -U postgres -W
+initdb -E UTF8 -D $PGDATA --auth-host=md5 --auth-local=trust --wal-segsize=64 --locale=C -U postgres -W
 ```
 
 > 如果配置了PGDATA可忽略 -D
 
-3. Starting the Database Server
+<!--
+hgdb-see
+initdb -D $PGDATA -e sm4 -A sm3 -c "echo 12345678" > /opt/initdb.log
+//-e选项表示启用FDE功能使用国密算法sm4进行数据加密
+//-c选项表示输入一个命令，形成密钥的一部分
+// > /opt/HighGo4.5.2-see/bin/initdb.log是将初始化过程的日志信息转存到文件中
+初始化命令可以针对不同需求和安全级别来进行，例如有国密算法加密要求的
+开启-e SM4数据加密，有国密算法连接认证要求的开启-A SM3。-e支持AES128/AES-256/SM4，-A支持MD5/SM3。数据加密下边介绍几种情况供参考。
+1. initdb
+此为默认情况，使用sm3认证方式，不开启全库数据加密。
+2. initdb -A md5
+使用MD5认证方式；不开启全库数据加密。
+3. initdb -A sm3 -e sm4 -c "echo 12345678"
+使用SM3认证方式；开启全库数据加密，加密方式：SM4。
+4. initdb -A md5 -e AES-256 -c "echo 12345678" -D data4
+使用MD5认证方式；开启全库数据加密，加密方式：AES-256。
+
+cp $HGDB_HOME/etc/server.* $PGDATA
+chmod 0600 $PGDATA/server.*
+pg_ctl start
+-->
+
+1. Starting the Database Server
 
 Before anyone can access the database, you must start the database server. The database server program is called postgres. The postgres program must know where to find the data it is supposed to use. This is done with the -D option. Thus, the simplest way to start the server is:
 

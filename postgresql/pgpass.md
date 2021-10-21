@@ -36,7 +36,7 @@ On Unix systems, the permissions on a password file must disallow any access to 
 touch ~/.pgpass
 chmod 0600 ~/.pgpass
 
-cat ~/.pgpass
+vi ~/.pgpass
 
 #hostname:port:database:username:password
 127.0.0.1:5433:*:repuser:repuser
