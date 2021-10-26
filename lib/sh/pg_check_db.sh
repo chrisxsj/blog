@@ -173,7 +173,8 @@ function pg_space_usage () {
       ) AS all_tables
       ORDER BY total_size DESC
   ) AS pretty_sizes limit 10;'
-
+  done
+  
   echo "###### 表大小（TOP10）"
   for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$)'`
   do

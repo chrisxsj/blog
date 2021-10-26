@@ -1,10 +1,26 @@
 # copy
 
-[toc]
+**作者**
+
+Chrisx
+
+**日期**
+
+2021-10-25
+
+**内容**
+
+COPY — 在一个文件和一个表之间移动数据。COPY to 将表的内容复制到文件中, 而 COPY FROM 将数据从文件复制到表中
+
+<!--
+最大的优势就是速度。优势在让我们跳过shared buffer,wal buffer。直接写文件。
+-->
 
 ref[copy](https://www.postgresql.org/docs/12/sql-copy.html)
 
-COPY — 在一个文件和一个表之间移动数据。COPY to 将表的内容复制到文件中, 而 COPY FROM 将数据从文件复制到表中
+----
+
+[toc]
 
 ## copy使用
 
@@ -85,5 +101,3 @@ copy public.test_copy to '/tmp/test_copy_all.csv' (FORMAT csv, DELIMITER ',', es
 copy (select * from public.test_copy where sal>2000) to '/tmp/test_copy_2000.csv';
 
 ```
-
-

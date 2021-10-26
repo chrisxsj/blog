@@ -101,6 +101,7 @@ pg_dump -h host1 dbname | psql -h host2 dbname
 ```
 
 * pg_restore可以在两种模式下操作。如果指定了一个数据库名称，pg_restore会连接那个数据库并且把归档内容直接恢复到该数据库中。否则，会创建一个脚本,等效于pg_dump的纯文本输出格式.
+* pg_restore可以细粒度控制
 
 > 注意，一旦完成恢复，在每个数据库上运行ANALYZE操作
 

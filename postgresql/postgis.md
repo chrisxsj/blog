@@ -1,10 +1,177 @@
 # postgis
 
-reference [postgis documentation](http://postgis.net/documentation/)
+**作者**
 
-## 下载
+Chrisx
+
+**日期**
+
+2021-10-25
+
+**内容**
+
+postgis安装使用
+
+reference [postgis](http://postgis.net/documentation/)
+
+reference [postgis download](https://postgis.net/source/)
+
+----
+
+[toc]
+
+## linux安装
 
 安装包有源码编译安装包（Compiling from Source）和二进制程序安装包(Binary Installers)。不同的安装包有不同的方式。
+下面以源码安装为例
+
+1. 获取源码包
+reference [postgis download](https://postgis.net/source/)
+
+2. 安装需求
+
+Required
+
+* pg9.6或更高版本的数据库
+* GNU C compiler (gcc)
+* GNU Make (gmake or make)
+* Proj4 reprojection library. Proj4 4.9 or above is required.  [http://trac.osgeo.org/proj/](http://trac.osgeo.org/proj/)
+* GEOS geometry library, version 3.6 or greater,[http://trac.osgeo.org/geos/](http://trac.osgeo.org/geos/)
+* LibXML2, version 2.5.x or higher. http://xmlsoft.org/downloads.html
+* JSON-C, version 0.9 or higher. [https://github.com/json-c/json-c/releases/](https://github.com/json-c/json-c/releases/)
+* GDAL, version 2+ is required 3+ is preferred.[http://trac.osgeo.org/gdal/wiki/DownloadSource](http://trac.osgeo.org/gdal/wiki/DownloadSource)
+* If compiling with PostgreSQL+JIT, LLVM version >=6 is required [https://trac.osgeo.org/postgis/ticket/4125](https://trac.osgeo.org/postgis/ticket/4125)
+
+Optional
+
+参考文档[install](https://postgis.net/docs/postgis_installation.html#install_short_version)
+
+满足以上需求进行安装前的配置
+
+```sh
+安装数据库
+
+安装依赖
+
+yum install -y gcc make libxml2  libxml2-devel
+
+安装 proj-5.1.0.tar.gz
+cd proj-5.1.0
+./configure
+make
+sudo make install
+
+安装 geos-3.6.2.tar.bz2
+cd geos-3.6.2/
+./configure
+make
+sudo make install
+
+
+安装 gdal-2.3.0.tar.gz
+cd gdal-2.3.0/
+./configure
+make
+sudo make install
+
+=================
+
+可选
+
+安装 boost_1_67_0.tar.gz
+cd boost_1_67_0
+./bootstrap.sh
+sudo ./b2 install
+
+安装 gmp-6.1.2.tar.lz
+cd gmp-6.1.2/
+./configure
+make
+sudo make install
+
+安装 mpfr-4.0.1.tar.gz
+cd mpfr-4.0.1/
+./configure
+make
+sudo make install
+
+安装 CGAL-4.7.tar.gz
+cd CGAL-4.7
+cmake .
+make
+sudo make install
+
+安装 SFCGAL-1.2.2.zip
+cd SFCGAL-1.2.2/
+cmake .
+make
+sudo make install
+
+
+```
+
+2.编译安装插件
+
+假设数据库目录为：/home/highgo/highgo/database/4.3.2/ 
+
+postgis-2.4.4.tar.gz
+
+export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
+sudo cp -rf -d /usr/local/lib64/libSFCGAL.so* /usr/local/lib/
+cd postgis-2.4.4
+./configure
+make
+sudo make install
+
+ogr_fdw 插件： https://github.com/pramsey/pgsql-ogr-fdw
+
+export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
+cd pgsql-ogr-fdw-1.0.6
+make
+make install
+
+pgrouting-2.6.0
+export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
+cd pgrouting-2.6.0/
+mkdir build
+cd build/
+cmake ..
+make make install
+
+pointcloud
+export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin 
+./autogen.sh
+./configure
+make
+make install
+
+3.拷贝库文件
+
+#!/bin/bash
+LIBPATH="/home/highgo/highgo/database/4.3.2/lib"
+cp -d /usr/local/lib/libgeos* $LIBPATH
+cp -d /usr/local/lib/libgeos_c* $LIBPATH
+cp -d /usr/local/lib/libproj* $LIBPATH
+cp -d /usr/local/lib/libSFCGAL* $LIBPATH
+cp -d /usr/local/lib/libCGAL* $LIBPATH
+cp -d /usr/local/lib/libmpfr* $LIBPATH
+cp -d /usr/local/lib/libgdal* $LIBPATH
+cp -d /usr/local/lib/libboost_date_time* $LIBPATH
+cp -d /usr/local/lib/libboost_thread* $LIBPATH
+cp -d /usr/local/lib/libboost_system* $LIBPATH
+cp -d /usr/local/lib/libboost_serialization* $LIBPATH
+
+4.测试
+create extension postgis;
+create extension postgis_topology;
+create extension postgis_sfcgal;
+create extension address_standardizer;
+create extension fuzzystrmatch;
+create extension postgis_tiger_geocoder;
+create extension pgrouting;
+create extension pointcloud;
+create extension pointcloud_postgis;
+create extension ogr_fdw;
 
 ## win安装
 
@@ -83,123 +250,3 @@ create extension postgis;
 
 ```
 
-## linux安装
-
-1.安装依赖
-yum install -y bison flex perl-ExtUtils-Embed readline-devel zlib-devel openssl-devel libxml2-devel libxslt-devel uuid-devel openldap-devel python-devel krb5-devel tcl-devel pam-devel gettext-devel gcc gcc-c++ gtk2-devel automake m4 json-c-devel.x86_64
-
-安装 cmake-3.2.3.tar.gz
-cd cmake-3.2.3/
-./configure
-gmake
-sudo make install
-
-安装 boost_1_67_0.tar.gz
-cd boost_1_67_0
-./bootstrap.sh
-sudo ./b2 install
-
-安装 gmp-6.1.2.tar.lz
-cd gmp-6.1.2/
-./configure
-make
-sudo make install
-
-安装 mpfr-4.0.1.tar.gz
-cd mpfr-4.0.1/
-./configure
-make
-sudo make install
-
-安装 CGAL-4.7.tar.gz
-cd CGAL-4.7
-cmake .
-make
-sudo make install
-
-安装 SFCGAL-1.2.2.zip
-cd SFCGAL-1.2.2/
-cmake .
-make
-sudo make install
-
-安装 gdal-2.3.0.tar.gz
-cd gdal-2.3.0/
-./configure
-make
-sudo make install
-
-安装 geos-3.6.2.tar.bz2
-cd geos-3.6.2/
-./configure
-make
-sudo make install
-
-安装 proj-5.1.0.tar.gz
-cd proj-5.1.0
-./configure
-make
-sudo make install
-
-2.编译安装插件
-
-假设数据库目录为：/home/highgo/highgo/database/4.3.2/ 
-
-postgis-2.4.4.tar.gz
-
-export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
-sudo cp -rf -d /usr/local/lib64/libSFCGAL.so* /usr/local/lib/
-cd postgis-2.4.4
-./configure
-make
-sudo make install
-
-ogr_fdw 插件： https://github.com/pramsey/pgsql-ogr-fdw
-
-export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
-cd pgsql-ogr-fdw-1.0.6
-make
-make install
-
-pgrouting-2.6.0
-export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin
-cd pgrouting-2.6.0/
-mkdir build
-cd build/
-cmake ..
-make make install
-
-pointcloud
-export PATH=$PATH:/home/highgo/highgo/database/4.3.2/bin 
-./autogen.sh
-./configure
-make
-make install
-
-3.拷贝库文件
-
-#!/bin/bash
-LIBPATH="/home/highgo/highgo/database/4.3.2/lib"
-cp -d /usr/local/lib/libgeos* $LIBPATH
-cp -d /usr/local/lib/libgeos_c* $LIBPATH
-cp -d /usr/local/lib/libproj* $LIBPATH
-cp -d /usr/local/lib/libSFCGAL* $LIBPATH
-cp -d /usr/local/lib/libCGAL* $LIBPATH
-cp -d /usr/local/lib/libmpfr* $LIBPATH
-cp -d /usr/local/lib/libgdal* $LIBPATH
-cp -d /usr/local/lib/libboost_date_time* $LIBPATH
-cp -d /usr/local/lib/libboost_thread* $LIBPATH
-cp -d /usr/local/lib/libboost_system* $LIBPATH
-cp -d /usr/local/lib/libboost_serialization* $LIBPATH
-
-4.测试
-create extension postgis;
-create extension postgis_topology;
-create extension postgis_sfcgal;
-create extension address_standardizer;
-create extension fuzzystrmatch;
-create extension postgis_tiger_geocoder;
-create extension pgrouting;
-create extension pointcloud;
-create extension pointcloud_postgis;
-create extension ogr_fdw;

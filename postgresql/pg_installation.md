@@ -219,7 +219,7 @@ initdb -E UTF8 -D $PGDATA --auth-host=md5 --auth-local=trust --wal-segsize=64 --
 
 <!--
 hgdb-see
-initdb -D $PGDATA -e sm4 -A sm3 -c "echo 12345678" > /opt/initdb.log
+initdb -D $PGDATA -e sm4 -A md5 -c "echo 12345678" > /opt/initdb.log
 //-e选项表示启用FDE功能使用国密算法sm4进行数据加密
 //-c选项表示输入一个命令，形成密钥的一部分
 // > /opt/HighGo4.5.2-see/bin/initdb.log是将初始化过程的日志信息转存到文件中
