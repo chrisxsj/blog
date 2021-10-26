@@ -52,6 +52,7 @@ PARALLEL : Same as "WRITER=DIRECT" and "MULTI_PROCESS=YES". If PARALLEL is speci
 其他选项参考[pg_bulkload](http://ossc-db.github.io/pg_bulkload/pg_bulkload.html)
 
 2. 使用控制文件
+
 pg_bulkload sample_csv.ctl
 
 load选项可以写到控制文件中。参考[pg_bulkload](http://ossc-db.github.io/pg_bulkload/pg_bulkload.html)

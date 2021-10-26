@@ -50,7 +50,7 @@ psql
 alter system set shared_preload_libraries=pg_qualstats;
 pg_ctl restart
 CREATE EXTENSION pg_qualstats;
-select * from pg_qualstats;
+
 ```
 
 配置参数
@@ -65,7 +65,14 @@ select * from pg_qualstats;
 参考手册[Configuration](https://github.com/powa-team/pg_qualstats)
 
 ```sql
+alter system set pg_qualstats.enabled='true';
+alter system set pg_qualstats.max=2000;
 alter system set pg_qualstats.sample_rate=1;
+```
+
+```sql
+select * from pg_qualstats;
+
 ```
 
 ## pg_qualstats_index_advisor
