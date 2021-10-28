@@ -23,8 +23,10 @@ reference [postgis download](https://postgis.net/source/)
 ## linux安装
 
 安装包有源码编译安装包（Compiling from Source）和二进制程序安装包(Binary Installers)。不同的安装包有不同的方式。
-下面以源码安装为例
+下面以源码安装为例，源码安装太难了！
 
+
+<!--
 1. 获取源码包
 reference [postgis download](https://postgis.net/source/)
 
@@ -53,23 +55,23 @@ Optional
 
 安装依赖
 
-yum install -y gcc make libxml2  libxml2-devel
+yum install -y gcc make libxml2  libxml2-devel gcc-c++ sqlite sqlite-devel cmake swig ruby python
 
-安装 proj-5.1.0.tar.gz
-cd proj-5.1.0
+安装 proj-5.2.0.tar.gz （建议安装proj-5.x，更高版本需要安装高版本sqlite等依赖包）
+cd proj-5.2.0
 ./configure
 make
 sudo make install
 
-安装 geos-3.6.2.tar.bz2
-cd geos-3.6.2/
+安装 geos-3.6.5.tar.bz2 （建议安装geos-3.6.x，更高版本需要安装高版本cmake等依赖包）
+cd geos-3.6.5/
 ./configure
 make
 sudo make install
 
 
-安装 gdal-2.3.0.tar.gz
-cd gdal-2.3.0/
+安装 gdal-2.4.4.tar.gz  （建议安装geos-2.x，更高版本需要安装高版本proj等依赖包）
+cd gdal-2.4.4
 ./configure
 make
 sudo make install
@@ -172,6 +174,7 @@ create extension pgrouting;
 create extension pointcloud;
 create extension pointcloud_postgis;
 create extension ogr_fdw;
+-->
 
 ## win安装
 

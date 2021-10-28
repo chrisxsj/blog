@@ -23,8 +23,8 @@ Chrisx
 ```sh
 ## Same thing without a password--在这行下面添加
 # %wheel    ALL=(ALL)   NOPASSWD: ALL
-highgo  ALL=(ALL)       NOPASSWD: ALL
-%highgo  ALL=(ALL)       NOPASSWD: ALL
+highgo      ALL=(ALL)       NOPASSWD: ALL
+%highgo     ALL=(ALL)       NOPASSWD: ALL
 ```
 
 测试
