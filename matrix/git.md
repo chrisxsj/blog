@@ -77,8 +77,8 @@ git init    #git初始化
 git add .
 git commit -m 'init'
 git remote add gitee git@gitee.com:chrisxian/imagehost.git    #设置remote地址
-git branch --set-upstream-to=gitee/master #关联本地 master 到远程 master
-git pull gitee --allow-unrelated-histories #pull远程仓库的内容，更新本地仓库，使用–allow-unrelated-histories忽略本地仓库和远程仓库的无关性，强行合并（关键）：
+git branch --set-upstream-to=gitee/main #关联本地 master 到远程 master
+git pull gitee main --allow-unrelated-histories #pull远程仓库的内容，更新本地仓库，使用–allow-unrelated-histories忽略本地仓库和远程仓库的无关性，强行合并（关键）：
 git push --set-upstream gitee main
 ```
 
