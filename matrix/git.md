@@ -60,26 +60,51 @@ git config --global user.name "Chrisx"
 
 4. 使用
 
-clone仓库
+
+A simple command-line tutorial:
+
+Git global settings:
 
 ```sh
-git clone git@gitee.com:chrisxian/blog.git 
-# clone的自动关联远程仓库
-# 只是为了clone小的话，用--depth=1只获取最新的commit即可
+git config --global user.name "Chrisx"
+git config --global user.email "xianshijie0@163.com"
+
 ```
 
-创建本地仓库，命令示例
+Create git repository:
 
 ```sh
-mkdir imagehost # 创建目录
-git init    #git初始化
-#本地初始化的需要关联远程仓库
-git add .
-git commit -m 'init'
-git remote add gitee git@gitee.com:chrisxian/imagehost.git    #设置remote地址
-git branch --set-upstream-to=gitee/main #关联本地 master 到远程 master
-git pull gitee main --allow-unrelated-histories #pull远程仓库的内容，更新本地仓库，使用–allow-unrelated-histories忽略本地仓库和远程仓库的无关性，强行合并（关键）：
-git push --set-upstream gitee main
+mkdir blog
+cd blog
+git init
+touch README.md
+git add README.md
+git commit -m "first commit"
+git remote add origin git@gitee.com:chrisxian/blog.git
+git push -u origin master
+
+```
+
+Existing repository?
+
+```sh
+cd existing_git_repo
+git remote add origin git@gitee.com:chrisxian/blog.git
+git push -u origin master
+
+```
+
+## 常用命令
+
+```sh
+git config -l   #查看配置
+git status  #查看状态
+git clone git@gitee.com:chrisxian/blog.git # clone的自动关联远程仓库，只是为了clone小的话，用--depth=1只获取最新的commit即可
+git branh -a    #查看分支
+git remote -v   # 查看remote
+git branch --delete --remotes <remote>/<branch> #删除追踪分支
+git push -u origin master   #origin是remote名字，master是本地分支名字
+
 ```
 
 ## git两个仓库
