@@ -112,8 +112,8 @@ github  git@github.com:chrisxsj/blog.git (push)
 ```sh
 git add . #将工作区的“新建/修改”添加到暂存区
 git commit -m "提交日志" #将暂存区的内容提交到本地库
-git push -u github master  #推送到 GitHub
-git push -u gitee master   #推送到 Gitee
+git push -u gitee  #推送到 Gitee
+git push -u github #推送到 GitHub
 
 ```
 
