@@ -1,7 +1,11 @@
 # blog
 
 #### Description
+<<<<<<< HEAD
 Postgresql小屋
+=======
+my blog
+>>>>>>> 9f0bea893d53c1ca54da3528deeb31be6fcfcf6e
 
 #### Software Architecture
 Software architecture description
