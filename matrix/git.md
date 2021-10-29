@@ -76,6 +76,7 @@ git init    #git初始化
 #本地初始化的需要关联远程仓库
 git remote add origin git@gitee.com:chrisxian/imagehost.git    #设置remote地址
 git branch --set-upstream-to=origin/master #关联本地 master 到远程 master
+git pull origin master --allow-unrelated-histories #pull远程仓库的内容，更新本地仓库，使用–allow-unrelated-histories忽略本地仓库和远程仓库的无关性，强行合并（关键）：
 git pull origin master  #获取远程仓库master分支上的内容
 ```
 
@@ -109,8 +110,8 @@ github  git@github.com:chrisxsj/blog.git (push)
 ```sh
 git add . #将工作区的“新建/修改”添加到暂存区
 git commit -m "提交日志" #将暂存区的内容提交到本地库
-git push github master  #推送到 GitHub
-git push gitee master   #推送到 Gitee
+git push -u github master  #推送到 GitHub
+git push -u gitee master   #推送到 Gitee
 
 ```
 
