@@ -79,6 +79,43 @@ git branch --set-upstream-to=origin/master #关联本地 master 到远程 master
 git pull origin master  #获取远程仓库master分支上的内容
 ```
 
+## git两个仓库
+
+### 将本地仓库与 Gitee 和 GitHub 两个远程库关联
+
+如果原本只有 GitHub 一个远程库，则要注意，git 给远程库起的默认名称是 origin，需要用不同的名称来标识不同的远程库（GitHub & Gitee），则先删除
+
+```sh
+git remote rm origin    #删除已关联的名为 origin 的远程库
+git remote add github 远程库地址    #先关联GitHub的远程库.注意，远程库的名称叫 github，不叫 origin 了。
+git remote add gitee 远程库地址 #再关联 Gitee 的远程库
+
+```
+
+查看远程库信息，可以看到两个远程库
+
+```sh
+git remote -v
+chrisx@hg-cx:/opt/git/blog$ git remote -v
+gitee   git@gitee.com:chrisxian/blog.git (fetch)
+gitee   git@gitee.com:chrisxian/blog.git (push)
+github  git@github.com:chrisxsj/blog.git (fetch)
+github  git@github.com:chrisxsj/blog.git (push)
+
+```
+
+### 同步更新
+
+```sh
+git add . #将工作区的“新建/修改”添加到暂存区
+git commit -m "提交日志" #将暂存区的内容提交到本地库
+git push -u github master  #推送到 GitHub
+git push -u gitee master   #推送到 Gitee
+
+```
+
+:warning: 如果permission denied（publickey），则需要在github或gitee中提供本地git的ssh key；GitHub添加SSH key
+
 ## vscode管理
 
 安装完git后，可以使用vscode直接管理gitee仓库
