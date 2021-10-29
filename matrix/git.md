@@ -60,7 +60,7 @@ git config --global user.name "Chrisx"
 
 4. 使用
 
-colone仓库
+clone仓库
 
 ```sh
 git clone git@gitee.com:chrisxian/blog.git 
@@ -78,9 +78,6 @@ git remote add  origin git@gitee.com:chrisxian/imagehost.git    #设置remote地
 git branch --set-upstream-to=origin/master #关联本地 master 到远程 master
 git pull origin master  #获取远程仓库master分支上的内容
 ```
-
-
-
 
 ## vscode管理
 
