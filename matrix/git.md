@@ -140,6 +140,10 @@ git commit -m "提交日志" #将暂存区的内容提交到本地库
 git push -u gitee  #推送到 Gitee
 git push -u github #推送到 GitHub
 
+git config branch.master.remote gitee   # 设置默认分支,可通过git config -a查看
+or
+git config branch.main.remote gitee
+
 ```
 
 :warning: 如果permission denied（publickey），则需要在github或gitee中提供本地git的ssh key；GitHub添加SSH key
