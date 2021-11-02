@@ -24,7 +24,7 @@ tail -f  /highgo/patroni.log
 
 ```
 
-## 重做备库
+## 重做备库步骤
 
 ```sh
 # 确认主库正常
@@ -37,7 +37,8 @@ ps -ef |grep post   #如有进程，kill
 mv /opt/HighGo456-see/data /opt/HighGo456-see/data.bak
 systemctl start hghac.service
 systemctl start hgproxy.service
-
+# 检查状态
+/opt/HighGo456-see/tools/hghac/hghactl  -c /opt/HighGo456-see/tools/hghac/hghac.yaml list
 ```
 
 ## 查看集群状态
@@ -53,4 +54,5 @@ psql -U sysdba -c 'select * from pg_stat_replication'   #110
 
 ## hghac路径
 
+find /opt/HighGo -name hghactl
 /opt/HighGo/tools/hghac/hghactl -c /opt/HighGo/tools/hghac/hghac-see.yaml list 
