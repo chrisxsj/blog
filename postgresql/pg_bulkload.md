@@ -99,7 +99,7 @@ Don't use "WRITER=PARALLE"
 ```sh
 rpm -q postgresqlxx-devel pam-devel make gcc gzip readline readline-devel zlib zlib-devel
 
-yum install postgresqlxx-devel pam-devel make gcc gzip readline readline-devel zlib zlib-devel
+yum install postgresqlxx-devel pam-devel make gcc gzip readline readline-devel zlib zlib-devel openssl openssl-devel
 
 tar -zxvf pg_bulkload-3.1.19.tar.gz
 cd pg_bulkload-3.1.19/
