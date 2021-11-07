@@ -77,8 +77,6 @@ Create git repository:
 mkdir blog
 cd blog
 git init
-touch README.md
-git add README.md
 git commit -m "first commit"
 git remote add origin git@gitee.com:chrisxian/blog.git
 git push -u origin master
