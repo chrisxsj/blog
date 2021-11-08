@@ -60,7 +60,6 @@ git config --global user.name "Chrisx"
 
 4. 使用
 
-
 A simple command-line tutorial:
 
 Git global settings:
