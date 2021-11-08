@@ -50,8 +50,15 @@ vi ~/.pgpass
 在微软的 Windows 上该文件被命名为%APPDATA%\postgresql\pgpass.conf（其中%APPDATA%指的是用户配置中的应用数据子目录）。另外，可以使用连接参数passfile或者环境变量PGPASSFILE指定一个口令文件。
 
 windows上密码文件的使用
+
 1. D盘创建密码文件pgpass.conf
+
+```powershell
 #hostname:port:database:username:password
 127.0.0.1:5433:*:repuser:repuser
+
+```
+
 2. 配置环境变量PGPASSFILE，参数值指定pgpass.conf文件路径
 
+:warning: 如果不生效就使用环境变量PGPASSWORD
