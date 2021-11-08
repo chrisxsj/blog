@@ -46,27 +46,16 @@ ref [设置 WSL 开发环境的最佳做法](https://docs.microsoft.com/zh-cn/wi
 
 ## 其他
 
-### WSL 2 和其他第三方虚拟化工具兼容性
+### wsl 指定的服务未安装
 
-ref[WSL 2 和其他第三方虚拟化工具](https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-faq)
-ref[Windows 10 (2004) 启用wsl2, 并与VirtualBox 6.0+共存](https://blog.csdn.net/qq_36992069/article/details/104750248?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control)
+执行wsl命令是提示，指定的服务未安装。一个奇怪的bug
 
-1. 前提要求
+1. 先卸载wsl
+卸载 windows subsystem for linux update
 
-Windows 版本: 2004+
-VirtualBox 版本: 6.0+
-CPU启用虚拟化
-注 : 本文中提到的命令一般都需要管理员权限
-
-2. VirtualBox启用hyper-v支持（vbox新版本已经支持，无需修改）
-
-指定vbox下的虚拟系统开启这个功能
-./VBoxManage.exe setextradata "<虚拟机名字>" "VBoxInternal/NEM/UseRing0Runloop" 0
-
-或指定vbox所有虚拟系统开启
-./VBoxManage.exe setextradata global "VBoxInternal/NEM/UseRing0Runloop" 0
-
-VBoxManage.exe setextradata global "VBoxInternal/NEM/UseRing0Runloop" 0
+2. 重新安装一下
+ref [旧版 WSL 的手动安装步骤](https://docs.microsoft.com/zh-cn/windows/wsl/install-manual)
+步骤 4 - 下载 Linux 内核更新包
 
 ### wsl2与win相互访问文件
 
@@ -111,24 +100,3 @@ apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
 
 apt-get check                       // 检查是否有损坏的依赖
 
-### apt-get update返回NO_PUBKEY错误的解决方法
-
-错误代码：
-
-
-复制代码代码如下:
-
-W: GPG error: http://security.ubuntu.com trusty-security Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 40976EAF437D05B5 NO_PUBKEY 3B4FE6ACC0B21F32
-
-运行如下命令解决
-
-复制代码代码如下:
-
-apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32
-apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 40976EAF437D05B5
-
-实际上类似的问题无论Key是什么只需要使用相同的代码替换到相对的Key的位置即可。
-
-### Typora+PicGo+Gitee+坚果云实现Win+Linux+手机端完美Markdown云笔记套件
-
-https://blog.csdn.net/Todobot/article/details/105667867?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-4
