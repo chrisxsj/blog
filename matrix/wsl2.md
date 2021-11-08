@@ -15,13 +15,38 @@ Chrisx
 
 ref[适用于 Linux 的 Windows 子系统文档](https://docs.microsoft.com/zh-cn/windows/wsl/)
 
-reference [WSL doc](https://docs.microsoft.com/en-us/windows/wsl/)
-
 ----
 
 [toc]
 
-## WSL 2 和其他第三方虚拟化工具兼容性
+## 安装
+
+ref [安装wsl](https://docs.microsoft.com/zh-cn/windows/wsl/install)
+
+```powershell
+PS C:\Users\xsj> wsl --install
+正在安装: 虚拟机平台
+已安装 虚拟机平台。
+正在安装: 适用于 Linux 的 Windows 子系统
+已安装 适用于 Linux 的 Windows 子系统。
+正在下载: WSL 内核
+正在安装: WSL 内核
+已安装 WSL 内核。
+正在下载: GUI 应用支持
+正在安装: GUI 应用支持
+已安装 GUI 应用支持。
+正在下载: Ubuntu
+请求的操作成功。直到重新启动系统前更改将不会生效。
+PS C:\Users\xsj>
+```
+
+## 最佳实践
+
+ref [设置 WSL 开发环境的最佳做法](https://docs.microsoft.com/zh-cn/windows/wsl/setup/environment)
+
+## 其他
+
+### WSL 2 和其他第三方虚拟化工具兼容性
 
 ref[WSL 2 和其他第三方虚拟化工具](https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-faq)
 ref[Windows 10 (2004) 启用wsl2, 并与VirtualBox 6.0+共存](https://blog.csdn.net/qq_36992069/article/details/104750248?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1.control)
@@ -43,7 +68,7 @@ CPU启用虚拟化
 
 VBoxManage.exe setextradata global "VBoxInternal/NEM/UseRing0Runloop" 0
 
-## wsl2与win相互访问文件
+### wsl2与win相互访问文件
 
 Windows 访问 Linux 文件
 
@@ -54,22 +79,10 @@ Linux 访问 Windows 文件
 
 在从 WSL 访问 Windows 文件时，可以直接使用/mnt/{Windows盘符}进入对应的盘中。
 
-## wsl2 ubuntussh连接
+### wsl2 ubuntussh连接
 使用localhost可以直接链接wsl2
 
-## wsl2优化
-
-内存
-
-当然，WSL2也会带来内存占用的问题，可以打开$home/.wslconfig，进行如下设置
-
-[wsl2]
-memory=4GB
-swap=0
-
----
-
-## ubuntu apt升级
+### ubuntu apt升级
 
 终端执行：
 
@@ -84,7 +97,7 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 更换软件源[wsl2_source](./wsl2_source.md)
 
-## apt-get 查询软件包
+### apt-get 查询软件包
 
 dpkg -l |grep post
 
@@ -98,7 +111,7 @@ apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
 
 apt-get check                       // 检查是否有损坏的依赖
 
-## apt-get update返回NO_PUBKEY错误的解决方法
+### apt-get update返回NO_PUBKEY错误的解决方法
 
 错误代码：
 
@@ -116,6 +129,6 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 40976EAF437D05B5
 
 实际上类似的问题无论Key是什么只需要使用相同的代码替换到相对的Key的位置即可。
 
-## Typora+PicGo+Gitee+坚果云实现Win+Linux+手机端完美Markdown云笔记套件
+### Typora+PicGo+Gitee+坚果云实现Win+Linux+手机端完美Markdown云笔记套件
 
 https://blog.csdn.net/Todobot/article/details/105667867?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-4
