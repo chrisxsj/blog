@@ -176,7 +176,7 @@ delete noprompt archivelog until time 'sysdate-1/24';
 crosscheck archivelog all;
 delete noprompt expired archivelog all;
 }
-EOF
+EOF 
 
 crontab -l
 10 3 * * 6 sh /u01/app/oracle/script/del_arch_rman_standby.sh
