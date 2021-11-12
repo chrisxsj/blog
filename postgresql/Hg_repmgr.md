@@ -458,6 +458,92 @@ promote
 follow
 rejoin
 
+4 集群管理
+4.1 Promote
+当主节点故障后，可使用 repmgr standby promote 命令将当前服务器上的某个备节
+点提升为主节点。
+1. 如果主节点未故障，执行该命令会报错：
+repmgr standby promote
+2. 查看当前集群状态;
+repmgr cluster show
+3. 停掉主节点数据库模拟主节点故障：
+pg_ctl stop
+4. 由于主节点的数据库已经故障，无法查询集群状态。在备节点查看集群当前状态：
+repmgr cluster show
+5. 将 node2 提升为主节点：
+repmgr standby promote
+ 瀚高数据库企业版 V5hg_repmgr 最佳实践
+版权所有 © 瀚高基础软件股份有限公司 6
+6. 查看当前集群状态：
+此时 node1 故障，node2 提升为 primary，node3 仍为 standby，但是其 upstream 为
+node1，需要手动执行 follow 命令使其跟随新主 node2。详见下一节。
+4.2 Follow
+在上一章节的基础上继续执行如下操作。
+1. 在 node3 上执行 follow 命令：
+repmgr standby follow
+2. 查看集群状态：
+repmgr cluster show
+4.3 Rejoin
+当上一章节中的原主 node1 故障恢复后，使用 repmgr node rejoin 命令将其作为备节
+点重新加入集群。
+1. 在原主 node1 上执行：
+repmgr node rejoin -d 'host=node2 user=hgrepmgr dbname=hgrepmgr' --force-rewind --
+verbose
+2. 查看集群状态：
+repmgr cluster show
+4.4 Switchover
+1. 查看当前集群状态：
+repmgr cluster show
+2. 手动将 node1 提升为主节点，在待提升的节点 node1 上执行如下命令：
+repmgr standby switchover
+ 瀚高数据库企业版 V5hg_repmgr 最佳实践
+版权所有 © 瀚高基础软件股份有限公司 7
+3. 查看集群状态：
+repmgr cluster show
+此时，node1 提升为主节点，node2 降为备节点，node3 仍跟随原主 node2。
+如果在 swithover 时需使 node3 跟随新的主节点 node1，需要在 repmgr standby 
+switchover 命令中提供--siblings-follow 参数，操作如下。
+--siblings-follow 选项示例
+1. 查看当前集群状态：
+repmgr cluster show
+2. 将 node3 切换为主节点：
+repmgr standby switchover --siblings-follow
+4.5 自动 failover
+配置集群自动故障转移（failover），需要为集群中的每个节点开启 repmgrd守护进
+程。当主节点出现故障后，会自动将合适的备节点提升为新主节点，继续对外提供服
+务。示例如下。
+1. 配置 postgresql.replication.conf 文件（所有节点）
+在上述 postgresql.replication.conf 的基础上，添加如下参数：
+shared_preload_libraries = 'repmgr'
+重启数据库：
+pg_ctl restart
+2. 配置 hg_repmgr.conf（所有节点）
+在现有的 hg_repmgr.conf 文件中添加如下参数：
+vi hg_repmgr.conf
+failover=automatic
+ promote_command='repmgr standby promote'
+follow_command='repmgr standby follow --upstream-node-id=%n'
+如果需要将 repmgr 的日志定位到固定的日志文件可添加 log_file 参数，如下：
+log_file='/home/highgo/hgdb/data/log/hg_repmgr.log'
+为了防止上述日志文件不断膨胀，可配置系统的 logrotate。（详细步骤略）
+ 瀚高数据库企业版 V5hg_repmgr 最佳实践
+版权所有 © 瀚高基础软件股份有限公司 8
+3. 开启 repmgrd 进程（所有节点）
+repmgrd -d -p /tmp/hg_repmgrd.pid
+查看集群状态
+4. 模拟主节点故障
+1）在 node1 上关闭数据库
+pg_ctl stop
+2）在 node2 上查看集群状态
+此时 node2 已经提升为 primary，node3 跟随新主 node2。
+3）查看 node2 的 hg_repmgr.log
+5. 当 node1 的故障恢复之后，可重新加入集群
+1）重新加入集群
+repmgr node rejoin -d 'host=node2 dbname=hgrepmgr user=hgrepmgr' --forcerewind --verbose
+注意：执行该命令前应关闭 node1 的 HGDB。
+2）查看集群状态
+repmgr cluster show
+
 ## repmgr切换时间
 
 修改 repmgr 切换时间为5分钟，是调整哪个参数

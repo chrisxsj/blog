@@ -172,12 +172,16 @@ OPTIONS ( null 'null' );
 
 postgres_fdw模块提供了外部数据包装器postgres_fdw，它可以被用来访问存储在外部PostgreSQL服务器中的数据。
 
+本地数据库配置！
+
 ```sql
 CREATE EXTENSION postgres_fdw;      --创建fdw扩展
 
 CREATE SERVER ser_postgres_fdw  
         FOREIGN DATA WRAPPER postgres_fdw  
         OPTIONS (host '192.168.6.142', port '5966', dbname 'test'); --创建远程服务
+
+--OPTIONS (host '192.168.6.142', port '5966', dbname 'test') 是远程数据库连接信息
 
 CREATE USER MAPPING FOR highgo  
         SERVER ser_postgres_fdw  
@@ -193,10 +197,14 @@ CREATE FOREIGN TABLE test_postgres_fdw (product_id      CHAR(4)      NOT NULL,
  regist_date     DATE) SERVER ser_postgres_fdw
 OPTIONS (schema_name 'public',table_name 'product' );     --创建外部表
 
-```
+-- test_postgres_fdw，本地表名称。通常来说，推荐创建外部表时使用和远程表一致的数据类型以及可能的排序规则。虽然目前 postgres_fdw 支持各种类型转换，远程服务器和本地服务器解析 WHERE 子句的细微差别可能会导致意外的语义异常。另外，外部表的字段个数可以少于远程表，字段顺序也可以不同；因为字段的映射是通过名称而不是字段位置实现。
+--OPTIONS (schema_name 'public',table_name 'product' )是远程表的信息
 
-:warning: 通常来说，推荐创建外部表时使用和远程表一致的数据类型以及可能的排序规则。虽然目前 postgres_fdw 支持各种类型转换，远程服务器和本地服务器解析 WHERE 子句的细微差别可能会导致意外的语义异常。另外，外部表的字段个数可以少于远程表，字段顺序也可以不同；因为字段的映射是通过名称而不是字段位置实现。
-:warning: 远端存在表public.product
+
+
+ALTER TABLE test_postgres_fdw OWNER TO highgo;  --将表授予普通用户
+
+```
 
 查询外部表
 
