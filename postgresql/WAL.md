@@ -192,9 +192,17 @@ Latest checkpoint location: 16/79FF5520
 Latest checkpoint’s REDO location: 16/79FF54E8
 Latest checkpoint’s REDO WAL file: 00000001000000160000001E
 这里表示16/79FF54E8检查点已经执行，已经包含在00000001000000160000001E日志文件中，那么这个日志之前的日志是可以清理的。
- 
+
 保留000000010000001600000027之后的日志
 pg_archivecleanup /opt/pgdata11.3/pg_root/pg_wal/ 000000010000001600000027
+
+
+或者
+
+ls -atl $arch/*.backup
+ 
+保留000000010000001600000027.00000020.backup之后的日志
+pg_archivecleanup /opt/pgdata11.3/pg_root/pg_wal/ 000000010000001600000027.00000020.backup
 
 ```
 
