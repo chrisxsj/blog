@@ -57,10 +57,11 @@ pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -Fp -v -f /tmp/test_dump1.d
 输出一个适合于作为pg_restore输入的自定义格式归档（customer）
 
 ```bash
-pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -t public.test_dump -Fc -v -f /tmp/test_dump2.dmp  #导出表
-pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -s -t public.test_dump -Fc -v -f /tmp/test_dump2.dmp  #只导出表结构,需指定schema
+pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -t public.test_dump -Fp -v -f /tmp/test_dump2.dmp  #可导出表、view视图。其他对象使用pg_restore过滤
+pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -s -t public.test_dump -Fc -v -f /tmp/test_dump2.dmp  #只导出表结构、view定义。需指定schema
 pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -a -t public.test_dump -n public -Fc -v -f /tmp/test_dump2.dmp  #只导出表数据,需指定schema
 pg_dump -d postgres -U pg126 -Fc -v -f /tmp/test_dump2.dmp #导出数据库
+
 ```
 
 自定义、9级压缩格式

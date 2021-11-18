@@ -1,5 +1,19 @@
 # FDW
 
+**作者**
+
+Chrisx
+
+**日期**
+
+2021-11-17
+
+**内容**
+
+FDW的使用
+
+----
+
 [toc]
 
 FWD(foreign data wrapper)外部数据包装器,允许我们使用普通SQL查询来访问位于PostgreSQL之外的数据。
@@ -62,10 +76,10 @@ $\downarrow$ `executor`--生成执行计划树时，会为外部表创建对应�
 
 2. 远程服务器
 
-fdw机制支持一种特性，将user_remote_estimate设置为on，查询会获取外部表上的统计信息，用于估计查询代价。目前仅postgres_fdw支持比较好。
+fdw机制支持一种特性，将use_remote_estimate设置为on，查询会获取外部表上的统计信息，用于估计查询代价。目前仅postgres_fdw支持比较好。
 
 ```sql
-alter server remote_server_name options(user_remote_estimate 'on');
+alter server remote_server_name options(use_remote_estimate 'on');
 ```
 
 3. 发送sql并接收结果。
@@ -74,12 +88,12 @@ alter server remote_server_name options(user_remote_estimate 'on');
 * 不同的fdw扩展决定了sql语句发送到远程服务器的具体方法
 * postgres_fdw的sql执行顺序
 
-> 1启动远程事务，默认隔离级别repeatable read
-2声明一个游标，sql以游标的方式运行
-3fetch获取结果，默认fetch命令一次获取100行
-4从远程服务器接收结果
-5关闭游标
-6提交远程事务
+1）启动远程事务，默认隔离级别repeatable read
+2）声明一个游标，sql以游标的方式运行
+3）fetch获取结果，默认fetch命令一次获取100行
+4）从远程服务器接收结果
+5）关闭游标
+6）提交远程事务
 
 ## fdw工作原理
 
@@ -189,7 +203,7 @@ CREATE USER MAPPING FOR highgo
 --highgo，要映射到外部服务器的一个现有用户的名称。也就是本地用户名
 --OPTIONS (user 'test', password 'test')，定义该映射实际的用户名和 口令，也就是远程连接使用的用户名口令，也就是远程服务器上存在的用户名口令
 
-CREATE FOREIGN TABLE test_postgres_fdw (product_id      CHAR(4)      NOT NULL,
+CREATE FOREIGN TABLE public.test_postgres_fdw (product_id      CHAR(4)      NOT NULL,
  product_name    VARCHAR(100) NOT NULL,
  product_type    VARCHAR(32)  NOT NULL,
  sale_price      INTEGER ,
@@ -203,6 +217,11 @@ OPTIONS (schema_name 'public',table_name 'product' );     --创建外部表
 
 
 ALTER TABLE test_postgres_fdw OWNER TO highgo;  --将表授予普通用户
+
+也可以批量导入外部表。如下。从服务器film_server上的远程模式foreign_films 中导入表定义，把外部表创建在本地模式films中，但是只导入两个表actors和 directors（如果存在）
+
+IMPORT FOREIGN SCHEMA foreign_films LIMIT TO (actors, directors)
+    FROM SERVER film_server INTO films;
 
 ```
 
