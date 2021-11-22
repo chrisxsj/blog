@@ -169,7 +169,7 @@ alter system set timezone = 'PRC';
 
 -- other
 alter system set temp_buffers='1GB';
-alter system set log_temp_files='5GB';
+alter system set log_temp_files='5GB';  --日志记录临时文件超过5G大小的文件
 
 alter system set commit_delay = 10; --insert
 alter system set commit_siblings = 60; --insert

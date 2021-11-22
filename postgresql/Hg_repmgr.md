@@ -577,6 +577,11 @@ repmgr primary register -F一下
 
 -->
 
+## vip绑定解绑
+
+ip addr add 131.15.2.53/32 dev erp6s0f0 #添加
+ip addr del 131.15.2.53/32 dev erp6s0f0 #删除
+
 ## 重做备节点步骤
 
 1. 确认主节点（repmgr cluster show）
