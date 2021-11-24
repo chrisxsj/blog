@@ -1,4 +1,4 @@
-# FDW
+# fdw
 
 **作者**
 
@@ -182,6 +182,12 @@ OPTIONS ( null 'null' );
 
 [为 PostgreSQL CSV 日志创建一个外部表](https://www.postgresql.org/docs/13/file-fdw.html)
 
+外部表相关视图
+
+* pg_foreign_server
+* pg_user_mapping
+* pg_foreign_table
+
 ## postgres_fdw
 
 postgres_fdw模块提供了外部数据包装器postgres_fdw，它可以被用来访问存储在外部PostgreSQL服务器中的数据。
@@ -214,14 +220,7 @@ OPTIONS (schema_name 'public',table_name 'product' );     --创建外部表
 -- test_postgres_fdw，本地表名称。通常来说，推荐创建外部表时使用和远程表一致的数据类型以及可能的排序规则。虽然目前 postgres_fdw 支持各种类型转换，远程服务器和本地服务器解析 WHERE 子句的细微差别可能会导致意外的语义异常。另外，外部表的字段个数可以少于远程表，字段顺序也可以不同；因为字段的映射是通过名称而不是字段位置实现。
 --OPTIONS (schema_name 'public',table_name 'product' )是远程表的信息
 
-
-
 ALTER TABLE test_postgres_fdw OWNER TO highgo;  --将表授予普通用户
-
-也可以批量导入外部表。如下。从服务器film_server上的远程模式foreign_films 中导入表定义，把外部表创建在本地模式films中，但是只导入两个表actors和 directors（如果存在）
-
-IMPORT FOREIGN SCHEMA foreign_films LIMIT TO (actors, directors)
-    FROM SERVER film_server INTO films;
 
 ```
 
