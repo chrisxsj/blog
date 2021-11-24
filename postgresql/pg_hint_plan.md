@@ -10,8 +10,7 @@ Chrisx
 
 **内容**
 
-pg_hint_plan使用
-
+pg_hint_plan使用,ref[pg-hint-plan](https://postgrespro.com/docs/enterprise/10/pg-hint-plan.html?spm=a2c4g.11186623.0.0.256f60f50ks8pd)
 ----
 
 [toc]
@@ -22,20 +21,48 @@ pg_hint_plan使用
 
 :warning: 下载时选择对应版本的branches
 
+```sh
 unzip pg_hint_plan-PG12.zip
+make
+make install
 
-<!--
-/*+ Set temp_file_limit='20MB' */
+```
+
+## 使用
+
+1. 加载扩展
+  
+```sql
+alter system set shared_preload_libraries = pg_hint_plan; --加载插件库
+create extension pg_hint_plan;  --创建扩展
+
+```
+
+2. 重启生效
+
+```sh
+pg_ctl restart
+
+```
+
+3 使用
+
+```sql
+
+create table test_hint(id int);
+insert into test_hint select * from generate_series(1,10);
+create index idx_test_hint on test_hint (id);
+
+/*+ IndexScan(test_hint) */ explain select * from test_hint where id=1; --使用索引
+/*+ seqscan(test_hint) */ explain select  * from test_hint where id=10; --强制全表扫描
+
+/*+ Set (temp_file_limit 10MB) */ --guc参数测试不起作用？
+with recursive tree as (
+    select dep.id,dep.name,dep.parent_id from department dep where dep.id =7
+    union all
+    select dep.id,dep.name,dep.parent_id from department dep inner join tree on tree.parent_id = dep.id
+) select * from tree;
 
 
-小结
-用户使用递归语句时一定要注意防止死循环，通过设置会话级别的temp_file_limit可以预防，还有一种方法是使用pg_hint_plan，在语句中使用HINT，例如：
-/*+ 
-  Set (temp_file_limit='10MB')
-*/
-with recursive t(c1,c2,info) as (select * from test where c1=9 union all select t2.* from test t2 join t on (t.c2 =t2.c1) ) select count(*) from t;
+```
 
-祝大家玩得开心，欢迎随时来 阿里云促膝长谈 业务需求 ，恭候光临。
-
-阿里云的小伙伴们加油，努力做 最贴地气的云数据库 。
--->
