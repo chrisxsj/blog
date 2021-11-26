@@ -24,7 +24,7 @@ ref[recovery_min_apply_delay](https://www.postgresql.org/docs/10/standby-setting
   
 :warninig: 注意，如果主库的时间早于备库，则可能造成备库立即应用日志。（主库3:00<备库5:00,备库延迟1h，也是4:00应用，因此，此时备库5:00会立即应用日志）
 
-* 延迟备库实际上是设置备库延迟应用wal的时间，而备库依然及时接收主库发送的wal日志流。因此recovery_min_apply_delay 参数设置过大会使备库的 pg_wal 日志因保留过多的 WAL 日志文件而占用较大硬 盘空间。
+* 延迟仅发生在事务提交的WAL记录上。其他记录会尽快重放，这不是问题，因为MVCC可见性规则确保在应用相应的提交记录之前其效果不可见。也就是说，延迟仅是wal应用延迟，备库依然及时接收主库发送的wal日志流。因此recovery_min_apply_delay 参数设置过大会使备库的 pg_wal 日志因保留过多的 WAL 日志文件而占用较大硬盘空间。
 
 ## 配置
 
@@ -65,4 +65,4 @@ sync_state       | async
 ```
 
 The delay occurs once the database in recovery has reached a consistent state, until the standby is promoted or triggered. After that the standby will end recovery without further waiting.
-恢复中的数据库达到一致状态后，将发生延迟，直到升级或触发备用数据库。之后，备用服务器将结束恢复，无需进一步等待。
+恢复中的数据库达到一致状态后，将发生延迟，直到转换备库角色。之后，备用服务器将恢复所有延迟，无需进一步等待。
