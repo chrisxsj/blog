@@ -42,7 +42,8 @@ ref [Upgrading a PostgreSQL Cluster](https://www.postgresql.org/docs/13/upgradin
 4. 启动数据库，使用新版本软件加载原来的data
 5. 数据验证
 
-:warning: 非内核扩展插件需要重新安装。升级前做好备份
+:warning: 非内核扩展插件需要重新安装。
+:warning: 升级前做好备份
 
 ## 主版本升级
 
