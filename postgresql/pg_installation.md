@@ -26,53 +26,7 @@ ref [Installation from Source Code](https://www.postgresql.org/docs/13/installat
 
 ### 1. Requirements
 
-* packages
-
-*The following software packages are required for building PostgreSQL:*
-
-rpm -q make gcc gzip readline readline-devel zlib zlib-devel
-check
-make --version
-which make tar gzip
-
-*The following packages are optional*
-
-rpm -q perl python tcl OpenSSL Kerberos OpenLDAP
-
-上述软件包的安装最要借助yum进行安装，以上软件包可能需要提供其他依赖包，配置完成yum之后
-
-```sh
-yum install make gcc gzip readline* zlib*
-yum install perl python tcl openssl openssl-devel kerberos openldap #可选
-```
-
-suse参考[suse_readline](../os/suse_readline.md)
-
-<!--
-Ubuntu参考
-dpkg -l make gcc gzip readline readline-devel zlib zlib-devel
-apt-get install make 
-apt-get install gcc 
-apt-get install gzip 
-
-需要先安装libreadline-gplv2-dev(代替readline，readline-devel )
-apt-get install libreadline-gplv2-dev
-
-在ubuntu软件源里zlib和zlib-devel叫做zlib1g zlib1g.dev 直接输命令后还是不能安装。这就要求我们先装ruby. 默认的安装源里没有zlib1g.dev。要在packages.ubuntu.com上找。
-apt-get install ruby
-apt-get install zlib1g  
-apt-get install zlib1g-dev
-
-dpkg -l make gcc gzip readline readline-devel zlib zlib-devel
-
--->
-
-* disk space
-
-source tree: 100 MB
-installation directory: 20MB
-empty database cluster: 35MB
-databases: 大约是具有相同数据的平面文本文件的五倍
+ref [pg_Requirements](./pg_Requirements.md)
 
 ### 2. Getting The Source
 

@@ -138,3 +138,29 @@ ref [patroni_and_etcd_installation](./patroni_and_etcd_installation.md)
 1. 停止节点patroni
 2. 停止节点etcd
 3. 删除流复制备库
+
+```sh
+# get member ID
+export ETCDCTL_API=3
+HOST_1=10.240.0.13
+HOST_2=10.240.0.14
+HOST_3=10.240.0.15
+etcdctl --endpoints=${HOST_1}:2379,${HOST_2}:2379,${HOST_3}:2379 member list
+
+# remove the member
+MEMBER_ID=278c654c9a6dfd3b
+etcdctl --endpoints=${HOST_1}:2379,${HOST_2}:2379,${HOST_3}:2379 \
+	member remove ${MEMBER_ID}
+
+# add a new member (node 4)
+export ETCDCTL_API=3
+NAME_1=etcd-node-1
+NAME_2=etcd-node-2
+NAME_4=etcd-node-4
+HOST_1=10.240.0.13
+HOST_2=10.240.0.14
+HOST_4=10.240.0.16 # new member
+etcdctl --endpoints=${HOST_1}:2379,${HOST_2}:2379 \
+	member add ${NAME_4} \
+	--peer-urls=http://${HOST_4}:2380
+```

@@ -47,6 +47,7 @@ systemctl start hgproxy.service
 /opt/HighGo456-see/tools/hghac/etcd/etcdctl  --endpoints=http://10.121.32.110:2379,http://10.121.32.111:2379,http://10.121.32.113:2379 endpoint status --write-out=table    #etcd
 
 /opt/HighGo456-see/tools/hghac/hghactl/hghactl list #patroni
+/opt/HighGo/tools/hghac/hghactl -c /opt/HighGo/tools/hghac/hghac-see.yaml list  #hghac
 
 psql -U sysdba -c 'select * from pg_stat_replication'   #110
 
@@ -55,4 +56,12 @@ psql -U sysdba -c 'select * from pg_stat_replication'   #110
 ## hghac路径
 
 find /opt/HighGo -name hghactl
-/opt/HighGo/tools/hghac/hghactl -c /opt/HighGo/tools/hghac/hghac-see.yaml list 
+or
+systemctl status hghac
+
+## hghac修改ip
+
+etcd节点修改IP地址
+
+修改所有节点etcd的yaml文件
+
