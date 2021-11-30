@@ -38,7 +38,7 @@ mv jdk-17.0.1/ /opt
 ```sh
 # java conf
 export JAVA_HOME=/opt/jdk-17.0.1
-export CLASSPATH=.;$JAVA_HOME/lib
+export CLASSPATH=.:$JAVA_HOME/lib
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
