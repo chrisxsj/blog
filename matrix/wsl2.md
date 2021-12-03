@@ -100,6 +100,15 @@ apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
 
 apt-get check                       // 检查是否有损坏的依赖
 
+## wsl2内存配置
+
+这个解决方案来自github，简单来说就是创建一个%UserProfile%\.wslconfig文件来限制wsl使用的内存总量。比如说我在Windows中使用的用户是tinychen，那么我就在C:\Users\tinychen中创建了一个.wslconfig文件，在里面加入以下内容来限制wsl2的内存总大小
+
+[wsl2]
+memory=8GB  #限制最大物理内存
+swap=8GB    #限制最大虚拟内存
+processors=2    #限制最大cpu个数
+
 ## 使用git
 
 ref git*

@@ -103,7 +103,7 @@ base backup过程将创建一个备份历史记录文件backup history file并�
 使用示例
 
 ```bash
-pg_basebackup -F p -X stream -v -D /tmp/backup  -h 192.168.80.105 -p 5432 -U postgres -P -v
+pg_basebackup -h 192.168.80.105 -p 5432 -U postgres -P -v -F p -X stream -D /tmp/backup
 ```
 
 > 注意，The backup is made over a regular PostgreSQL connection, and uses the replication protocol. The connection must be made with a superuser or a user having REPLICATION permissions (see Section 21.2), and pg_hba.conf must explicitly permit the replication connection. The server must also be configured with max_wal_senders set high enough to leave at least one session available for the backup and one for WAL streaming (if used).
