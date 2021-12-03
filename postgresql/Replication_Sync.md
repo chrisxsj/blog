@@ -139,4 +139,4 @@ select pg_reload_conf();
 DETAIL:  The transaction has already committed locally, but might not have been replicated to the standby.
 ```
 
-synchronous_commit参考[fsync、synchronous_commit、wal_sync_method、full_page_writes](./fsync-synchronous_commit-wal_sync_method-full_page_writes.md)
+synchronous_commit参考[pg_reliability](./pg_reliability.md)

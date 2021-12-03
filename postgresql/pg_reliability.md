@@ -1,4 +1,4 @@
-# fsync-synchronous_commit-wal_sync_method-full_page_writes
+# pg_reliability
 
 **作者**
 
@@ -9,6 +9,8 @@ Chrisx
 2021-04-26
 
 **内容**
+
+可靠性配置
 
 * fsync
 * synchronous_commit

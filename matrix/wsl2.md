@@ -198,4 +198,8 @@ source /opt/lib/task.sh
 export JAVA_HOME=/opt/jdk-17.0.1
 export CLASSPATH=.:$JAVA_HOME/lib
 export PATH=$JAVA_HOME/bin:$PATH
+
+# ssh
+alias ssh151="ssh root@192.168.80.151"
+alias ssh193="ssh root@192.168.80.193"
 ```
