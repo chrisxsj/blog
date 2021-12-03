@@ -1,5 +1,5 @@
 
-# wsl2
+# wsl2g_zh
 
 **作者**
 
@@ -41,7 +41,7 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export DefaultIMModule=fcitx
-fcitx &  # 运行fcitx，可将启动命令写入环境变量文件
+#fcitx &  # 运行fcitx，可将启动命令写入环境变量文件
 
 fcitx-config-gtk3   #输入法设置界面
 fcitx-config-gtk3》Global Config 》Trigger Input Method和Scroll between Input Method #切换输入法快捷键修改一下，避免和win快捷键冲突

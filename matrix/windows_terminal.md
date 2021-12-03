@@ -10,21 +10,25 @@ chrisx
 
 **内容**
 
-windows terminal自定义配置
+windows terminal使用
+
+ref [Windows 终端](https://docs.microsoft.com/zh-cn/windows/terminal/)
+
+ref [官方文档-配色方案](https://docs.microsoft.com/zh-cn/windows/terminal/customize-settings/color-schemes)
+
+ref [主题](https://windowsterminalthemes.dev)
 
 ---
 
+[toc]
+
+## 安装
+
+ref [install](https://aka.ms/terminal)
+
 ## 自定义配置
 
-Windows Terminal 的配置文件是一个 JSON 格式的文件，我们会在其中定义全部 Windows Terminal 的属性。简单来讲，这个配置文件包含了如下的几个部分：
-
-* 全局属性：位于 JSON 最外侧，包含有设置亮暗主题、默认 Profile 等项目的配置。
-
-* 环境入口 profiles：一个列表，其中包含有 Windows Terminal 下拉菜单中唤起的各种环境（比如打开 PowerShell 环境、WSL 环境或 SSH 至远程服务器的环境……）与各种环境里 Windows Terminal 的显示方案（比如字体、背景、色彩方案等）。
-
-* 配色主题 schemes：一个配色方案列表，其中包含有 Windows Terminal 在上一项「环境入口」中可以调用的「色彩主题」。
-
-* 快捷键绑定 keybindings：自定义快捷键。
+设置-配置文件-外观
 
 ## 快捷键，标签页切换
 
@@ -84,27 +88,28 @@ Windows Terminal 的配置文件是一个 JSON 格式的文件，我们会在其
 ```json
 "schemes": [
     {
-        "name": "Sonoran Sunrise",
-        "black": "#F9FAE3",
-        "red": "#EB6f6f",
-        "green": "#669C50",
-        "yellow": "#F2C55C",
-        "blue": "#227B4D",
-        "purple": "#7189D9",
-        "cyan": "#E07941",
-        "white": "#665E4B",
-        "brightBlack": "#F9FAE3",
-        "brightRed": "#EB6f6f",
-        "brightGreen": "#669C50",
-        "brightYellow": "#F2C55C",
-        "brightBlue": "#227B4D",
-        "brightPurple": "#7189D9",
-        "brightCyan": "#E07941",
-        "brightWhite": "#665E4B",
-        "background": "#F9FAE3",
-        "foreground": "#61543E",
-        "cursorColor": "#61543E"
-      }
+      "name": "Ubuntu",
+      "black": "#2e3436",
+      "red": "#cc0000",
+      "green": "#4e9a06",
+      "yellow": "#c4a000",
+      "blue": "#3465a4",
+      "purple": "#75507b",
+      "cyan": "#06989a",
+      "white": "#d3d7cf",
+      "brightBlack": "#555753",
+      "brightRed": "#ef2929",
+      "brightGreen": "#8ae234",
+      "brightYellow": "#fce94f",
+      "brightBlue": "#729fcf",
+      "brightPurple": "#ad7fa8",
+      "brightCyan": "#34e2e2",
+      "brightWhite": "#eeeeec",
+      "background": "#300a24",
+      "foreground": "#eeeeec",
+      "selectionBackground": "#b5d5ff",
+      "cursorColor": "#bbbbbb"
+    }
 ],
 
 ```
@@ -131,7 +136,7 @@ Windows Terminal 的配置文件是一个 JSON 格式的文件，我们会在其
 
 ```
 
-我们需要在配置里面添加一行
+我们需要在配置里面添加一行、或修改
 
 ```json
 "colorScheme": "Sonoran Sunrise",
@@ -139,6 +144,3 @@ Windows Terminal 的配置文件是一个 JSON 格式的文件，我们会在其
 ```
 
 > 注意，Sonoran Sunrise是配色方案中的"name"
-
-参考[官方文档-配色方案](https://docs.microsoft.com/zh-cn/windows/terminal/customize-settings/color-schemes)
-参考[主题](https://windowsterminalthemes.dev)

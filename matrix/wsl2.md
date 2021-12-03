@@ -1,4 +1,3 @@
-
 # wsl2
 
 **作者**
@@ -68,7 +67,8 @@ Linux 访问 Windows 文件
 
 在从 WSL 访问 Windows 文件时，可以直接使用/mnt/{Windows盘符}进入对应的盘中。
 
-### wsl2 ubuntussh连接
+### wsl2 ubuntu ssh连接
+
 使用localhost可以直接链接wsl2
 
 ### ubuntu apt升级
@@ -100,3 +100,102 @@ apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
 
 apt-get check                       // 检查是否有损坏的依赖
 
+## 使用git
+
+ref git*
+
+## 使用docker
+
+ref docker*
+
+## 使用vscode
+
+ref vscode*
+
+## 使用邮件客户端
+
+安装最新版thunderbird
+
+Adding this PPA to your system
+You can update your system with unsupported packages from this untrusted PPA by adding ppa:ubuntu-mozilla-daily/ppa to your system's Software Sources. (Read about installing)
+
+sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa
+sudo apt-get update
+sudo apt-get install thunderbird
+
+thunderbird
+
+设置中文
+preference-language(search for more language)-add chinese(china)
+
+配置公司邮箱
+ref [在升级到Thunderbird 78版后，不能收发电子邮件了](https://support.mozilla.org/zh-CN/kb/thunderbird-78-faq-cn#w_zai-sheng-ji-dao-thunderbird-78ban-hou-bu-neng-shou-fa-dian-zi-you-jian-liao)
+
+首选项-配置编辑器-查找security.tls.version.min，并将值改为1-ssl/tls的验证方式选择普通密码
+
+## 使用libreoffice
+
+下载deb包[libreoffice](https://zh-cn.libreoffice.org/download/libreoffice/?type=deb-x86_64&version=7.2.3&lang=zh-CN)
+下载[已翻译的用户界面语言包: 中文 (简体)]()
+
+tar -zxvf LibreOffice_7.2.3_Linux_x86-64_deb.tar.gz
+tar -zxvf LibreOffice_7.2.3_Linux_x86-64_deb_langpack_zh-CN.tar.gz
+cd LibreOffice_7.2.3_Linux_x86-64_deb/DEBS
+sudo dpkg -i ./lib*.deb
+cd LibreOffice_7.2.3.2_Linux_x86-64_deb_langpack_zh-CN/DEBS
+sudo dpkg -i ./lib*.deb
+
+libreoffice7.2
+
+## microsfto-edge
+
+下载[edge](https://www.microsoft.com/zh-cn/edge?r=1#evergreen)
+
+sudo apt-get install ./microsoft-edge-stable_96.0.1054.41-1_amd64.deb
+
+## remmina
+
+ref [how-to-install-remmina](https://remmina.org/how-to-install-remmina/#ubuntu)
+
+sudo apt-add-repository ppa:remmina-ppa-team/remmina-next
+sudo apt update
+sudo apt install remmina remmina-plugin-rdp remmina-plugin-secret
+
+List available plugins with apt-cache search remmina-plugin
+
+## OBS Studio
+
+ref [OBS Studio](https://obsproject.com/wiki/install-instructions#linux)
+
+obs
+
+## shotcut
+
+## gnome-boxes
+
+sudo apt install gnome-boxes
+sudo gnome-boxes
+
+## 环境变量
+
+```sh
+# chrisx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export DefaultIMModule=fcitx
+#fcitx &
+
+# docker
+sudo service docker start
+# ssh
+sudo service ssh start
+# crontab
+sudo service cron start
+source /opt/lib/task.sh
+
+# java conf
+export JAVA_HOME=/opt/jdk-17.0.1
+export CLASSPATH=.:$JAVA_HOME/lib
+export PATH=$JAVA_HOME/bin:$PATH
+```
