@@ -52,6 +52,9 @@ ref [txidwrap](./txidwrap.md)
 
 ref [tuple_and_deadtuple](./tuple_and_deadtuple.md)
 
+
+<!--
+
 #### 空闲空间映射
 
 插入元组时，使用表与索引的FSM来选择可供插入额页面。
@@ -100,9 +103,9 @@ txid_current_snapshot的文本表示形式为“xmin：xmax：xip_list“，这�
 
 ref [Transaction_Isolation](./Transaction_Isolation.md)，事务隔离的实现就是依据事务快照实现的。
 
-<!--
+
 详细机制参考ref [The Internals of PostgreSQL](http://www.interdb.jp/pg/)
--->
+
 
 ### 可见性检查
 
@@ -144,7 +147,8 @@ Rule 4: ELSE   /* t_xmin ≠ current_txid */
 
 如果这个元组被另一个事务插入，并且t_xmin的状态是IN_PROGRESS，这个元组显然是不可见的(Rule 4)。
 如果t_xmin等于当前txid(即该元组被当前事务插入)并且t_xmax**不**是INVALID，则该元组不可见，因为它已被当前事务更新或删除(Rule 3)。
-<!--txid=0=INVALID-->
+
+txid=0=INVALID
 
 例外情况是由当前事务插入此元组并且t_xmax为INVALID的情况。在这种情况下，这个元组在当前事务中是可见的(Rule 2)。
 
@@ -226,3 +230,5 @@ PostgreSQL 数据库在大量 DELETE、UPDATE 操作后，表和索 引都会出
 PostgreSQL 使用了一种十分简单的方法实现了多副本控制机制，并没有像 Oracle、 MYSQL 一样引入专门的回滚段机制。这种 MVCC 机制实现十分简单，但是我们可以很快 发现这种机制存在的问题，因为 update 操作会在表中产生大量的 MVCC 版本，从而导致表 和索引碎片的大量产生，从而影响该表访问的性能。不过这种 MVCC 机制也不都是副作用， 对于删除操作，由于 PostgreSQL 只需要简单的标识，因此大批量删除的场景，PostgreSQL 的性能优于 Mysql。
 
 由于 MVCC 机制的缺陷，PostgreSQL 数据库的应用场景也受到了一定的限制。如数据量较大，某些大表的 DML 较多，有较大并发量进行全表扫描的 7*24 场景
+
+-->

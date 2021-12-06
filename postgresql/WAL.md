@@ -104,7 +104,7 @@ WAL记录被缓存在wal缓冲区，需要尽快写持久化存储文件
 如果出现以下情况之一，WAL缓冲区上的所有WAL记录都会写入WAL段文件，而不管它们的事务是否已提交。
 
 * 一个正在运行的事务已经提交或已经中止。
-* WAL缓冲区已经写满了许多元组。(WAL缓冲区大小设置为参数[wal_buffers])
+* WAL缓冲区已经写满了许多元组。(wal_buffers)
 * WAL写进程定期写入 (wal_writer_delay)。
 
 :warning: 注意，除了DML操作会写WAL外，COMMIT、checkpoint操作都会产生相应的WAL记录。
@@ -281,15 +281,17 @@ Time of latest checkpoint:            Wed Apr 28 16:09:10 2021
 
 数据库的恢复功能基于WAL日志实现。数据库通过从重做点依序重放WAL段文件中的WAL记录来恢复数据库集群。
 
-实例恢复过程如下
+实例恢复
 
-1. 启动时读取pg_control文件的所有项。如果state项是in production，将进入恢复模式，因为这意味这数据库没有正常停止。而如果state是shutdown，就会进入正常启动模式。
-2. 数据库从pg_control中读取最近的检查点位置，获取重做点，找到从合适的wal段文件。如果检查点记录不可读，就会放弃恢复操作。
-3. 使用合适的资源管理器按照顺序读取并重放wal记录。从重做点开始直到wal段文件的最后位置。当遇到一条属于备份区块的wal记录时(full page wal)，无论LSN如何，都会覆写相应表的页面。其他情况下，只有当此记录的LSN大于页面的pd_lsn时，才会重放该WAL记录。
+1. 读取控制文件。读取state项，如果是in production，进入恢复模式。
+2. 读取控制文件。读取Latest checkpoint's REDO location项。获取恢复的重做点，读取对应的wal开始恢复。
+3. 恢复到日志文件末尾。
 
-<!--
-WAL记录重放，不是无脑重放，而是通过LSN对比，对比过程有的会跳过一些WAL重放，加快恢复速度。
--->
+物理恢复
+
+1. 读取备份文件backup_label，找到checkpoint location，找到恢复重做点。
+2. 读取恢复参数restore_command、recovery_target_time
+3. 从从做点开始恢复wal，恢复至日志文件末尾或指定时间点的日志。
 
 ref [lsn比较](./pg_inter/ch9.md)
 

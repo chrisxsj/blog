@@ -1,140 +1,193 @@
 # pg_lock
 
+**作者**
+
+Chrisx
+
+**日期**
+
+2021-12-06
+
+**内容**
+
+显示锁定
+
+数据库提供了多种锁模式用于控制对表中数据的并发访问。锁与mvcc一起构成了并发控制。
+
+---
+
 [toc]
 
-## 锁模式
+## 表级锁
 
-```c
-#define NoLock   0
-#define AccessShareLock   1 /* SELECT */
-#define RowShareLock   2 /* SELECT FOR UPDATE/FOR SHARE */
-#define RowExclusiveLock   3 /* INSERT, UPDATE, DELETE */
-#define ShareUpdateExclusiveLock
-#define ShareLock   5 /* CREATE INDEX (WITHOUT CONCURRENTLY) */
-#define ShareRowExclusiveLock
-#define ExclusiveLock   7 /* blocks ROW SHARE/SELECT...FOR UPDATE */
-#define AccessExclusiveLock
-#define MaxLockMode   8
+表可以被并发读取，如果在表上同时存在读写呢，并发会冲突吗？
 
-```
+表级锁，就是它的字面意思，在表级进行锁定。表级锁共有8中，对并发进行细粒度控制。不同的表锁之间可能并存也可能冲突。详细表锁介绍如下
 
-ref[xl_standby_lock](https://doxygen.postgresql.org/lockdefs_8h.html#a05f25f0cb575cd10c00bb7bb79b26822)
+* ACCESS SHARE
+与ACCESS EXCLUSIVE锁模式冲突。表上的查询都会获得这种锁模式。
 
-冲突关系
+* ROW SHARE
+与EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。SELECT FOR UPDATE和SELECT FOR SHARE命令在目标表上取得一个这种模式的锁。
 
-```text
-1<>8
-2<>7,8
-3<>5,6,7,8
-4<>4,5,6,7,8
-5<>3,4,6,7,8
-6<>3,4,5,6,7,8
-8<>1,2,3,4,5,6,7,8
+* ROW EXCLUSIVE
+与SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。DML命令UPDATE、DELETE和INSERT在目标表上取得这种锁模式
+
+* SHARE UPDATE EXCLUSIVE
+与SHARE UPDATE EXCLUSIVE、SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。这种模式保护一个表不受并发模式改变和VACUUM运行的影响。
+
+* SHARE
+与ROW EXCLUSIVE、SHARE UPDATE EXCLUSIVE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。这种模式保护一个表不受并发数据改变的影响。由CREATE INDEX（不带CONCURRENTLY）取得。
+
+* SHARE ROW EXCLUSIVE
+与ROW EXCLUSIVE、SHARE UPDATE EXCLUSIVE、SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。这种模式保护一个表不受并发数据修改所影响，并且是自排他的，这样在一个时刻只能有一个会话持有它。由CREATE COLLATION、CREATE TRIGGER和很多 ALTER TABLE语句获得。
+
+* EXCLUSIVE
+与ROW SHARE、ROW EXCLUSIVE、SHARE UPDATE EXCLUSIVE、SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE锁模式冲突。这种模式只允许并发的ACCESS SHARE锁，即只有来自于表的读操作可以与一个持有该锁模式的事务并行处理。由REFRESH MATERIALIZED VIEW CONCURRENTLY获得。
+
+* ACCESS EXCLUSIVE
+与所有模式的锁冲突（ACCESS SHARE、ROW SHARE、ROW EXCLUSIVE、SHARE UPDATE EXCLUSIVE、SHARE、SHARE ROW EXCLUSIVE、EXCLUSIVE和ACCESS EXCLUSIVE）。这种模式保证持有者是访问该表的唯一事务。由ALTER TABLE、DROP TABLE、TRUNCATE、REINDEX、CLUSTER、VACUUM FULL和REFRESH MATERIALIZED VIEW（不带CONCURRENTLY）命令获取。ALTER TABLE的很多形式也在这个层面上获得锁（见ALTER TABLE）。这也是未显式指定模式的LOCK TABLE命令的默认锁模式。
+
+一旦被获取，一个锁通常将被持有直到事务结束。ROLLBACK取消事务后，锁资源会被释放。
+
+具体的锁冲突参考如下
+
+| 锁冲突                 | ACCESS SHARE | ROW SHARE | ROW EXCLUSIVE | SHARE UPDATE EXCLUSIVE | SHARE | SHARE ROW EXCLUSIVE | EXCLUSIVE | ACCESS EXCLUSIVE |
+| ---------------------- | ------------ | --------- | ------------- | ---------------------- | ----- | ------------------- | --------- | ---------------- |
+| ACCESS SHARE           |              |           |               |                        |       |                     |           | X                |
+| ROW SHARE              |              |           |               |                        |       |                     | X         | X                |
+| ROW EXCLUSIVE          |              |           |               |                        | X     | X                   | X         | X                |
+| SHARE UPDATE EXCLUSIVE |              |           |               | X                      | X     | X                   | X         | X                |
+| SHARE                  |              |           | X             | X                      |       | X                   | X         | X                |
+| SHARE ROW EXCLUSIVE    |              |           | X             | X                      | X     | X                   | X         | X                |
+| EXCLUSIVE              |              | X         | X             | X                      | X     | X                   | X         | X                |
+| ACCESS EXCLUSIVE       | X            | X         | X             | X                      | X     | X                   | X         | X                |
+
+示例
+
+```sql
+create table t_lock(id integer primary key);
+insert into t_lock values(1),(2);
+
+session 1:
+
+begin;
+alter table t_lock add column name text;
+
+session 2
+begin;
+insert into t_lock values (3);  
+
+session 3
+
+postgres=# select pc.relname,pl.pid,pl.mode,pl.granted,psa.usename,psa.wait_event_type,psa.wait_event,psa.state,psa.query from pg_locks pl inner join pg_stat_activity psa on pl.pid = psa.pid inner join pg_class pc on pl.relation=pc.oid and pc.relname not like 'pg_%';
+ relname | pid |        mode         | granted | usename  | wait_event_type | wait_event |        state        |                  query
+---------+-----+---------------------+---------+----------+-----------------+------------+---------------------+------------------------------------------
+ t_lock  | 373 | RowExclusiveLock    | f       | postgres | Lock            | relation   | active              | insert into t_lock values (3);
+ t_lock  | 326 | AccessExclusiveLock | t       | postgres | Client          | ClientRead | idle in transaction | alter table t_lock add column name text;
+(2 rows)
 
 ```
 
 ## 行锁模式
 
-```c
- {
-     /* SELECT FOR KEY SHARE */
-     LockTupleKeyShare,
-     /* SELECT FOR SHARE */
-     LockTupleShare,
-     /* SELECT FOR NO KEY UPDATE, and UPDATEs that don't modify key columns */
-     LockTupleNoKeyExclusive,
-     /* SELECT FOR UPDATE, UPDATEs that modify key columns, and DELETE */
-     LockTupleExclusive
- } LockTupleMode;
+同一个表上操作会有冲突，在同一行上操作呢？
 
-```
+多个事务在相同的行上操作也可能会形成锁冲突。但是行级锁不影响数据查询操作。
 
-ref[LockTupleMode](https://doxygen.postgresql.org/lockoptions_8h.html#a85f4eb65dea33cc285fded80c5c20c30)
+* FOR UPDATE
+FOR UPDATE会导致由SELECT语句检索到的行被锁定，就好像它们要被更新。任何在一行上的DELETE命令也会获得FOR UPDATE锁模式，在某些列上修改值的UPDATE也会获得该锁模式。
+
+* FOR NO KEY UPDATE
+行为与FOR UPDATE类似，不过获得的锁较弱：这种锁将不会阻塞尝试在相同行上获得锁的SELECT FOR KEY SHARE命令。任何不获取FOR UPDATE锁的UPDATE也会获得这种锁模式。
+
+* FOR SHARE
+行为与FOR NO KEY UPDATE类似，不过它在每个检索到的行上获得一个共享锁而不是排他锁。一个共享锁会阻塞其他事务在这些行上执行UPDATE、DELETE、SELECT FOR UPDATE或者SELECT FOR NO KEY UPDATE，但是它不会阻止它们执行SELECT FOR SHARE或者SELECT FOR KEY SHARE。
+
+* FOR KEY SHARE
+行为与FOR SHARE类似，不过锁较弱：SELECT FOR UPDATE会被阻塞，但是SELECT FOR NO KEY UPDATE不会被阻塞。一个键共享锁会阻塞其他事务执行修改键值的DELETE或者UPDATE，但不会阻塞其他UPDATE，也不会阻止SELECT FOR NO KEY UPDATE、SELECT FOR SHARE或者SELECT FOR KEY SHARE。
+
+具体行锁冲突模式如下
+
+| 锁冲突            | FOR KEY SHARE | FOR SHARE | FOR NO KEY UPDATE | FOR UPDATE |
+| ----------------- | ------------- | --------- | ----------------- | ---------- |
+| FOR KEY SHARE     |               |           |                   | X          |
+| FOR SHARE         |               |           | X                 | X          |
+| FOR NO KEY UPDATE |               | X         | X                 | X          |
+| FOR UPDATE        | X             | X         | X                 | X          |
 
 示例
 
 ```sql
-create table a(aid integer not null,col1 integer,primary key(aid));
-create table b(bid integer not null,aid integer not null,col2 integer,primary key(bid),foreign key(aid) references a(aid));
+create table t_lock(id integer primary key);
+insert into t_lock values(1),(2);
 
-insert into a(aid) values(1),(2);
-insert into b(bid,aid) values(2,1);
+session 1:
 
-create extension pgrowlocks;
+begin;
+select * from t_lock where id=1 for update;
+
+session 2
+begin;
+update t_lock set id=100 where id=1;
+
+session 3
+
+postgres=# select pc.relname,pl.pid,pl.mode,pl.granted,psa.usename,psa.wait_event_type,psa.wait_event,psa.state,psa.query from pg_locks pl inner join pg_stat_activity psa on pl.pid = psa.pid inner join pg_class pc on pl.relation=pc.oid and pc.relname not like 'pg_%';
+   relname   | pid |        mode         | granted | usename  | wait_event_type |  wait_event   |        state        |                    query
+
+-------------+-----+---------------------+---------+----------+-----------------+---------------+---------------------+-------------------------------------
+--------
+ t_lock_pkey | 373 | RowExclusiveLock    | t       | postgres | Lock            | transactionid | active              | update t_lock set id=100 where id=1;
+ t_lock      | 373 | RowExclusiveLock    | t       | postgres | Lock            | transactionid | active              | update t_lock set id=100 where id=1;
+ t_lock_pkey | 467 | RowShareLock        | t       | postgres | Client          | ClientRead    | idle in transaction | select * from t_lock where id=1 for
+update;
+ t_lock      | 467 | RowShareLock        | t       | postgres | Client          | ClientRead    | idle in transaction | select * from t_lock where id=1 for
+update;
+ t_lock      | 373 | AccessExclusiveLock | t       | postgres | Lock            | transactionid | active              | update t_lock set id=100 where id=1;
+(5 rows)
 
 ```
 
-> 注，pgrowlocks扩展，提供函数显示指定表的行锁信息;
+## 死锁(deadlock)
 
-session1
+锁的使用过程中，可能会造成死锁，死锁是指两个（或多个）事务相互持有对方想要的锁。PostgreSQL能够自动检测到死锁情况并且会通过中断其中一个事务从而允许其它事务完成来解决这个问题
+
+示例
 
 ```sql
+create table t_lock(id integer primary key);
+insert into t_lock values(1),(2);
+create table t_deadlock(id integer primary key);
+insert into t_deadlock values(1),(2);
+
+session 1:
 begin;
-select * from a;
-update a set col1=555 where aid=1;
-SELECT pg_backend_pid();
+update t_lock set id=100 where id=1;
 
- pg_backend_pid
-----------------
-           2176
-(1 row)
+session 2
+begin;
+update t_deadlock set id=200 where id=1;
+update t_lock set id=200 where id=1;
 
+session 1
+update t_deadlock set id=100 where id=1;
+
+
+session 3
 ```
 
-session2
+错误日志：
 
-```sql
-begin;
-select * from a;
-update a set col1=666 where aid=1;
-
+```bash
+ERROR:  deadlock detected
+DETAIL:  Process 558 waits for ShareLock on transaction 532; blocked by process 560.
+Process 560 waits for ShareLock on transaction 530; blocked by process 558.
+HINT:  See server log for query details.
+CONTEXT:  while updating tuple (0,1) in relation "t_deadlock"
 ```
 
-session3
-
-```sql
-begin;
-select * from pgrowlocks('a');
- locked_row | locker | multi | xids  |       modes       |  pids
-------------+--------+-------+-------+-------------------+--------
- (0,1)      |    611 | f     | {611} | {"No Key Update"} | {2176}
-(1 row)
-
-```
-
-# 锁介绍
-
-锁和并发息息相关。
-表可以被并发读取而不会彼此阻塞，如果读写同时发生呢？
- 
-同一时间对同一行做操作
-事务1：update
-事务2：select
-事务1不会阻塞事务2，同时事务2会读取旧数据。pg会保证事务的一致性，通过mvcc功能。而事务1会锁定操作的行。
- 
-我们也可以显示锁定对象。
-highgo=# \h lock
-Command:     LOCK
-Description: lock a table
-Syntax:
-LOCK [ TABLE ] [ ONLY ] name [ * ] [, ...] [ IN lockmode MODE ] [ NOWAIT ]
- 
-where lockmode is one of:
- 
-    ACCESS SHARE | ROW SHARE | ROW EXCLUSIVE | SHARE UPDATE EXCLUSIVE
-    | SHARE | SHARE ROW EXCLUSIVE | EXCLUSIVE | ACCESS EXCLUSIVE
- 
-pg的锁有8种
- 
- 
-## 使用for share和for update
-Select for update;
-Select for update nowait;
-Select from limit 1 for update;
-Select for update skip locked;
- 
-注意：for update会影响外键，不允许外键约束被破坏。因此for update会影响外键引用的表操作。
-For update还有for share
+防止死锁的最好方法通常是保证所有使用一个数据库的应用在逻辑上以一致的顺序在多个对象上获得锁。避免死锁的产生。
 
 ## 如何检查或监控锁等待呢？
 
@@ -434,41 +487,8 @@ AND state in ('idle', 'idle in transaction', 'idle in transaction (aborted)', 'd
 AND state_change < current_timestamp - INTERVAL '15' MINUTE;
 ```
 
-## 死锁等待
 
-SESSION A：
-    Lock tuple 1;
-
-SESSION B：
-    Lock tuple 2;
-
-SESSION A：
-    Lock tuple 2 waiting;
-
-SESSION B：
-    Lock tuple 1 waiting;
-
-A,B相互等待。
-
-死锁检测的时间间隔配置，deadlock_timeout默认为1秒。
-锁等待超过这个配置后，触发死锁检测算法。
-因为死锁检测比较耗资源，所以这个时间视情况而定。
-
-规避死锁需要从业务逻辑的角度去规避，避免发生这种交错持锁和交错等待的情况。
-
-日志
-
-当SQL请求锁等待超过deadlock_timeout指定的时间时，报类似如下日志：
-
-```bash
-LOG: process xxx1 acquired RowExclusiveLock on relation xxx2 of database xxx3 after xxx4 ms at xxx
-STATEMENT: INSERT ...........
-```
-
-解释：
-xxx1进程请求位于数据库xxx3中的xxx2对象的RowExclusiveLock锁，已等待xxx4秒。
-
-## reference
+<!--
 
 segment级锁问题排查
 由于Greenplum是分布式架构，所以有些异常的情况下，在master可能看不到锁等待的罪魁祸首，只能看到等待者，那么需要查询segment才能分析出到底是等待什么，以及如何处理，请参考：
