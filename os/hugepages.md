@@ -28,6 +28,16 @@ cat /proc/meminfo | grep -i huge
 Script to quantify Huge Pages
 This is a simple script which returns the number of Huge Pages required. Execute the script on your Linux box while your PostgreSQL is running. Ensure that $PGDATA environment variable is set to PostgreSQL’s data directory.
 
+<!--
+Linux默认使用大小为4K的内存页。
+页面是分配给一个进程的一块内存，一个进程可能拥有多个页面，这取决于它对内存的要求。进程需要的内存越多，分配给它的页面就越多。
+操作系统持有一个分配给进程的页面的表。CPU和操作系统必须记住哪个页面属于哪个进程，以及它存储在哪里。显然，页面越多，查找内存映射位置所需的时间就越长。
+因此，大页面使得使用大量内存的同时减少开销成为可能。
+
+使用大页面之后，页面查找次数更少，页面错误更少，通过更大的缓冲区读取/写入操作更快，这样就提升了数据库的性能。
+
+-->
+
 查看操作系统页面大小
 
 ```sh

@@ -42,7 +42,7 @@ shmmax=`echo "$phys_pages * 0.6 * $page_size" |bc`
 
 # kernel内存使用。建议参数值比shared buffer大
 echo kernel.shmall = $shmall #此参数设置系统范围内共享内存总数量（以内存页PAGE_SIZE表示）。因此, SHMALL 始终大于(shmmax/PAGE_SIZE)。
-echo   = $shmmax #此参数定义单个共享内存段的最大大小 (以字节为单位)
+echo kernel.shmmax = $shmmax #此参数定义单个共享内存段的最大大小 (以字节为单位)
 echo kernel.shmmni = 819200 #此参数设置系统内最大共享内存段个数
 echo kernel.sem = 4096 2147483647 2147483646 512000 #信号量负责进程间通信，协调各个进程工作
 #cat /proc/sys/kernel/sem

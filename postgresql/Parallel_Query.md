@@ -158,7 +158,9 @@ highgo=# EXPLAIN ANALYSE SELECT test_small.name FROM test_big,test_small WHERE t
 ```
 
 ## 其他示例
+
 PostgreSQL优化器计算并行度及如何决定使用并行
+
 1、确定整个系统能开多少worker进程（max_worker_processes）
 2、计算并行计算的成本，优化器根据CBO原则选择是否开启并行（parallel_setup_cost、parallel_tuple_cost）。
 3、强制开启并行（force_parallel_mode）。
