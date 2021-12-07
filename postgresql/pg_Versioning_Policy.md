@@ -21,6 +21,11 @@ ref [Versioning Policy](https://www.postgresql.org/support/versioning/)
 ## 版本介绍
 
 PostgreSQL全球开发组每年发布一次包含新特性，新功能的主要新版本。
+
+<!--
+10月？？
+-->
+
 每个主要版本都会收到错误修复，如果需要的话，还会收到安全修复，这些修复至少每三个月发布一次，称之为“次要版本”
 
 有关次要发行计划的更多信息，可以查看次要发行路线图[minor release roadmap](https://www.postgresql.org/developer/roadmap/)（预定发行计划是二月、五月、八月和十一月的第二个星期四。）

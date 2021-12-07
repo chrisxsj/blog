@@ -129,6 +129,16 @@ ntpdate 192.168.6.15
 
 ```
 
+## 问题
+
+如果不同步，可能是防火墙阻止了端口访问
+
+开通ntpd端口
+
+firewall-cmd --add-port=123/udp --permanent
+firewall-cmd --reload
+firewall-cmd --list-ports
+
 <!--
 # How to setup a NTP server which can synchorize with an Internet time source and provide time service for internal servers?
 
