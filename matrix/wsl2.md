@@ -178,6 +178,10 @@ ref [OBS Studio](https://obsproject.com/wiki/install-instructions#linux)
 
 obs
 
+## pgadmin
+
+https://www.pgadmin.org/download/pgadmin-4-apt/
+
 ## shotcut
 
 ## gnome-boxes
