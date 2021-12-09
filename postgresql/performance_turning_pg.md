@@ -115,20 +115,24 @@ alter system set work_mem = '50MB'; --测试改为128MB，可在session级别修
 
 --for wal
 alter system set wal_level=replica; --测试改为mimimal
-
+alter system set wal_log_hints='on' --开启使用pg_rewind
 alter system set wal_buffers='32MB'; --测试改为wal段大小的2倍
 alter system set max_wal_size = '50GB';
 alter system set min_wal_size = '5GB';
 alter system set wal_keep_segments = 100;
+
 alter system set checkpoint_timeout = '30min';
 alter system set checkpoint_completion_target = 0.8; --测试改为0.9
 alter system set full_page_writes = on; --测试改为off
 alter system set max_wal_senders = 40;
 alter system set max_replication_slots=40;
+
 alter system set archive_mode = on; --测试改为off
 alter system set archive_command = 'test ! -f /arch/%f;cp -i %p /arch/%f;scp -i %p 192.168.6.13:/arch'; --测试去掉
 --alter system set archive_command = 'DIR=/home/postgres/`date +%F`;test ! -d $DIR && mkdir $DIR;test ! -f $DIR/%f && cp %p $DIR/%f';
 -- for error reporting and logging
+alter system set archive_timeout= '30min';
+
 alter system set logging_collector = 'on'; --测试改为off
 alter system set log_destination = 'csvlog';
 alter system set log_directory = 'hgdb_log';
@@ -145,6 +149,9 @@ alter system set log_disconnections = 'on'; --测试改为off
 alter system set log_hostname=off;
 alter system set log_lock_waits=on; --测试改为off
 --alter system set cluster_name=pgdb;
+
+alter system set temp_buffers='1GB';
+alter system set log_temp_files='5GB';  --日志记录临时文件超过5G大小的文件
 
 ###########################################################
 #以下内容非常规配置，可在优化时调整
@@ -168,8 +175,7 @@ alter system set random_page_cost=1.1;
 alter system set timezone = 'PRC';
 
 -- other
-alter system set temp_buffers='1GB';
-alter system set log_temp_files='5GB';  --日志记录临时文件超过5G大小的文件
+
 
 alter system set commit_delay = 10; --insert
 alter system set commit_siblings = 60; --insert

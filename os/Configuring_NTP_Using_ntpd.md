@@ -54,7 +54,7 @@ ref [friewall](./firewall.md)
 ntp.conf配置如下
 
 ```bash
-restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap     #限制，允许网段连接ntp服务器
+restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap     #限制192.168.6.0网段连接，不允许客户端修改服务端时间，但可以通过服务器进行网络校时
 server 127.127.1.0  #设置本机作为内部时钟数据
 fudge  127.127.1.0 stratum 10
 
@@ -90,8 +90,8 @@ Ntp.conf
 
 ```bash
 
-#restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap     #限制，允许网段连接ntp服务器
-server 192.168.6.141  #设置本机作为内部时钟数据
+#restrict 192.168.6.141 mask 255.255.255.0 nomodify notrap     #允许192.168.6.141连接本机，即允许其修改时间，不允许客户端修改时间
+server 192.168.6.141  #设置内部时钟服务器
 
 # 以下信息注释掉
 
@@ -111,7 +111,7 @@ synchronised to NTP server (192.168.6.141) at stratum 12
    time correct to within 1392 ms
    polling server every 64 s
 
-[root@db2 ~]# ntpq -p
+[root@db2 ~]# ntpq -pn
      remote           refid      st t when poll reach   delay   offset  jitter
 ==============================================================================
 *192.168.6.141   LOCAL(0)        11 u   32   64  377    0.217    0.020   0.045

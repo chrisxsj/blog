@@ -72,6 +72,8 @@ hostnamectl set-hostname t3
 
 ## 数据库集群安装配置
 
+（不需要配置集群。patroni自动配置集群）
+
 :warning: 虽然Patroni支持自动化初始化PostgreSQL数据库并部署流复制，但这两块内容写到yml文件比较复杂，建议还是手工来做比较好。此外数据库配置参数也可以写到patroni的yml文件中，但参数会受patroni控制，不灵活，不建议。
 
 数据库安装 ref [pg_installation](./../postgresql/pg_installation.md)
@@ -222,6 +224,7 @@ nohup ./etcd --config-file ./etcd.yml > start_etcd.log 2>&1 &
 
 ```shell
 ./etcdctl --write-out=table member list
+./etcdctl endpoint status -w table
 
 [root@t2 etcd-v3.5.0-linux-amd64]# ./etcdctl --write-out=table member list
 +------------------+---------+---------+----------------------------+----------------------------+------------+

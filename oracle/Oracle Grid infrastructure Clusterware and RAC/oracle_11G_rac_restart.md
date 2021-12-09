@@ -1,8 +1,8 @@
+# oracle_11G_rac_restart
+
 http://blog.csdn.net/tianlesoftware/article/details/8435772
 
 Steps To Shutdown(stop)/Startup(start) CRS, OHAS, ASM, RDBMS & ACFS Services on a RAC Cluster 11.2 & 12.1 Configuration (Doc ID 1355977.1)
-
-	
 
 
 
