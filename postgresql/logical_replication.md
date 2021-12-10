@@ -38,6 +38,7 @@ ref [Logical Replication](https://www.postgresql.org/docs/13/logical-replication
 * 跨大版本升级。
 * 实现跨平台同步。
 * 数据库中批量导入部分表
+* 自动初始化基础数据
 
 ## 3发布（ publication ）和发布者（ publisher ）
 
@@ -278,3 +279,10 @@ alter subscription lipei_solt_sub enable;
 ```sql
 alter subscription sub1 refresh publication;
 ```
+
+## 第 50 章 复制进度追踪
+复制源是为了更容易地在逻辑解码 上实现逻辑复制解决方案而设计。它们提供了对两种常见问题的解决方案：
+
+如何安全地跟踪复制进度？
+
+如何基于一行的来源更改复制行为？例如，阻止双向复制 设置中的循环
