@@ -26,7 +26,7 @@ ref [Logical Replication](https://www.postgresql.org/docs/13/logical-replication
 
 逻辑复制使用发布`publication`和订阅`subscription`模型,数据库中可以创建多个发布或订阅对象。一个订阅者可订阅多个发布。一个发布者也可以对应不同的订阅。订阅者从他们订阅的发布中提取数据,实现数据同步。订阅者也可以重新发布数据,以允许级联复制或更复杂的配置
 
-![logical_replication](../image/20210830logical_replication.png)
+![logical_replication](../image/20211212logical_replication.png)
 
 ## 2适用场景
 
@@ -278,10 +278,3 @@ alter subscription lipei_solt_sub enable;
 ```sql
 alter subscription sub1 refresh publication;
 ```
-
-## 第 50 章 复制进度追踪
-复制源是为了更容易地在逻辑解码 上实现逻辑复制解决方案而设计。它们提供了对两种常见问题的解决方案：
-
-如何安全地跟踪复制进度？
-
-如何基于一行的来源更改复制行为？例如，阻止双向复制 设置中的循环
