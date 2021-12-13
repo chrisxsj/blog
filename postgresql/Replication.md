@@ -341,7 +341,7 @@ recovery_target_timeline='latest'
 
 > 注意： primary_conninfo 明文指出了密码，建议将密码配置在密码文件中。参考[pgpass](./pgpass.md) （备库）
 
-**pg12及以上参考[pg12新特性-迁移recovery.conf到postgresql.conf](./pg_new_features/pg12新特性-迁移recovery.conf到postgresql.conf.md)**
+**以上为pg12前的配置，pg12及之后版本配置如下，参考[pg12新特性-迁移recovery.conf到postgresql.conf](./pg_new_features/pg12新特性-迁移recovery.conf到postgresql.conf.md)**
 
 pg12及以上使用以上配置会报错
 
