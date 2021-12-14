@@ -92,7 +92,7 @@ ref [firewall](./firewall.md)
 2. Configure Time Synchronization
 
 It is highly recommended to enable NTP on your cluster nodes
-ref [Configuring NTP Using ntpd](./Configuring_NTP_Using_ntpd.md)
+ref [ntp](./ntp.md)
 
 ### Configure the OS
 
@@ -108,7 +108,7 @@ ssh 192.168.6.142
 hostname
 ssh
 
-ref [Configure Communication Between Nodes](./Configuring_NTP_Using_ntpd.md)
+ref [Configure Communication Between Nodes](./Configure_Communication_Between_Nodes.md)
 
 ### Set up a Cluster
 

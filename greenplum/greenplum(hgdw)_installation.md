@@ -180,7 +180,7 @@ server 10.6.220.20
 在主节点主机，使用NTP守护进程同步所有计算节点主机的系统时钟。例如，使用gpssh来完成：
 gpssh -f hostfile_gpssh_allhosts  -v -e 'ntpd'
 
-ref [Configuring_NTP_Using_ntpd](../os/Configuring_NTP_Using_ntpd.md)
+ref [ntp](../os/ntp.md)
 
 ### 配置节点互信
 

@@ -1,4 +1,4 @@
-# Configuring NTP Using ntpd
+# ntp
 
 **作者**
 
@@ -11,6 +11,7 @@ chrisx
 **内容**
 
 Configuring NTP Using ntpd
+
 REDHAT 7.x ref [Configuring NTP Using ntpd](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_ntpd)
 
 ----
@@ -28,9 +29,9 @@ systemctl status chronyd
 
 ```
 
-## 安装NPT
+## 安装启动NPT
 
-主从节点都安装
+主从节点都做
 
 ```shell
 yum install ntp
@@ -38,20 +39,20 @@ systemctl enable ntpd
 systemctl start ntpd
 systemctl status ntpd
 
-
-[root@db ~]# ntpstat
-unsynchronised
-  time server re-starting
-   polling server every 8 s
 ```
 
-## 停止firewalld
+## 防火墙开端口
 
-ref [friewall](./firewall.md)
+```sh
+firewall-cmd --add-port=123/udp --permanent
+firewall-cmd --reload
+firewall-cmd --list-ports
 
-## Configure NTP
+```
 
-ntp.conf配置如下
+## Configure NTP（主库）
+
+vi /etc/ntp.conf
 
 ```bash
 restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap     #限制192.168.6.0网段连接，不允许客户端修改服务端时间，但可以通过服务器进行网络校时
@@ -86,11 +87,13 @@ synchronised to local net (127.127.1.0) at stratum 11
 
 ## configure client
 
-Ntp.conf
+客户端ntp配置
+
+vi /etc/ntp.conf
 
 ```bash
 
-#restrict 192.168.6.141 mask 255.255.255.0 nomodify notrap     #允许192.168.6.141连接本机，即允许其修改时间，不允许客户端修改时间
+restrict 192.168.6.141 mask 255.255.255.0 nomodify notrap noquery    #允许192.168.6.141连接本机，即允许其修改时间，不允许客户端修改时间
 server 192.168.6.141  #设置内部时钟服务器
 
 # 以下信息注释掉
@@ -100,8 +103,6 @@ server 192.168.6.141  #设置内部时钟服务器
 #server 2.rhel.pool.ntp.org iburst
 #server 3.rhel.pool.ntp.org iburst
 ```
-
-> 注意，注释掉server0-5
 
 查看状态
 
@@ -118,7 +119,9 @@ synchronised to NTP server (192.168.6.141) at stratum 12
 
 ```
 
-备库可先手动同步一次时间，手动同步时需要关闭ntp服务
+## 手动同步
+
+备库可先手动同步一次时间，手动同步时需要关闭ntp服务，手动同步完再启动服务
 
 ```bash
 主库
@@ -135,9 +138,12 @@ ntpdate 192.168.6.15
 
 开通ntpd端口
 
+```sh
 firewall-cmd --add-port=123/udp --permanent
 firewall-cmd --reload
 firewall-cmd --list-ports
+
+```
 
 <!--
 # How to setup a NTP server which can synchorize with an Internet time source and provide time service for internal servers?
