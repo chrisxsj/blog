@@ -652,19 +652,6 @@ function pg_mvcc () {
       pid,
       query,
       state,
-      xact_start,
-      now() - xact_start xact_duration
-  from pg_stat_activity
-  where now() - xact_start > interval $$30 min $$
-  and state = $$idle$$
-  order by xact_start
-  limit 5;'
-
-  psql -d $db --pset=pager=off -q -c 'select current_database(),
-      usename,
-      pid,
-      query,
-      state,
       backend_start,
       now() - backend_start backend_duration
   from pg_stat_activity

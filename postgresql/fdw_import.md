@@ -10,13 +10,17 @@ Chrisx
 
 **内容**
 
-fdw批量导入表. ref [importforeignschema](https://www.postgresql.org/docs/13/sql-importforeignschema.html)
+IMPORT FOREIGN SCHEMA
+
+Import only foreign tables matching one of the given table names. 
+
+fdw批量导入外部表. ref [importforeignschema](https://www.postgresql.org/docs/13/sql-importforeignschema.html)
 
 ----
 
 [toc]
 
-## fdw批量导入表
+## fdw批量导入外部表
 
 1. 创建fdw扩展
 
@@ -48,7 +52,7 @@ CREATE USER MAPPING FOR highgo
 
 ```
 
-4. 创建外部表
+4. 批量导入外部表
 
 ```sql
 \c highgo highgo
