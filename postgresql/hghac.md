@@ -100,7 +100,24 @@ chmod 0600 $PGDATA/server*
 
 ```
 
-### 4. 修改数据库参数
+### 4. 生成ssl证书
+
+生成需要的ssl_ca_cert
+
+```sh
+/opt/HighGo4.5.7-see/bin/hg_sslkeygen.sh /data/highgo/data
+
+
+# ls -atl /data/highgo/data/root.*
+-rw-------. 1 root root 1338 12月  8 22:05 /data/highgo/data/root.crt
+
+# ls -atl /data/highgo/data/server.*
+-rw-------. 1 root root 4317 12月  8 15:14 /data/highgo/data/server.crt
+-rw-------. 1 root root 1675 12月  8 15:14 /data/highgo/data/server.key
+
+```
+
+### 5. 修改数据库参数
 
 ```sh
 mkdir /data/archive
@@ -172,7 +189,7 @@ alter user sysdba with password 'xxx';
 
 ```
 
-### 5. 网络访问配置文件
+### 6. 网络访问配置文件
 
 pg_hba.conf
 
@@ -183,7 +200,7 @@ host    replication             all             0.0.0.0/0              sm3
 
 ```
 
-### 6. 密码文件
+### 7. 密码文件
 
 ```sh
 pgpass  0600
@@ -194,16 +211,17 @@ localhost:5866:highgo:syssao:xxx
 
 ```
 
-### 7. lic
+### 8. lic
 
-### 8. 关闭数据库
+### 9. 启动关闭数据库
 
 ```sh
+pg_ctl start  #启动测试
 pg_ctl stop
 
 ```
 
-### 流复制
+### 10. 流复制
 
 流复制可提前手动配置，也可以通过patroni自动配置。本次使用patroni自动配置
 
@@ -713,22 +731,7 @@ ssl_dh_params_file =
 
 ```
 
-### ssl_ca_cert配置
-
-生成需要的ssl_ca_cert
-
-```sh
-/opt/HighGo4.5.7-see/bin/hg_sslkeygen.sh /data/highgo/data
-
-
-# ls -atl /data/highgo/data/root.*
--rw-------. 1 root root 1338 12月  8 22:05 /data/highgo/data/root.crt
-
-# ls -atl /data/highgo/data/server.*
--rw-------. 1 root root 4317 12月  8 15:14 /data/highgo/data/server.crt
--rw-------. 1 root root 1675 12月  8 15:14 /data/highgo/data/server.key
-
-```
+### 拷贝ssl证书
 
 拷贝ssl相关文件至指定路径（proxy.conf文件中ssl_ca_cert_dir）
 
@@ -738,16 +741,6 @@ scp /data/highgo/data/root.crt xxx:/data/highgo/data
 cp /data/highgo/data/server.* /opt/highgo/hgproxy/etc
 cp /data/highgo/data/root.crt /opt/highgo/hgproxy/etc
 
-
-```
-
-数据库修改参数，两个节点都要做
-
-```sql
-alter system set ssl_cert_file='/data/highgo/data/server.crt';
-alter system set ssl_key_file='/data/highgo/data/server.key';
-
-select pg_reload_conf();
 
 ```
 
