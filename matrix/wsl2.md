@@ -91,6 +91,7 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 dpkg -l |grep post
 
 dpkg -l                             // 列出已安装的所有软件包
+dpkg-query -l
 
 apt-cache search PackageName        // 搜索软件包
 apt-cache show PackageName          // 获取软件包的相关信息, 如说明、大小、版本等
