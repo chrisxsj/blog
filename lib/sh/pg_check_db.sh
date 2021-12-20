@@ -479,6 +479,14 @@ from pg_stat_database'
   echo "--->>> 回滚比例大说明业务逻辑可能有问题, 命中率小说明shared_buffer要加大, 数据块读写时间长说明块设备的IO性能要提升,"
   echo "--->>> 死锁次数多说明业务逻辑有问题, 复制冲突次数多说明备库可能在跑LONG SQL."
 
+  ##计算缓存命中率
+  ##select blks_hit::float/(blks_read + blks_hit) as cache_hit_ratio from pg_stat_database where datname=current_database();
+  ##表的索引使用率ASC
+  ##select relname,idx_scan::float/(idx_scan+seq_scan) as idx_scan_ratio from pg_stat_all_tables where schemaname='prod_1209';
+  ##索引扫描占整个数据扫描比率
+  ##select sum(idx_scan)/(sum(idx_scan)+sum(seq_scan)) as idx_scan_ratio from pg_stat_all_tables where schemaname='prod_1209';
+
+
   echo "###### 检查点, bgwriter 统计信息"
   psql --pset=pager=off -q -x -c 'select * from pg_stat_bgwriter'
   echo "--->>> checkpoint_write_time多说明检查点持续时间长, 检查点过程中产生了较多的脏页."

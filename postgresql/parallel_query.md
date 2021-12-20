@@ -1,4 +1,4 @@
-# Parallel_Query
+# parallel_query
 
 PostgreSQL 可以设计查询计划，利用多个 CPU 更快地回答查询。此功能称为并行查询。
 
