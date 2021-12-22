@@ -1,5 +1,5 @@
 
-# wsl2_ssh
+# ubuntu_ssh
 
 **作者**
 
@@ -11,7 +11,7 @@ Chrisx
 
 **内容**
 
-wsl2 ubuntu开启ssh服务
+ubuntu开启ssh服务
 
 ----
 

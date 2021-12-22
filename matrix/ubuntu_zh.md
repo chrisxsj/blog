@@ -1,5 +1,5 @@
 
-# wsl2g_zh
+# ubuntu_zh
 
 **作者**
 
