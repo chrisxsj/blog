@@ -5,7 +5,6 @@
 https://linuxcontainers.org/lxd/getting-started-cli/#linux
 
 sudo apt update
-sudo apt install snapd
 sudo snap install lxd
 
 ## Getting started with LXD

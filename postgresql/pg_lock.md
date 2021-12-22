@@ -191,7 +191,7 @@ CONTEXT:  while updating tuple (0,1) in relation "t_deadlock"
 
 ## 如何检查或监控锁等待呢？
 
-PostgreSQL提供了两个视图
+PostgreSQL提供了几个视图
 
 1. pg_locks展示锁信息，每一个被锁或者等待锁的对象一条记录。
 <!--
@@ -486,7 +486,6 @@ pid <> pg_backend_pid()
 AND state in ('idle', 'idle in transaction', 'idle in transaction (aborted)', 'disabled')
 AND state_change < current_timestamp - INTERVAL '15' MINUTE;
 ```
-
 
 <!--
 
