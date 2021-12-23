@@ -20,17 +20,21 @@ ref[multipass](https://multipass.run/)
 
 ## multipass
 
+```sh
 multipass find
 multipass launch -c 8 --d 50G --mem 8G --n u1 21.10
 multipass mount c:\data\ubuntu u1:/c
+```
 
 ## ubuntu apt升级
 
 终端执行：
 
+```sh
 sudo apt update
 sudo apt upgrade
-sudo systemctl reboot
+sudo shutdown -r now
+```
 
 如果报错：
 E: The repository 'http://archive.ubuntu.com/ubuntu focal-backports Release' does not have a Release file.
@@ -41,18 +45,16 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 ## apt-get 查询软件包
 
+```sh
 dpkg -l |grep post
-
 dpkg -l                             // 列出已安装的所有软件包
 dpkg-query -l
-
 apt-cache search PackageName        // 搜索软件包
 apt-cache show PackageName          // 获取软件包的相关信息, 如说明、大小、版本等
-
 apt-cache depends PackageName       // 查看该软件包需要哪些依赖包
 apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
-
 apt-get check                       // 检查是否有损坏的依赖
+```
 
 ## 使用git
 
