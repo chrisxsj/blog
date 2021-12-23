@@ -18,7 +18,13 @@ ref[multipass](https://multipass.run/)
 
 [toc]
 
-### ubuntu apt升级
+## multipass
+
+multipass find
+multipass launch -c 8 --d 50G --mem 8G --n u1 21.10
+multipass mount c:\data\ubuntu u1:/c
+
+## ubuntu apt升级
 
 终端执行：
 
@@ -31,9 +37,9 @@ E: The repository 'http://archive.ubuntu.com/ubuntu focal-backports Release' doe
 N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details.
 
-更换软件源[wsl2_source](./wsl2_source.md)
+更换国内软件源[ubuntu_source](./ubuntu_source.md)
 
-### apt-get 查询软件包
+## apt-get 查询软件包
 
 dpkg -l |grep post
 

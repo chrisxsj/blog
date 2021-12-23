@@ -42,6 +42,8 @@ deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal-backports main restricted univ
 
 [清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)
 
+选择对应版本的镜像源地址，下面以ubuntu 20.04 LTS为例
+
 ```sh ubuntu 20.04
 # 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse
