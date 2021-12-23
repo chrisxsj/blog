@@ -22,7 +22,7 @@ ref[multipass](https://multipass.run/)
 
 ```sh
 multipass find
-multipass launch -c 8 --d 50G --mem 8G --n u1 21.10
+multipass launch -c 4 --d 50G --mem 4G --n u1 21.10
 multipass mount c:\data\ubuntu u1:/c
 ```
 
