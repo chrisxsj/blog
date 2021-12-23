@@ -18,29 +18,10 @@ wsl2配置软件源，通常ubuntu等linux安装完成后，建议更换为国�
 
 ## 配置源
 
-1. 国内源网站
-
-[中国科学技术大学开源软件镜像](https://mirrors.ustc.edu.cn/repogen/)
-
-```sh ubuntu 20.04
-deb https://mirrors.ustc.edu.cn/ubuntu/ focal main restricted universe multiverse
-deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal main restricted universe multiverse
-
-deb https://mirrors.ustc.edu.cn/ubuntu/ focal-security main restricted universe multiverse
-deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal-security main restricted universe multiverse
-
-deb https://mirrors.ustc.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
-deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
-
-deb https://mirrors.ustc.edu.cn/ubuntu/ focal-backports main restricted universe multiverse
-deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal-backports main restricted universe multiverse
-
-## Not recommended
-# deb https://mirrors.ustc.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
-# deb-src https://mirrors.ustc.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
-```
+以下为常用国内源
 
 [清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)
+[中国科学技术大学开源软件镜像](https://mirrors.ustc.edu.cn/repogen/)
 
 选择对应版本的镜像源地址，下面以ubuntu 20.04 LTS为例
 
