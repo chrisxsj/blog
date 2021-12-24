@@ -426,6 +426,13 @@ ted | fastpath | virtualtransaction | pid  |     mode      | granted
 
 ```
 
+### 方法4
+
+```sql
+select pid,pg_blocking_pids(pid),wait_event_type,wait_event,query from pg_stat_activity ;
+
+```
+
 显示阻塞者相关信息
 
 ref[Find Locks](https://wiki.postgresql.org/wiki/Find_Locks?d=1594624951637)
