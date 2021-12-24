@@ -156,25 +156,21 @@ update;
 示例
 
 ```sql
-create table t_lock(id integer primary key);
-insert into t_lock values(1),(2);
-create table t_deadlock(id integer primary key);
-insert into t_deadlock values(1),(2);
+create table t_deadlock(id integer primary key,name varchar);
+insert into t_deadlock values(1,'aaa'),(2,'bbb');
 
 session 1:
 begin;
-update t_lock set id=100 where id=1;
+update t_deadlock set name='Peter' where id=1;
 
 session 2
 begin;
-update t_deadlock set id=200 where id=1;
-update t_lock set id=200 where id=1;
+update t_deadlock set name='Jason' where id=2;
+update t_deadlock set name='xiaoming' where id=1;
 
 session 1
-update t_deadlock set id=100 where id=1;
+update t_deadlock set name='xiaohong' where id=2;
 
-
-session 3
 ```
 
 错误日志：
@@ -188,6 +184,8 @@ CONTEXT:  while updating tuple (0,1) in relation "t_deadlock"
 ```
 
 防止死锁的最好方法通常是保证所有使用一个数据库的应用在逻辑上以一致的顺序在多个对象上获得锁。避免死锁的产生。
+
+ref[deadlocks-in-postgresql](https://shiroyasha.io/deadlocks-in-postgresql.html)
 
 ## 如何检查或监控锁等待呢？
 
