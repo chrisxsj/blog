@@ -123,8 +123,7 @@ gmake install
 
 ## Uninstallation
 
-make uninstall
-https://www.postgresql.org/docs/10/static/install-procedure.html
+ref [install-procedure](https://www.postgresql.org/docs/10/install-procedure.html)
 
 ##　Client-only installation
 
@@ -135,7 +134,12 @@ make -C src/include install
 make -C src/interfaces install
 make -C doc install
 
-来自 <https://www.postgresql.org/docs/10/install-procedure.html>
+ref [install-procedure](https://www.postgresql.org/docs/10/install-procedure.html)
+
+<!--
+apt install postgresql-client-common
+apt install postgresql-client-13
+-->
 
 ## Post-Installation Setup
 

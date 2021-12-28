@@ -68,6 +68,10 @@ ref docker*
 
 ref vscode*
 
+## 使用数据库
+
+sudo apt install postgresql postgresql-contrib
+
 ## 使用邮件客户端
 
 安装最新版thunderbird

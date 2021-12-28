@@ -59,3 +59,27 @@ centos       7.9.2009   eeb6ee3f44bd   10 days ago     204MB
 
 sudo docker tag e96425946916 c79d11:20210926
 ```
+
+## 将普通用户加入docker组
+
+```sh
+usermod -a -G docker cx
+
+```
+
+## 问题
+
+Permission issue with PostgreSQL in docker container
+
+docker外挂目录，自动被修改为systemd-coredump
+
+```sh
+drwx------ 19 systemd-coredump chrisx 4096 12月 28 10:53 pg129/
+```
+
+解决方案
+
+修改配置文件
+
+/var/lib/docker/containers/[hash_of_the_container]/hostconfig.json
+
