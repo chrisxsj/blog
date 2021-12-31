@@ -133,6 +133,18 @@ obs
 
 https://www.pgadmin.org/download/pgadmin-4-apt/
 
+## dbeaver
+
+https://dbeaver.io/download/
+
+## aria2
+
+sudo apt-get install aria2
+
+## vlc
+
+sudo apt-get install vlc
+
 ## shotcut
 
 ## gnome-boxes

@@ -18,17 +18,8 @@ Chrisx
 
 ## usage
 
-1. 安装daemonize
-
 ```sh
-sudo apt-get install daemonize
-
-```
-
-2. 执行以下命令开启
-
-```sh
-sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
-
-exec sudo nsenter -t $(pidof systemd) -a su - $LOGNAME
+git clone https://github.com/DamionGans/ubuntu-wsl2-systemd-script.git
+cd ubuntu-wsl2-systemd-script/
+bash ubuntu-wsl2-systemd-script.sh
 ```
