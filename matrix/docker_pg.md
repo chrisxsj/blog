@@ -18,6 +18,12 @@ ref [docker_postgres](https://hub.docker.com/_/postgres)
 
 [toc]
 
+## 拉取镜像
+
+```sh
+docker pull postgres:12.9
+```
+
 ## 运行pg
 
 ```sh
