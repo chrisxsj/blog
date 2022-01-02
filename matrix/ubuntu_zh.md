@@ -22,6 +22,7 @@ wslg支持中文
 ```sh
 locale  #查看当前系统语言环境
 sudo apt-get install -y language-pack-zh-hans   # 安装中文语言支持
+sudo apt-get install -y fonts-noto   # 安装中文字体
 locale -a   #查看已安装的语言环境
 
 ```
@@ -34,5 +35,6 @@ locale -a   #查看已安装的语言环境
 sudo vi /etc/default/locale
 
 LANG=zh_CN.UTF-8
+LANGUAGE=zh_CN
 
 ```
