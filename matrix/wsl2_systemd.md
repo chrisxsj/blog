@@ -32,6 +32,15 @@ bash ubuntu-wsl2-systemd-script.sh
 systemctl
 ```
 
+## 卸载
+
+```sh
+sudo vi /etc/bash.bashrc
+
+注释掉#source /usr/sbin/start-systemd-namespace
+
+```
+
 ## 错误
 
 报错
