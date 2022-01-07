@@ -18,8 +18,16 @@ Chrisx
 
 ## usage
 
+安装systemd
+
 ```sh
 git clone https://github.com/DamionGans/ubuntu-wsl2-systemd-script.git
 cd ubuntu-wsl2-systemd-script/
 bash ubuntu-wsl2-systemd-script.sh
+```
+
+重启wsl，并执行以下命令确认
+
+```sh
+systemctl
 ```
