@@ -180,8 +180,8 @@ create extension ogr_fdw;
 
 下载地址[postgis for win](http://download.osgeo.org/postgis/windows/)
 
-> 注意，版本一定要对应好，否则安装失败（HGDBV4对应PG9.5， HGDBV5对应PG10）
-> 注意，V5中LIB和PATH都要配置在PATH中
+:warning: 注意，版本一定要对应好，否则安装失败（HGDBV4对应PG9.5， HGDBV5对应PG10）
+:warning: 注意，V5中LIB和PATH都要配置在PATH中
 
 下载的gis安装包分为.zip和.exe两种格式
 .exe：直接安装，指定到数据库的安装目录，例如：D:\highgo\database\5.6.4
@@ -250,6 +250,11 @@ set POSTGISVER=3.0
 
 ```sql
 create extension postgis;
+create extension postgis;
+create extension postgis_raster;
+create extension postgis_sfcgal;
+create extension fuzzystrmatch;
+create extension postgis_tiger_geocoder;
+create extension postgis_topology;
 
 ```
-
