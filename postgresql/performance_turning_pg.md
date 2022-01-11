@@ -179,8 +179,14 @@ alter system set max_parallel_maintenance_workers='16'; --create index
 alter system set backend_flush_after = 0;
 alter system set dynamic_shared_memory_type = posix;    --设置为除none之外的值，启动并发查询
 
+-- for 
+alter system set bgwriter_delay = '500ms';
+alter system set bgwriter_lru_multiplier = 10;
+alter system set bgwriter_lru_maxpages = 1000;
+alter system set bgwriter_flush_after = 128;
 
-
+alter system set wal_writer_delay = '500ms';
+alter system set wal_writer_flush_after = 0;
 
 
 #for 错误日志
@@ -198,17 +204,7 @@ alter system set timezone = 'PRC';
 
 -- other
 
-
 alter system set enable_bitmapscan = on; --index
-
-alter system set bgwriter_delay = '500ms';
-alter system set bgwriter_lru_multiplier = 10;
-alter system set bgwriter_lru_maxpages = 1000;
-alter system set bgwriter_flush_after = 128;
-
-alter system set wal_writer_delay = '500ms';
-alter system set wal_writer_flush_after = 0;
-
 
 alter system set log_timezone = 'PRC';
 alter system set datestyle = 'iso, ymd';
@@ -219,9 +215,6 @@ alter system set lc_messages = 'zh_CN. UTF-8';
 --alter system set tcp_keepalives_interval = 10
 --alter system set tcp_keepalives_count = 10
 
--- 安全版，测试情况下，可修改以下参数提高性能
-select set_secure_param('hg_macontrol','min') --syssso，强制访问控制功能开关
-select set_secure_param('hg_rowsecure','off') --syssso，行级强制访问功能开关
 ```
 
 ## 索引
