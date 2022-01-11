@@ -39,7 +39,7 @@ ref [How to determine if NUMA configuration is enabled or disabled](../os/How%20
 ref [shmmax_shmall_shmmni](../os/shmmax_shmall_shmmni.md)
 10. 关闭透明大页（transparent_hugepage）
 ref [Transparent_HugePages](../os/Transparent_HugePages.md)
-11. 刷新SWAP
+11. 设置SWAP
 ref [Transparent_HugePages](../os/swap.md)
 
 ## 调优方法

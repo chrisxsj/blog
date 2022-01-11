@@ -63,7 +63,7 @@ echo fs.nr_open=76724600 #单进程最大文件句柄数（最大能够打开的
 
 
 # vm 虚拟内存使用
-echo vm.swappiness = 10
+echo vm.swappiness = 1
 #此参数用于控制Linux系统上将页面在swap分区和内存间进行交换的行为。可能影响数据库性能的内核参数。
 #Higher value means more aggressively swap.
 #此参数值值的范围为0到100，RHEL 5 and 6上，该参数默认值为60,在 RHEL 7上，该参数默认值为30，你的内存在使用到100-30=60%的时候，就开始出现有交换分区的使用。建议值10

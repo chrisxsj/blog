@@ -1,40 +1,73 @@
 # performance_turning_poctest
 
-性能优化方案（安全版数据库/企业版）
+性能优化方案（瀚高安全版数据库/企业版）
 
 ## 操作系统
+
 参考[performance_turning_os](./performance_turning_os.md)
 
 ## 2 数据库
 
-### 1数据库参数
+### 数据库参数
 
 ref[performance_turning_pg](./performance_turning_pg.md)
 
 对数据安全性有影响的参数，纯测试环境可以设置，以加快速度
 
 ```sql
-alter system set wal_level = minimal;
+alter system set logging_collector = 'off'; --关闭日志
+alter system set wal_level = minimal; --最小化wal日志
 alter system set full_page_writes = off; # 全页写对性能影响约20%-30%，测试关闭全页写
+
 alter system set synchronous_commit = off;
-alter system set max_wal_senders=0;
-alter system set row_security = off;
 alter system set fsync = off;
-alter system set autovacuum = off;
 alter system set wal_sync_method = 'open_sync'; --根据测试定义
 
 ```
 
 > 注意，可以调大wal segment size
 
-### 2关闭插件
+### 关闭三权
+
+关闭三权开关，重启生效
 
 ```sql
-alter system set shared_preload_libraries = 'repmgr, level_check, pgaudit, pg_stat_statements'; 
+\c highgo syssso
+
+v45x之前
+
+select set_secure_level ('off');
+SELECT show_secure_param();
+
+v45x之后
+select set_secure_param('hg_sepofpowers','off');  --关闭三权
+select set_secure_param('hg_macontrol','min');  --最小化强制访问控制
+select set_secure_param('hg_rowsecure','off');  --关闭行级强制访问控制
+SELECT set_secure_param('hg_ShowLoginInfo', 'off'); --关闭登录信息提示
+SELECT show_secure_param();
+
+```
+
+### 关闭audit
+
+```sql
+\c highgo syssao
+
+v45x之后
+
+select set_audit_param('hg_audit','off');
+select show_audit_param();
+
+```
+
+### 关闭插件
+
+```sql
+show shared_preload_libraries;
 alter system reset shared_preload_libraries; 
 ```
 
-### 3pg_prewarm
+### pg_prewarm
 
 pg_prewarm 预加载扩展，
 
@@ -72,45 +105,6 @@ vacuum wf_yi_ban_task;
 analyze verbose;
 
 ```
-
-
-### 安全版注意事项
-
-关闭安全配置
-
-```sql
-v45x之前
-\c qh syssso
-select set_secure_level ('off');
-SELECT show_secure_param();
-
-v45x之后
-
-select set_secure_param('hg_sepofpowers','off');
-
-
-```
-
-调整安全配置
-
-```sql
-select clear_user_limit('sysdba');
-SELECT set_secure_param('hg_PwdErrorLock', '7');
-SELECT set_secure_param('hg_ShowLoginInfo', 'off');
-
-```
-
-关闭 audit
-
-```sql
-\c highgo syssao
-select set_audit_param('hg_audit_Log', 'none');
-select set_audit_param('hg_audit_LogCatalog', 'off');
-select show_audit_param();
-
-```
-
-pg_ctl restart
 
 ## 最后的方式，还没用到！
 

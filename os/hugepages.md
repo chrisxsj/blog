@@ -20,13 +20,10 @@ ref [Linux Huge Pages](https://www.postgresql.org/docs/13/kernel-resources.html)
 
 ## pg使用大页介绍
 
-Linux, by default, uses 4K memory pages, BSD has Super Pages, whereas Windows has Large Pages. A page is a chunk of RAM that is allocated to a process. A process may own more than one page depending on its memory requirements. The more memory a process needs the more pages that are allocated to it. The OS maintains a table of page allocation to processes. The smaller the page size, the bigger the table, the more time required to look up a page in that page table. Therefore, huge pages make it possible to use a large amount of memory with reduced overheads; fewer page lookups, fewer page faults, faster read/write operations through larger buffers. This results in improved performance.
-PostgreSQL has support for bigger pages on Linux only. By default, Linux uses 4K of memory pages, so in cases where there are too many memory operations, there is a need to set bigger pages. Performance gains have been observed by using huge pages with sizes 2 MB and up to 1 GB. The size of Huge Page can be set boot time. You can easily check the huge page settings and utilization on your Linux box using cat /proc/meminfo | grep -i huge command.
+巨型页面的使用会导致更小的页面表以及花费在内存管理上的 CPU 时间更少，从而提高性能。
 
-cat /proc/meminfo | grep -i huge
-
-Script to quantify Huge Pages
-This is a simple script which returns the number of Huge Pages required. Execute the script on your Linux box while your PostgreSQL is running. Ensure that $PGDATA environment variable is set to PostgreSQL’s data directory.
+当PostgreSQL使用大量连续的内存块时，使用大页面会减少开销， 特别是在使用大shared_buffers时。 要在PostgreSQL中使用此特性，您需要一个包含 CONFIG_HUGETLBFS=y和CONFIG_HUGETLB_PAGE=y的内核。 您还必须调整内核设置vm.nr_hugepages。要估计所需的巨大页面的数量， 请启动PostgreSQL，而不启用巨大页面，并使用 /proc文件系统来检查postmaster的匿名共享内存段大小以及系统的巨大页面大小。
+Linux、FreeBSD以及Illumos之类的操作系统也能为普通内存分配自动使用巨型页（也被称为“超级”页或者“大”页面），而不需要来自PostgreSQL的显式请求。在Linux上，这被称为“transparent huge pages”（THP，透明巨型页）。已知这种特性对某些Linux版本上的某些用户会导致PostgreSQL的性能退化，因此当前并不鼓励使用它（与huge_pages的显式使用不同）。
 
 <!--
 Linux默认使用大小为4K的内存页。
@@ -60,13 +57,14 @@ From <https://www.eygle.com/archives/2011/12/hugepageshugetl.html>
 
 1. 计算需要的大页数量
 
-ref [gethugepage.sh](../bin/gethugepage.sh)
+ref [gethugepage.sh](../lib/sh/gethugepage.sh)
 
 2. 设置大页
 
 ```bash
-sysctl -w vm.nr_hugepages=67537
+sysctl -w vm.nr_hugepages=67537 #临时设置
 
+echo 'vm.nr_hugepages=67537' >> /etc/sysctl.conf    #永久设置
 ```
 
 3. Pg开启大页功能
