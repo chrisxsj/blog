@@ -12,13 +12,14 @@
 
 ref[performance_turning_pg](./performance_turning_pg.md)
 
-对数据安全性有影响的参数，纯测试环境可以设置，以加快速度
-
 ```sql
+必要时，设置以下参数，加快速度
+alter system set archive_mode = 'off';
 alter system set logging_collector = 'off'; --关闭日志
 alter system set wal_level = minimal; --最小化wal日志
-alter system set full_page_writes = off; # 全页写对性能影响约20%-30%，测试关闭全页写
 
+必要时，修改以下参数，这些参数对数据安全性有影响的参数，纯测试环境可以设置，以加快速度
+alter system set full_page_writes = off; # 全页写对性能影响约20%-30%，测试关闭全页写
 alter system set synchronous_commit = off;
 alter system set fsync = off;
 alter system set wal_sync_method = 'open_sync'; --根据测试定义
@@ -57,6 +58,13 @@ v45x之后
 
 select set_audit_param('hg_audit','off');
 select show_audit_param();
+
+```
+
+### 开启oracle兼容
+
+```sql
+alter system set compatible_db='oracle';
 
 ```
 

@@ -30,7 +30,7 @@ find -name "*.trc" -ctime +30 -exec rm -rf {} \;   #删除30天之前的文件
 find -name "*.trw" -ctime +10 |wc -l
 find -name "*.trw" -ctime +30 -exec rm -rf {} \;
 find . -ctime +72 |xargs du -cm
-find -name "*.trw" -mmin +1440  |wc -l
+find -name "*.trw" -mmin +1440  |wc -l  #按分钟计算，修改的时间
 
 ```
 

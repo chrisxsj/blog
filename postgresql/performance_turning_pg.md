@@ -127,9 +127,17 @@ alter system set full_page_writes = on; --测试改为off
 alter system set max_wal_senders = 40;
 alter system set max_replication_slots=40;
 
+alter system set commit_delay = 20; --insert
+alter system set commit_siblings = 10; --insert
+
 alter system set archive_mode = on; --测试改为off
 alter system set archive_command = 'test ! -f /arch/%f;cp -i %p /arch/%f;scp -i %p 192.168.6.13:/arch'; --测试去掉
---alter system set archive_command = 'DIR=/home/postgres/`date +%F`;test ! -d $DIR && mkdir $DIR;test ! -f $DIR/%f && cp %p $DIR/%f';
+--alter system set archive_command = 'DIR=/home/postgres/`date +%F`;test ! -d $DIR && mkdir $DIR;test ! -f $DIR/%f && cp %p $DIR/%f'; --自动创建归档目录
+--自动删除4h以前的日志
+--在$PGDATA下新建arch.sh文件，内容如下:
+--"test ! -f $PGDATA/archivedir/$1 && cp --preserve=timestamp $2 $PGDATA/archivedir/$1 ; find $PGDATA/archivedir/ -type -f -mmin +240 -exec -rm -f {} \;" 
+--alter system set archive_command = '$PGDATA/arch.sh %f %p';
+
 -- for error reporting and logging
 alter system set archive_timeout= '30min';
 
@@ -153,11 +161,6 @@ alter system set log_lock_waits=on; --测试改为off
 alter system set temp_buffers='1GB';
 alter system set log_temp_files='5GB';  --日志记录临时文件超过5G大小的文件
 
-###########################################################
-#以下内容非常规配置，可在优化时调整
-alter system set client_min_messages = 'notice'; --测试改为panic
-alter system set log_min_messages = 'warning'; --测试改为panic
-alter system set log_min_error_statement = 'error'; --测试改为panic
 -- for Automatic Vacuuming
 alter system set autovacuum_max_workers = 6;
 --autovacuum_freeze_max_age = 1500000000
@@ -166,6 +169,25 @@ alter system set autovacuum_max_workers = 6;
 alter system set autovacuum_vacuum_cost_limit = -1;
 --alter system set maintenance_work_mem='1GB';
 alter system set autovacuum_naptime='2min';  --酌情增加或减小
+
+-- for effective_io_concurrency
+alter system set max_prepared_transactions=1200;
+alter system set max_worker_processes = 50;
+alter system set max_parallel_workers='30';
+alter system set max_parallel_workers_per_gather = 4;;
+alter system set max_parallel_maintenance_workers='16'; --create index
+alter system set backend_flush_after = 0;
+alter system set dynamic_shared_memory_type = posix;    --设置为除none之外的值，启动并发查询
+
+
+
+
+
+#for 错误日志
+alter system set client_min_messages = 'notice'; --测试改为panic
+alter system set log_min_messages = 'warning'; --测试改为panic
+alter system set log_min_error_statement = 'error'; --测试改为panic
+
 
 -- for ssd
 alter system set random_page_cost=1.1;
@@ -177,24 +199,16 @@ alter system set timezone = 'PRC';
 -- other
 
 
-alter system set commit_delay = 10; --insert
-alter system set commit_siblings = 60; --insert
-
 alter system set enable_bitmapscan = on; --index
 
 alter system set bgwriter_delay = '500ms';
-alter system set bgwriter_lru_multiplier = 10.0;
+alter system set bgwriter_lru_multiplier = 10;
 alter system set bgwriter_lru_maxpages = 1000;
-alter system set bgwriter_flush_after = 0;
-alter system set backend_flush_after = 0;
+alter system set bgwriter_flush_after = 128;
+
 alter system set wal_writer_delay = '500ms';
 alter system set wal_writer_flush_after = 0;
 
-alter system set max_prepared_transactions=1200; --concurrent!
-alter system set max_worker_processes = 400; --concurrent!
-
-alter system set dynamic_shared_memory_type = posix;
-alter system set max_parallel_workers_per_gather = 4;
 
 alter system set log_timezone = 'PRC';
 alter system set datestyle = 'iso, ymd';

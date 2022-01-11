@@ -24,23 +24,23 @@ ref [firwall](./../os/firewall.md)
 ref [selinux](./../os/selinux.md)
 3. 调整操作系统内核参数
 ref [kernel_parameters](../os/Kernel_Parameters.md)
-4. 配置操作系统资源限制
+4. SHMMAX、SHMALL、SHMMNI配置
+ref [shmmax_shmall_shmmni](../os/shmmax_shmall_shmmni.md)
+5. 配置操作系统资源限制
 ref [limits](../os/limits.md)
-5. 设置磁盘的IO调度算法
+6. 设置磁盘的IO调度算法
 ref [scheduler](../os/scheduler.md)
-6. 磁盘预读参数
+7. 磁盘预读参数
 ref [read_ahead](../os/read_ahead.md)
-7. 配置大页内存
+8. 配置大页内存
 ref [hugepages](../os/hugepages.md)
-8. 关闭numa
+9. 关闭透明大页（transparent_hugepage）
+ref [Transparent_HugePages](../os/Transparent_HugePages.md)
+10. 设置SWAP
+ref [Transparent_HugePages](../os/swap.md)
+11. 关闭numa
 ref [how to disable numa](../os/How%20to%20disable%20NUMA.md)
 ref [How to determine if NUMA configuration is enabled or disabled](../os/How%20to%20determine%20if%20NUMA%20configuration%20is%20enabled%20or%20disabled.md)
-9. SHMMAX、SHMALL、SHMMNI配置
-ref [shmmax_shmall_shmmni](../os/shmmax_shmall_shmmni.md)
-10. 关闭透明大页（transparent_hugepage）
-ref [Transparent_HugePages](../os/Transparent_HugePages.md)
-11. 设置SWAP
-ref [Transparent_HugePages](../os/swap.md)
 
 ## 调优方法
 

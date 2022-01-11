@@ -71,6 +71,11 @@ echo 'vm.nr_hugepages=67537' >> /etc/sysctl.conf    #永久设置
 
 默认huge_pages = try，建议使用try，必要时使用on
 
+```sql
+show huge_pages;
+
+```
+
 <!--Now set the parameter huge_pages “on” in $PGDATA/postgresql.conf and restart the server.-->
 
 4. 查看大页使用
