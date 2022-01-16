@@ -33,3 +33,9 @@ REINDEX [ ( VERBOSE ) ] { INDEX | TABLE | SCHEMA | DATABASE | SYSTEM } [ CONCURR
 6、VERBOSE：在每个索引被重建时打印进度报告。
 
 :warning: CONCURRENTLY在线创建索引
+
+## 索引进度监控
+
+```sql
+pg_stat_progress_create_index   --pg12及以后
+```
