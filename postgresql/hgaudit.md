@@ -104,7 +104,7 @@ select * from hgaudit_object;
 noaudit delete,truncate on table public.test_audit by taudit whenever successful;
 ```
 
-## 3. 特殊的审计事件
+## 特殊的审计事件
 
 除了用户自主配置的审计事件，系统中还定义了两种类型的特殊审计事件
 1、mandatory(强制审计事件)：
