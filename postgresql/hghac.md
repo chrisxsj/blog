@@ -818,3 +818,20 @@ Success: restart on member xx
 
 ```
 
+## 问题
+
+问题描述
+
+```sh
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 ERROR [pid:1980143 cid:415 proxydbc_main.c:663] Life check failed! The backend errorMsg:
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 ERROR [pid:1980143 cid:415 proxydbc_main.c:664] password authentication failed for user "sysdba"
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 WARNING [pid:1980143 cid:415 proxydbc_main.c:884]  ip =[1.2.1.231] port=[5866] node down
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 ERROR [pid:1980143 cid:415 proxydbc_main.c:663] Life check failed! The backend errorMsg:
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 ERROR [pid:1980143 cid:415 proxydbc_main.c:664] password authentication failed for user "sysdba"
+1月 17 18:30:23 host-1-2-1-94 proxy_ctl[1980054]: 2022-01-17 18:30:23 WARNING [pid:1980143 cid:415 proxydbc_main.c:884]  ip =[1.2.1.94] port=[5866] node down
+
+```
+
+解决方案
+
+重新初始化，初始化过程填写密码
