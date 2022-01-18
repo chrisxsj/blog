@@ -192,6 +192,8 @@ initdb -D $PGDATA -e sm4 -A md5 -c "echo 12345678" > /opt/initdb.log
 4. initdb -A md5 -e AES-256 -c "echo 12345678" -D data4
 使用MD5认证方式；开启全库数据加密，加密方式：AES-256。
 
+initdb -E utf8 -A md5
+
 cp $HGDB_HOME/etc/server.* $PGDATA
 chmod 0600 $PGDATA/server.*
 pg_ctl start

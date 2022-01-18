@@ -12,15 +12,17 @@ pg中文如何按拼音排序
 
 ----
 
+[toc]
+
 ## 本地化支持
 
 ```shell
-LC_COLLATE	字符串排序顺序
-LC_CTYPE	字符分类（什么是一个字符？它的大写形式是否等效？）
-LC_MESSAGES	消息使用的语言Language of messages
-LC_MONETARY	货币数量使用的格式
-LC_NUMERIC	数字的格式
-LC_TIME	日期和时间的格式
+LC_COLLATE  字符串排序顺序
+LC_CTYPE  字符分类（什么是一个字符？它的大写形式是否等效？）
+LC_MESSAGES 消息使用的语言Language of messages
+LC_MONETARY 货币数量使用的格式
+LC_NUMERIC  数字的格式
+LC_TIME 日期和时间的格式
 
 ```
 
@@ -147,3 +149,14 @@ postgres=# select * from (values ('刘德华'), ('刘少奇')) t(id) order by by
 [如何按拼音排序 - 数据库本土化特性(collate, ctype, ...)](https://github.com/digoal/blog/blob/356b2cd7a9fc8b028c08f6ec95cdfecba1252cde/201704/20170424_03.md)
 [collation support](https://www.postgresql.org/docs/13/collation.html)
 [排序规则支持](http://www.postgres.cn/docs/13/collation.html)
+
+## GBK is not a valid encoding name
+
+highgo=# CREATE DATABASE test WITH ENCODING 'GBK';
+2022-01-18 03:21:34.880 UTC [946] ERROR:  GBK is not a valid encoding name at character 27
+2022-01-18 03:21:34.880 UTC [946] STATEMENT:  CREATE DATABASE test WITH ENCODING 'GBK';
+ERROR:  GBK is not a valid encoding name
+LINE 1: CREATE DATABASE test WITH ENCODING 'GBK';
+                                  ^
+
+服务端不支持
