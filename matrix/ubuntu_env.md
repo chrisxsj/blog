@@ -152,4 +152,6 @@ sudo apt-get install vlc
 sudo apt install gnome-boxes
 sudo gnome-boxes
 
+## 设置bash
 
+sudo dpkg-reconfigure dash
