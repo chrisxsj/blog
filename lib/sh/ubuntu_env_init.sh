@@ -1,76 +1,61 @@
-# ubuntu_env
+#! /bin/bash
+#######################################
+# Copyright 2021 by Chrisx.All rights reserved.
+# Author，Chrisx
+# Date，2021-01-19
+# discription, ubuntu (wsl2) init, Common software installation
+#######################################
 
-**作者**
+##安装git
+sudo apt install git -y
+echo "`date` git successfully"
 
-Chrisx
+## 安装docker
 
-**日期**
+sudo apt-get install \
+   apt-transport-https \
+   ca-certificates \
+   curl \
+   gnupg \
+   lsb-release -y
 
-2021-12-22
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-**内容**
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-使用multipass，并配置ubuntu办公环境
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
-ref[multipass](https://multipass.run/)
+echo "`date` dcoker successfully"
 
-----
 
-[toc]
+## 安装数据库
+sudo apt install postgresql postgresql-contrib -y
+echo "`date` postgresql successfully"
 
-## multipass
+## 安装aria2
+sudo apt-get install aria2 -y
+echo "`date` aria2 successfully"
 
-```sh
-multipass find
-multipass launch -c 4 --d 50G --mem 4G --n u1 21.10
-multipass mount c:\data\ubuntu u1:/c
-```
+## 安装vlc
+sudo apt-get install vlc -y
+echo "`date` vlc successfully"
 
-## ubuntu apt升级
+## gnome-boxes
 
-终端执行：
+sudo apt install gnome-boxes -y
+echo "`date` gnome-boxes successfully"
 
-```sh
-sudo apt update
-sudo apt upgrade
-sudo shutdown -r now
-```
+:<<EOF
+## 设置bash
+sudo dpkg-reconfigure dash
 
-如果报错：
-E: The repository 'http://archive.ubuntu.com/ubuntu focal-backports Release' does not have a Release file.
-N: Updating from such a repository can't be done securely, and is therefore disabled by default.
-N: See apt-secure(8) manpage for repository creation and user configuration details.
 
-更换国内软件源[ubuntu_source](./ubuntu_source.md)
-
-## apt-get 查询软件包
-
-```sh
-dpkg -l |grep post
-dpkg -l                             // 列出已安装的所有软件包
-dpkg-query -l
-apt-cache search PackageName        // 搜索软件包
-apt-cache show PackageName          // 获取软件包的相关信息, 如说明、大小、版本等
-apt-cache depends PackageName       // 查看该软件包需要哪些依赖包
-apt-cache rdepends PackageName      // 查看该软件包被哪些包依赖
-apt-get check                       // 检查是否有损坏的依赖
-```
-
-## 使用git
-
-ref git*
-
-## 使用docker
-
-ref docker*
-
-## 使用vscode
+## 安装vscode
 
 ref vscode*
 
-## 使用数据库
-
-sudo apt install postgresql postgresql-contrib
 
 ## 使用邮件客户端
 
@@ -137,21 +122,6 @@ https://www.pgadmin.org/download/pgadmin-4-apt/
 
 https://dbeaver.io/download/
 
-## aria2
-
-sudo apt-get install aria2
-
-## vlc
-
-sudo apt-get install vlc
-
 ## shotcut
 
-## gnome-boxes
-
-sudo apt install gnome-boxes
-sudo gnome-boxes
-
-## 设置bash
-
-sudo dpkg-reconfigure dash
+EOF
