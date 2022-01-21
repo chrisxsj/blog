@@ -1,9 +1,119 @@
-# shell base
+# shell_base
+
+## unix简史
+
+unix由贝尔实验室开发（bell labs）。完整历史信息可在以下链接中找到 [The Creation of the UNIX* Operating System](http://www.bell-labs.com/history/unix)
+由于没有盈利压力，unix大都小型、优雅。但随着unix流行，各种版本出现，标准不一致，导致shell脚本移植性变得困难。
+幸好，POSIX标准逐渐成熟，几乎所有商用或免费的unix都兼容POSIX。
+
+## 编程语言
+
+* 机器语言，运行最快，语言复杂，开发效率低
+* 汇编语言，运行速度快，语言复杂，开发效率低
+* 高级语言
+    * 编译，编译成机器语言。执行运行速快，跨平台性差，依赖机器环境。c、c++、java
+    * 解释，跨平台性强，一份代码，到处使用。执行速度慢。依赖解释器运行。shell
+
+shell经过posix标准化。基本可以与各unix系统通用。shell脚本写一次即可应用于各系统上。
+shell脚本：简单、可移植、开发容易。
+
+## 认识shell
+
+* 含义，shell是“壳”，相对于kernel内核来说。shell是面向用户的一个命令接口。shell是用户与机器之间的桥梁。通过shell对计算机操作和交互。
+* 表现，linux是内核与界面分离的。可以脱离界面单独运行。也可以在内核基础上运行图形化桌面。因此shell可以是无图形界面下的终端，也可以是图形化界面中的终端窗口。
+* 运行命令，命令行或脚本
+* 分类，linux中默认shell是/bin/bash或dash
+
+echo.sh
+
+```shell
+#! /bin/sh
+cd /tmp/
+echo "my name is chris"
+
+```
+
+* sh一般设成bash的软链 ll /bin/sh
+* 在一般的linux系统当中（如redhat），使用sh调用执行脚本相当于打开了bash的POSIX标准模式
+* 也就是说 /bin/sh 相当于 /bin/bash --posix所以，sh跟bash的区别，实际上就是bash有没有开启posix模式的区别so，可以预想的是，如果第一行写成 #!/bin/bash --posix，那么脚本执行效果跟#!/bin/sh是一样的（遵循posix的特定规范，有可能就包括这样的规范：“当某行代码出错时，不继续往下解释”）
+* 解析器的路径填写完全路径。
+
+第一行的#！，指定使用那种解析器
+
+```shell
+#! /bin/bash #调用哪种shell
+#! /usr/bin/python #调用python程序
+#！/bing/more #调用more程序
+```
+
+## shell命令种类
+
+linux shell可执行3种命令，内建命令，shell函数，外部命令
+
+* 内建命令，没有进程创建和消亡（echo，cd）
+* 外部命令，会创建一个当前shell的复制进程。（find，grep等程序）
+* shell函数，可以像其他命令一样被引用
+
+linux运行程序的方法
+
+* 提供可执行权限，直接运行文件
+* 调用命令解析器，如sh
+* source
+
+sh echo.sh不会改变目录，cd外部命令，会创建子进程，在子进程中执行cd后子进程消亡，父进程没有任何改变
+source echo.sh会改变目录，source只影响脚本自身，不会创建子进程，直接在父进程执行，父进程通过cd命令改变了目录
+
+## 命令与参数
+
+* 以空白（space or tab）隔开命令行中各个组成部分
+* 命令名称是命令行的第一个项目，后面会跟着选项（option），
+* 选项开头通常使用"-"后面接一个字母，选项开头可有可无。可将多个选项参数合并。如ls -atl
+* 长选项“--”表示，现在使用越来越普遍，特别是标准工具GUN版本。如patch --verbose
+* 分号（; ）可以用来分割一行里的多条命令。shell会依次执行这些命令。
+* 使用&而不是分号，shell将在后台执行前面的命令，这意味着shell不用等待前面的命令执行完成就可以执行下一个命令
+* 每一个可通过help和man得到指导
+
+## 语法检测
+
+shell的语法还是相当让人无语的，很多很容易疏忽遗漏的地方
+命令格式： sh -n ***.sh
+若是没有异常输出，证明脚本没有明显的语法问题。
+
+运行跟踪：
+
+实践是检验整理的唯一标准，跑一把。
+不过，可不是直接运行然后去看最终结果，这样会遗漏掉很多中间过程。
+命令格式： sh -vx ***.sh
+得到效果如下:
+我们可以看到
+每行代码原始命令（无+的）:[这是-v的效果]
+代码执行时的情况（带+），包括运算结果，逻辑判断结果，变量赋值等等[-x的效果]
+而我们所要关注的就是这些信息，主要是变量值和逻辑判断结果。
+
+## 国际化与本地化
+
+在unix中，控制让那种语言或文化环境生效的功能叫做locale
+一般设置LC_ALL强制设置单一的locale，而LANG设置locale的默认值。应避免设置任意的LC_XXX参数。
+
+locale -a：列出所有locale名称
+LC_ALL=C：强制使用传统的locale
+
+## bash特性
+
+* bash-completion支持命令自动补全
+* history命令历史记录 ref[history](./history.md)
+* alias别名功能.ref[alias](./alias.md)
+* 快捷键
+* 前后台作业
+* 输入输出重定向
+* 命令排序
+* 通配符
+
+
+## 其他
 
 ```shell
 #! /bin/bash
-
-alias mv="mv -i"        #mv进行提示
 
 # shell中特殊字符
 ~（主目录），

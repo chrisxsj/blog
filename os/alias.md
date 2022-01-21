@@ -23,9 +23,13 @@ alias命令使用
 ```sh
 alias ssh151="ssh root@192.168.80.151"
 alias ls='ls -atl'
-alias rm='do not use rm'
+alias rm='rm -i'        #rm进行提示
+alias mv="mv -i"        #mv进行提示
 ```
 
 ## 查看
 
+```sh
 alias
+
+```
