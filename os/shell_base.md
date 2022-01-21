@@ -6,6 +6,10 @@ unix由贝尔实验室开发（bell labs）。完整历史信息可在以下链�
 由于没有盈利压力，unix大都小型、优雅。但随着unix流行，各种版本出现，标准不一致，导致shell脚本移植性变得困难。
 幸好，POSIX标准逐渐成熟，几乎所有商用或免费的unix都兼容POSIX。
 
+linux设计思想，一切皆文件
+文件类型，-表示普通文件，d表示目录，c表示字符设备，d表示块设备，l表示符号链接文件
+unix的哲学KISS(keep it simple，stupid)
+
 ## 编程语言
 
 * 机器语言，运行最快，语言复杂，开发效率低
@@ -103,9 +107,9 @@ LC_ALL=C：强制使用传统的locale
 * bash-completion支持命令自动补全
 * history命令历史记录 ref[history](./history.md)
 * alias别名功能.ref[alias](./alias.md)
-* 快捷键
-* 前后台作业
-* 输入输出重定向
+* 快捷键。ref[shell_shortcut_key](./shell_shortcut_key.md)
+* 前后台作业.ref[shell_task](./shell_task.md)
+* 输入输出重定向.ref[shell_stdin_stdout_stderr](./shell_stdin_stdout_stderr.md)
 * 命令排序
 * 通配符
 

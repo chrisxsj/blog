@@ -208,7 +208,7 @@ alter system set enable_bitmapscan = on; --index
 
 alter system set log_timezone = 'PRC';
 alter system set datestyle = 'iso, ymd';
-alter system set ssl = off;
+alter system set ssl = off; --测试可关闭
 alter system set lc_messages = 'zh_CN. UTF-8';
 
 --alter system set tcp_keepalives_idle = 60
