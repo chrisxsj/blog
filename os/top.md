@@ -51,8 +51,8 @@ top命令查看资源使用情况
 ## top批处理
 
 ```sh
-top -b1 -n 2 -o +%MEM |tee /tmp/mem    #以内存使用降序排列输出到文件
-top -b1 -n 2 -o +%CPU |tee /tmp/cpu    #以cpu使用降序排列输出到文件
+top -b1 -n 2 -o +%MEM |tee /tmp/mem    #查看进程使用内存情况，以降序排列，执行2s，输出到文件
+top -b1 -n 2 -o +%CPU |tee /tmp/cpu    #查看进程使用cpu情况，以降序排列，执行2s，输出到文件
 
 ```
 
