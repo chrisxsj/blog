@@ -2,7 +2,7 @@
 #########################################
 # author，Chrisx
 # date，2021-06-18
-# Copyright (C): 2021 All rights reserved"
+# Copyright: 2021 All rights reserved"
 #########################################
 # variable
 source ~/.bash_profile

@@ -10,7 +10,7 @@ Chrisx
 
 **内容**
 
-shell输入输出重定向的使用
+shell输入输出重定向的使用。包括输入重定向、输出和错误重定向、/dev/null、/dev/zero、/dev/tty、管道|、tee
 
 ----
 
@@ -28,10 +28,13 @@ shell输入输出重定向的使用
 
 ## 输入重定向
 
-使用符号<
+使用符号<或read命令。
 
 ```sh
 cat < /tmp/output                       #<改变标准输入，标准输入修改为文件
+
+read -p "name" name
+echo $name
 
 ```
 
@@ -77,4 +80,15 @@ dd if=/dev/zero of=/tmp/zero bs=1024 count=10   #用二进制0填充一个1MB大
 
 ```sh
 read pass </dev/tty                     #从终端读取密码
+```
+
+## 管道|
+
+* 管道从一头进，一头出。管道将一个程序的标准输出当做另一个程序的标准输入，就像管子将两个程序连接一样。管道的符号是“|”
+* 如果想要同时将输出显示到屏幕和保存到文件中。可以使用tee。tee输出和输入一样，但会额外保存在文件中。
+* tee会覆盖已存在的文件，可使用参数-a追加。
+  
+```sh
+cat /etc/passwd | head -n 10 |tee -a /tmp/passwd10  #将结果显示到屏幕和保存到文件
+
 ```
