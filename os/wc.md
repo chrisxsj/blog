@@ -10,7 +10,7 @@ Chrisx
 
 **内容**
 
-vi常用技巧
+wc使用技巧
 
 ----
 
@@ -32,4 +32,7 @@ wc --help
 
 ## 用法
 
-wc -c *
+```sh
+wc -c /etc/passwd*
+wc -l /etc/passwd
+```
