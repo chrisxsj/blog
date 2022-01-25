@@ -22,23 +22,22 @@ function comm () {
   echo "--->>> 建议先设置白名单(超级用户允许的来源IP, 可以访问的数据库), 再设置黑名单(不允许超级用户登陆, reject), 再设置白名单(普通应用)"
   echo "--->>> 注意trust和password认证方法的危害"
   
-  echo "###### 获取pg_hba.conf md5值"
-  md5sum $PGDATA/pg_hba.conf
   echo "--->>> 主备md5值一致(判断主备配置文件是否内容一致的一种手段, 或者使用diff)."
   
   echo "###### control file info"
   pg_controldata
-  
-  echo "###### control file info"
-  pg_controldata
-  echo "###### 获取postgresql.conf md5值"
-  md5sum $PGDATA/postgresql.conf
   
   echo "###### 获取postgresql.conf配置"
   cat $PGDATA/postgresql.conf | grep -E '^[a-z]' 
   
   echo "###### 获取postgresql.auto.conf配置"
   cat $PGDATA/postgresql.auto.conf | grep -E '^[a-z]'
+
+  echo "###### 获取pg_hba.conf md5值"
+  md5sum $PGDATA/pg_hba.conf
+  
+  echo "###### 获取postgresql.conf md5值"
+  md5sum $PGDATA/postgresql.conf
 
   echo -e "\n"
 }
@@ -58,13 +57,13 @@ function pg_database_info () {
   psql --pset=pager=off -c 'select datname,datdba,encoding,datcollate,datctype,dattablespace,datacl from pg_database;'
   
   echo "###### 创建的扩展extention"
-  for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$)'`
+  for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$);'`
   do
   psql -d $db --pset=pager=off -q -c 'select current_database(),* from pg_extension'
   done
   
   echo "###### 用户使用了多少种数据类型"
-  for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$)'`
+  for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$);'`
   do
   psql -d $db --pset=pager=off -q -c 'select current_database(),
       b.typname,
@@ -84,7 +83,7 @@ function pg_database_info () {
       )
   group by 1,
       2
-  order by 3 desc'
+  order by 3 desc;'
   done
   
   echo "###### 用户创建了多少对象"
@@ -106,7 +105,7 @@ function pg_database_info () {
       2,
       3,
       4
-  order by 5 desc'
+  order by 5 desc;'
   done
 
   echo -e "\n"
@@ -212,22 +211,17 @@ function pg_space_usage () {
       c.relname,
       c.relkind,
       pg_size_pretty(pg_indexes_size(c.oid)) as indexes_size,
-      a.seq_scan,
-      a.seq_tup_read,
+      a.indexrelname,
       a.idx_scan,
-      a.idx_tup_fetch,
-      a.n_tup_ins,
-      a.n_tup_upd,
-      a.n_tup_del,
-      a.n_tup_hot_upd,
-      a.n_live_tup,
-      a.n_dead_tup
-  from pg_stat_all_tables a,
+      a.idx_scan,
+      a.idx_tup_read,
+      a.idx_tup_fetch
+  from pg_stat_all_indexes a,
       pg_class c,
       pg_namespace b
   where c.relnamespace = b.oid
       and c.relkind = $$i$$
-      and a.relid = c.oid
+      and a.indexrelid = c.oid
   order by pg_relation_size(c.oid) desc
   limit 10;'
   done
@@ -242,7 +236,7 @@ function pg_connect () {
   echo "|+++++++++++++++++++++++++++++++++++++++++++++++++++++++++|"
 
   echo "###### 当前活跃度"
-  psql --pset=pager=off -q -c 'select now(),state,count(*) from pg_stat_activity group by 1,2'
+  psql --pset=pager=off -q -c 'select now(),state,count(*) from pg_stat_activity group by 1,2;'
   echo "--->>> 如果active状态很多, 说明数据库比较繁忙. 如果idle in transaction很多, 说明业务逻辑设计可能有问题. 如果idle很多, 可能使用了连接池, 并且可能没有自动回收连接到连接池的最小连接数."
   
   echo "###### 剩余连接数"
@@ -293,7 +287,7 @@ function pg_connect () {
           group by datname
       ) b
   where a.datname = b.datname
-  order by b.connects desc'
+  order by b.connects desc;'
   echo "--->>> 给数据库设置足够的连接数, alter database ... CONNECTION LIMIT ."
 
   echo -e "\n"
@@ -394,7 +388,7 @@ function pg_performance () {
   where a.userid = c.oid
       and a.dbid = b.oid
   order by a.total_time desc
-  limit 5'
+  limit 5;'
   echo "--->>> 检查SQL是否有优化空间, 配合auto_explain插件在csvlog中观察LONG SQL的执行计划是否正确."
   
   echo "###### 索引数超过4并且SIZE大于10MB的表"
@@ -417,7 +411,7 @@ function pg_performance () {
   where t1.oid = t3.indrelid
       and t1.relnamespace = t2.oid
       and pg_relation_size(t1.oid) / 1024 / 1024.0 > 10
-  order by t3.idx_cnt desc'
+  order by t3.idx_cnt desc;'
   done
   echo "--->>> 索引数量太多, 影响表的增删改性能, 建议检查是否有不需要的索引."
   
@@ -443,7 +437,7 @@ function pg_performance () {
           where contype in ($$p$$, $$u$$, $$f$$)
       )
       and pg_relation_size(indexrelid) > 65536
-  order by pg_relation_size(indexrelid) desc'
+  order by pg_relation_size(indexrelid) desc;'
   done
   echo "--->>> 建议和应用开发人员确认后, 删除不需要的索引."
   
@@ -475,7 +469,7 @@ function pg_performance () {
     blk_write_time,
     conflicts,
     deadlocks
-from pg_stat_database'
+from pg_stat_database;'
   echo "--->>> 回滚比例大说明业务逻辑可能有问题, 命中率小说明shared_buffer要加大, 数据块读写时间长说明块设备的IO性能要提升,"
   echo "--->>> 死锁次数多说明业务逻辑有问题, 复制冲突次数多说明备库可能在跑LONG SQL."
 
@@ -488,7 +482,7 @@ from pg_stat_database'
 
 
   echo "###### 检查点, bgwriter 统计信息"
-  psql --pset=pager=off -q -x -c 'select * from pg_stat_bgwriter'
+  psql --pset=pager=off -q -x -c 'select * from pg_stat_bgwriter;'
   echo "--->>> checkpoint_write_time多说明检查点持续时间长, 检查点过程中产生了较多的脏页."
   echo "--->>> checkpoint_sync_time代表检查点开始时的shared buffer中的脏页被同步到磁盘的时间, 如果时间过长, 并且数据库在检查点时性能较差, 考虑一下提升块设备的IOPS能力."
   echo "--->>> buffers_backend_fsync太多说明需要加大shared buffer 或者 减小bgwriter_delay参数."
@@ -586,7 +580,7 @@ function pg_mvcc () {
       and n_dead_tup / n_live_tup > 0.2
       and schemaname not in ($$pg_toast$$, $$pg_catalog$$)
   order by n_dead_tup desc
-  limit 5'
+  limit 5;'
   done
   echo "--->>> 通常垃圾过多, 可能是因为无法回收垃圾, 或者回收垃圾的进程繁忙或没有及时唤醒, 或者没有开启autovacuum, 或在短时间内产生了大量的垃圾 . "
   echo "--->>> 可以等待autovacuum进行处理, 或者手工执行vacuum table . "
@@ -761,8 +755,8 @@ function pg_security () {
   echo "###### unlogged table和哈希索引"
   for db in `psql --pset=pager=off -Atq -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$)'`
   do
-  psql -d $db --pset=pager=off -q -c 'select current_database(),t3.rolname,t2.nspname,t1.relname from pg_class t1,pg_namespace t2,pg_authid t3 where t1.relnamespace=t2.oid and t1.relowner=t3.oid and t1.relpersistence=$$u$$'
-  psql -d $db --pset=pager=off -q -c 'select current_database(),pg_get_indexdef(oid) from pg_class where relkind=$$i$$ and pg_get_indexdef(oid) ~ $$USING hash$$'
+  psql -d $db --pset=pager=off -q -c 'select current_database(),t3.rolname,t2.nspname,t1.relname from pg_class t1,pg_namespace t2,pg_authid t3 where t1.relnamespace=t2.oid and t1.relowner=t3.oid and t1.relpersistence=$$u$$;'
+  psql -d $db --pset=pager=off -q -c 'select current_database(),pg_get_indexdef(oid) from pg_class where relkind=$$i$$ and pg_get_indexdef(oid) ~ $$USING hash$$;'
   done
   echo "--->>> unlogged table和hash index不记录wal, 无法使用流复制或者log shipping的方式复制到standby节点, 如果在standby节点执行某些SQL, 可能导致报错或查不到数据. "
   echo "--->>> 在数据库CRASH后无法修复unlogged table和hash index, 不建议使用. "

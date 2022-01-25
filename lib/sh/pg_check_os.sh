@@ -97,21 +97,16 @@ function storage()  {
 # 
 function performance()  {
   echo "###### top"
-  top -b -n 1
+  top -b1 -n 2 -o +%MEM |tee /tmp/mem
+  top -b1 -n 2 -o +%CPU |tee /tmp/cpu
   echo "###### cpu"
   vmstat 2 5
   echo "###### io"
   iostat -tkx 2 5
-  echo "###### /var/log/secure(需要root)"
-  tail -n 200 /var/log/secure
-  echo "###### /var/log/wtmp"
-  who -a /var/log/wtmp |tail -n 200
-  echo "###### /var/log/messages(需要root)"
-  tail -n 200 /var/log/messages
   echo "###### CPU占用率前十"
-  ps aux|head -1;ps aux|grep -v PID|sort -rn -k +3|head -n 10
+  #ps aux|head -1;ps aux|grep -v PID|sort -rn -k +3|head -n 10
   echo "###### 内存占用率前十"
-  ps aux|head -1;ps aux|grep -v PID|sort -rn -k +4|head -n 10
+  #ps aux|head -1;ps aux|grep -v PID|sort -rn -k +4|head -n 10
 
   echo -e "\n"
 }
@@ -136,7 +131,7 @@ function log()  {
 
 # 
 function infoscale()  {
-  echo "###### 状态"
+  echo "###### 状态(需要root)"
   hastatus -sum
   echo "###### 查看vx磁盘信息"
   vxdisk list
