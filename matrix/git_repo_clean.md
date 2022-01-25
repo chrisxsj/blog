@@ -1,4 +1,4 @@
-# git_verify-pack
+# git-repo-clean
 
 **作者**
 
@@ -6,7 +6,7 @@ chrisx
 
 **日期**
 
-2021-05-14
+2022-01-25
 
 **内容**
 
@@ -16,28 +16,25 @@ chrisx
 
 ref [仓库体积过大，如何减小？](https://gitee.com/help/articles/4232#article-header0)
 
-<!--
-## 查看存储库中的大文件
-
-git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -15 | awk '{print$1}')"
-
-## 改写历史，去除大文件
-
-git filter-branch --tree-filter 'rm -f path/to/large/files' --tag-name-filter cat -- --all
-git push origin --tags --force
-git push origin --all --force
-
-注意：下方命令中的 path/to/large/files 是大文件所在的路径，千万不要弄错！
--->
-
-有没有办法把这个文件从历次提交中彻底地移除呢？而不是移除文件。
-
 ----
 
 [toc]
 
+## git-repo-clean
 
-##　１.清空所有历史记录
+```sh
+tar -xvf git-repo-clean-1.3.1-Linux-64.tar
+sudo cp git-repo-clean /usr/bin/
+git repo-clean --version
+git repo-clean -i
+
+```
+
+有没有办法把这个文件从历次提交中彻底地移除呢？而不是移除文件。
+
+## 清空git提交记录
+
+１.清空所有历史记录
 
 ```sh
 git checkout --orphan new_branch    #进入 仓库，创建一个孤立的分支，从而启动一个新的历史记录。此时checkout在新分支上
