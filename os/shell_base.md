@@ -1,5 +1,21 @@
 # shell_base
 
+**作者**
+
+Chrisx
+
+**日期**
+
+2022-01-26
+
+**内容**
+
+shell介绍
+
+----
+
+[toc]
+
 ## unix简史
 
 unix由贝尔实验室开发（bell labs）。完整历史信息可在以下链接中找到 [The Creation of the UNIX* Operating System](http://www.bell-labs.com/history/unix)
@@ -15,8 +31,8 @@ unix的哲学KISS(keep it simple，stupid)
 * 机器语言，运行最快，语言复杂，开发效率低
 * 汇编语言，运行速度快，语言复杂，开发效率低
 * 高级语言
-    * 编译，编译成机器语言。执行运行速快，跨平台性差，依赖机器环境。c、c++、java
-    * 解释，跨平台性强，一份代码，到处使用。执行速度慢。依赖解释器运行。shell
+    编译，编译成机器语言。执行运行速快，跨平台性差，依赖机器环境。c、c++、java
+    解释，跨平台性强，一份代码，到处使用。执行速度慢。依赖解释器运行。shell
 
 shell经过posix标准化。基本可以与各unix系统通用。shell脚本写一次即可应用于各系统上。
 shell脚本：简单、可移植、开发容易。
@@ -28,45 +44,6 @@ shell脚本：简单、可移植、开发容易。
 * 运行命令，命令行或脚本
 * 分类，linux中默认shell是/bin/bash或dash
 
-echo.sh
-
-```shell
-#! /bin/sh
-cd /tmp/
-echo "my name is chris"
-
-```
-
-* sh一般设成bash的软链 ll /bin/sh
-* 在一般的linux系统当中（如redhat），使用sh调用执行脚本相当于打开了bash的POSIX标准模式
-* 也就是说 /bin/sh 相当于 /bin/bash --posix所以，sh跟bash的区别，实际上就是bash有没有开启posix模式的区别so，可以预想的是，如果第一行写成 #!/bin/bash --posix，那么脚本执行效果跟#!/bin/sh是一样的（遵循posix的特定规范，有可能就包括这样的规范：“当某行代码出错时，不继续往下解释”）
-* 解析器的路径填写完全路径。
-
-第一行的#！，指定使用那种解析器
-
-```shell
-#! /bin/bash #调用哪种shell
-#! /usr/bin/python #调用python程序
-#！/bing/more #调用more程序
-```
-
-## shell命令种类
-
-linux shell可执行3种命令，内建命令，shell函数，外部命令
-
-* 内建命令，没有进程创建和消亡（echo，cd）
-* 外部命令，会创建一个当前shell的复制进程。（find，grep等程序）
-* shell函数，可以像其他命令一样被引用
-
-linux运行程序的方法
-
-* 提供可执行权限，直接运行文件
-* 调用命令解析器，如sh
-* source
-
-sh echo.sh不会改变目录，cd外部命令，会创建子进程，在子进程中执行cd后子进程消亡，父进程没有任何改变
-source echo.sh会改变目录，source只影响脚本自身，不会创建子进程，直接在父进程执行，父进程通过cd命令改变了目录
-
 ## 命令与参数
 
 * 以空白（space or tab）隔开命令行中各个组成部分
@@ -77,22 +54,80 @@ source echo.sh会改变目录，source只影响脚本自身，不会创建子进
 * 使用&而不是分号，shell将在后台执行前面的命令，这意味着shell不用等待前面的命令执行完成就可以执行下一个命令
 * 每一个可通过help和man得到指导
 
-## 语法检测
+## bash特性
 
-shell的语法还是相当让人无语的，很多很容易疏忽遗漏的地方
-命令格式： sh -n ***.sh
-若是没有异常输出，证明脚本没有明显的语法问题。
+* bash-completion支持命令自动补全
+* history命令历史记录。 ref[history](./history.md)
+* alias别名功能。ref[alias](./alias.md)
+* 快捷键。ref[shell_shortcut_key](./shell_shortcut_key.md)
+* 前后台作业及脱机管理。ref[shell_task](./shell_task.md)
+* 输入输出重定向。ref[shell_stdin_stdout_stderr](./shell_stdin_stdout_stderr.md)
+* 命令排序。ref[shell_command_order](./shell_command_order.md)
+* 通配符。ref[shell_wildcard](./shell_wildcard.md)
 
-运行跟踪：
+## 编写标准
 
-实践是检验整理的唯一标准，跑一把。
-不过，可不是直接运行然后去看最终结果，这样会遗漏掉很多中间过程。
-命令格式： sh -vx ***.sh
-得到效果如下:
-我们可以看到
-每行代码原始命令（无+的）:[这是-v的效果]
-代码执行时的情况（带+），包括运算结果，逻辑判断结果，变量赋值等等[-x的效果]
-而我们所要关注的就是这些信息，主要是变量值和逻辑判断结果。
+* 风格规范
+
+第一行的#！，指定使用哪种解析器，sh一般设成bash的软链
+
+```shell
+#! /bin/sh
+
+#! /bin/bash #调用哪bash解析器
+#! /usr/bin/python #调用python程序
+```
+
+查看可支持的解析器
+
+```sh
+cat /etc/shells
+
+```
+
+* 注释。注释用于解释说明
+* 变量。变量通常放在脚本的开头，可调用系统变量
+
+```sh
+source ~/.bashrc
+export dt=`date +%Y-%m-%d`
+```
+
+* 缩进。需要有缩进，简单明了
+* 命名。规范命名，以.sh结尾；名称有意义；同一风格，小写字符加下划线
+* 编码统一。utf8
+* 日志和回显。记录日志，回显加特效
+* 密码要移除
+* 太长要分行（\）
+* 代码要有效率。代码过长会导致效率降低
+* 学会查路径。dir=$(cd $(dirname $0) && pwd)
+* 技巧
+    路径尽量使用绝对路径
+    优先使用bash变量代替sed，awk
+    简单if判断尽量是&&，||写成单行。如[[x>2]] && echo x
+    利用/dev/null过滤不友好的信息。
+    读取文件时，不要使用for loop，而使用wile read
+
+## 脚本调试
+
+ref [shell_debugging](./shell_debugging.sh)
+
+## 脚本运行
+
+linux运行程序的方法
+
+* 工作目录执行
+    ./x.sh (x.sh需要有可执行权限，否则报权限不对)
+* 绝对路径执行
+    `pwd`/x.sh
+* 调用命令解析器执行
+    bash x.sh
+    sh x.sh
+* shell环境执行
+    source x.sh
+
+sh echo.sh不会改变目录，cd外部命令，会创建子进程，在子进程中执行cd后子进程消亡，父进程没有任何改变
+source echo.sh会改变目录，source只影响脚本自身，不会创建子进程，直接在父进程执行，父进程通过cd命令改变了目录
 
 ## 国际化与本地化
 
@@ -102,46 +137,12 @@ shell的语法还是相当让人无语的，很多很容易疏忽遗漏的地方
 locale -a：列出所有locale名称
 LC_ALL=C：强制使用传统的locale
 
-## bash特性
-
-* bash-completion支持命令自动补全
-* history命令历史记录 ref[history](./history.md)
-* alias别名功能.ref[alias](./alias.md)
-* 快捷键。ref[shell_shortcut_key](./shell_shortcut_key.md)
-* 前后台作业.ref[shell_task](./shell_task.md)
-* 输入输出重定向.ref[shell_stdin_stdout_stderr](./shell_stdin_stdout_stderr.md)
-* 命令排序
-* 通配符
-
-
 ## 其他
 
 ```shell
 #! /bin/bash
 
-# shell中特殊字符
-~（主目录），
-``（命令替换），
-#（注释），
-$（变量表示符号），
-&（后台作业），
-*（字符串通配符），
-(（启动子shell），
-)（结束子shell）
-\（转义字符）
-|（管道）
-[(开始字符集通配)
-]（结束字符集通配）
-{（开始命令块）
-}（结束命令块）
-;（命令分隔）
-''（强引用）
-""（弱引用）
-<（输入重定向）
->（输出重定向）
-/（路径目录分隔）
-?（单个任意字符）
-!（管道行逻辑NOT）
+
 
 
 # shell启动文件
