@@ -1,6 +1,20 @@
-# shell ansi
+# shell_ansi_color
+
+**作者**
+
+Chrisx
+
+**日期**
+
+2022-01-26
+
+**内容**
 
 Shell 使用 ANSI 转义码 (ANSI escape codes) 进行颜色输出。
+
+----
+
+[toc]
 
 ## 格式
 

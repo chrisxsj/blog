@@ -1,22 +1,22 @@
 #! /bin/bash
 #######################################
 # author，Chrisx
-# date，2021-06-15
-# Copyright (C): 2021 All rights reserved"
+# date，2022-01-17
+# Copyright 2022 All rights reserved"
+# description,ping test
 #######################################
 DATE=`date +'%Y-%m-%d'`
+read -p "Input ip: " ip
 while true
 do
-# 替换目标IP地址
-ping=`ping -c 1 192.168.6.143 |grep loss |awk -F "%" '{print $1}' |awk -F "," '{print $NF}' `
-if [ "$ping" -eq 100 ]
-then
+ping -c 5 $ip > /dev/null
+if [ $? != 0 ];then
    echo `date` Destination Host Unreachable >> /tmp/ping$DATE.log
    count=`cat /tmp/ping$DATE.log |wc -l`
    if [ "$count" -gt 10 ]
    then
-      break
+   break
    fi
 fi
-#sleep 1s
+sleep 10s
 done
