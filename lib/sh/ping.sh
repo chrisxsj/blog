@@ -5,10 +5,14 @@
 # Copyright 2022 All rights reserved"
 # description,ping test
 #######################################
-DATE=`date +'%Y-%m-%d'`
-read -p "Input ip: " ip
+
+function fping {
 while true
 do
+DATE=`date +'%Y-%m-%d'`
+#DATE=`date +'%F'`
+#read -p "Input ip: " ip
+# Replace $ip
 ping -c 5 $ip > /dev/null
 if [ $? != 0 ];then
    echo `date` Destination Host Unreachable >> /tmp/ping$DATE.log
@@ -20,3 +24,6 @@ if [ $? != 0 ];then
 fi
 sleep 10s
 done
+}
+
+#fping

@@ -144,47 +144,6 @@ LC_ALL=C：强制使用传统的locale
 
 
 
-
-# shell启动文件
-# 启动文件用于创建一个运行环境，使用/bin/login读取/etc/passwd文件成功登陆后，启动一个交互登陆shell。命令行可以启动一个交互非登录shell，非交互shell通常是一个脚本。
-/etc/profile,全局范围，用户登陆生效
-$HOME/.bash_profile,用户首次登陆生效，覆盖全局设置
-$HOME/.bashrc,每次调用新的shell生效
-
-# 函数
-# 函数是一段独立的代码，用于执行一个完整的单项工作。函数复用是优质代码的特征。
-# shell执行函数时，并不独立创建子进程。
-
-# shell执行命令的顺序
-别名
-关键字（if，for）
-函数
-内置命令
-外部命令
-
-type ls # type 查看命令来源，函数、别名或是外部命令
-
-# 函数使用原则
-# 在函数中使用exit会退出脚本，如果想退回调用函数的地方，使用return命令
-# 如果函数保存在其他脚本中，可以使用source或dot命令将他们装入当前脚本中
-# 函数可递归调用
-declare -F  #查找当前会话中定义的函数。-f还会打印函数定义
-# 函数自动加载需写入启动文件（.bash_profile）
-
-# 函数返回方式使用return，return命令返回函数被调用的位置，如果没有指定return，则函数返回最后一条命令的退出状态。
-
-# add.sh
-#! /bin/bash
-function add()
-{
-    let "sum=$1+$2" #位置参数
-    return $sum #return返回值
-}
-
-source ~/bin/add.sh #加载add函数
-add 2 8             #调用函数，并传参
-echo $?             #查看返回值
-
 # 条件控制与流程控制
 # 条件控制if语句
 if condition
