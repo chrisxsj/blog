@@ -76,21 +76,53 @@ fi
 
 ## 函数传参
 
+使用位置参数传参
 
-
-<!--
-
-# add.sh
-#! /bin/bash
-function add()
-{
-    let "sum=$1+$2" #位置参数
-    return $sum #return返回值
+```sh
+#! /bin/sh
+function tadd {
+    sum=`awk "BEGIN{print $1+$2}"`
+    echo "$1 + $2 sum is $sum"
 }
 
-source ~/bin/add.sh #加载add函数
-add 2 8             #调用函数，并传参
-echo $?             #查看返回值
-eof
+source tadd.sh
+tadd 8 2
+```
 
--->
+## return返回函数结果
+
+return也可用echo代替。
+
+```sh
+#! /bin/sh
+# treturn.sh
+function treturn {
+    if [ -d $1 ]
+    then
+        return "111"
+    else
+        return "222"
+    fi
+}
+
+treturn $1  #调用函数，产生返回值
+result=$?   #获取函数返回值
+
+if [ ${result} == 111 ]
+    then
+    echo "return is ${result},$1 is exist"
+    else
+    echo "return is ${result},$1 is not exist"
+fi
+```
+
+```sh
+bash treturn.sh /tmp
+
+```
+
+## 递归函数
+
+调用自己的函数称为递归函数
+
+如上。

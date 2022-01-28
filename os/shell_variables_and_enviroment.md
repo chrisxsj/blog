@@ -1,4 +1,4 @@
-# shell_variable
+# shell_variables_and_enviroment
 
 **作者**
 
@@ -223,3 +223,7 @@ echo ${#A[*]}   #同上(4)
 echo ${#A[3]}   #返回第四个元素的长度，即def的长度（3）
 echo A[3]=xzy   #则是将第四个组数重新定义为（ xyz）
 ```
+
+## 全局变量和局部变量
+
+全局变量在shell脚本中任何地方都能使用；局部变量仅在函数内部使用。使用local就好。

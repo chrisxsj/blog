@@ -1,4 +1,4 @@
-# sed
+# shell_sed
 
 **作者**
 
@@ -50,6 +50,7 @@ $a,末尾
 sed -i '52,295d' /opt/HighGo4.3.4.7-see/etc/hgdb-see-4.3.4.7  #删除52-295行
 sed -i '1d' $PGDATA/pg_hba.conf              #删除第一行 
 sed -i '$d' $PGDATA/pg_hba.conf              #删除最后一行
+df -h |sed '1d'                              #删除第一行 
 sed -i '/reject/d' $PGDATA/pg_hba.conf  #删除包括reject的所有行
 ```
 
