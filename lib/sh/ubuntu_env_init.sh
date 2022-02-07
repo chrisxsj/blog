@@ -76,7 +76,7 @@ preference-language(search for more language)-add chinese(china)
 配置公司邮箱
 ref [在升级到Thunderbird 78版后，不能收发电子邮件了](https://support.mozilla.org/zh-CN/kb/thunderbird-78-faq-cn#w_zai-sheng-ji-dao-thunderbird-78ban-hou-bu-neng-shou-fa-dian-zi-you-jian-liao)
 
-首选项-配置编辑器-查找security.tls.version.min，并将值改为1-ssl/tls的验证方式选择普通密码
+首选项-配置编辑器-查找security.tls.version.min，并将值改为1；ssl/tls的验证方式选择普通密码
 
 ## 使用libreoffice
 
