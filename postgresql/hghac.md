@@ -499,6 +499,8 @@ systemctl start hghac-vip.service
 
 /opt/HighGo/tools/hghac/hghactl -c /opt/HighGo/tools/hghac/hghac-see.yaml list
 
+hghactl -c $HGHAC_CONF list
+
 hghactl list
 
 [root@db25 data]# hghactl list

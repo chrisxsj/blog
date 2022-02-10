@@ -374,13 +374,13 @@ log:
 
 #bootstrap:
   dcs:
-    ttl: 30
+    ttl: 30 #
     loop_wait: 10
     retry_timeouts: 10
     maximum_lag_on_failover: 33554432
     max_timelines_history: 0
     check_timeline: true
-
+#patroni进程每隔10秒(loop_wait)都会更新Leader key和TTL，如果Leader节点异常patroni进程无法及时更新Leader key，则会重新进行10s尝试retry_timeout）。直到时间超过30s（ttl）会触发新的leader选举，选取wal_position lsn最新的为新leader，如果wal_position一直，则进行争抢，谁先创建了leader key，谁就是新leader
     postgresql:
       use_slots: true
       use_pg_rewind: true
