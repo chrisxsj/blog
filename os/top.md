@@ -61,3 +61,34 @@ top -b1 -n 2 -o +%CPU |tee /tmp/cpu    #查看进程使用cpu情况，以降序�
 * -1 1(数字1)： 显示每个CPU的详细情况
 * -n 指定top在结束前应产生的最大迭代次数或帧数。
 * -o 指定将对任务进行排序的字段的名称。你可以提前准备将“+”或“-”添加到字段名，以覆盖排序方向。前导“+”将强制排序从高到低，而“-”将确保从低到高的顺序。
+
+## Mem
+
+内存显示
+
+* total: 内存总数
+* used: 已经使用的内存数
+* free: 空闲的内存数
+* buff/cache: 缓存内存数
+
+* buffer 与cache 的区别
+　　A buffer is something that has yet to be “written” to disk. A cache is something that has been “read” from the disk and stored for later use.
+
+* 真正内存使用率
+(used-(buffers+cached))/total
+
+* 真正内容空闲率
+(free+buffers+cached)/total
+
+* swap用了很多
+我们在观察Linux的内存使用情况时，只要没发现用swap的交换空间，就不必担心自己的内存太少。如果常常看到swap用了很多，那么你就要考虑加物理内存了。这也是在Linux服务器上看内存是否够用的标准。
+
+## load average
+
+load average是cpu的load。分别代表最近1分钟、最近5分钟、最近15分钟的负载。这个负载是指这段时间内cpu正在处理以及等待cpu处理进程之和的统计信息。也就是cpu使用队列长度统计信息。
+
+在多处理器系统上，负载相对于可用的处理器内核的数量是相对的。
+在一个单核处理器环境，负载1就表示100%利用率
+在多核处理器环境，如64核，负载15相对于64核，远远没有达到高负载。
+
+负载是判断服务器压力重要指标。Linux/Unix系统是非常稳健的，虽然内存占用显示90%以上，但其最近5分钟的负载指数较低，说明服务器压力不大。
