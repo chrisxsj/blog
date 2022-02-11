@@ -97,32 +97,74 @@ shell条件执行
 ```sh
 
 ```
-<!--
-# case
-# case也是一个流程控制，可以用更精细的方式表达if-elif语句
-case expression in
-pattern1)
-    statements;;
-pattern2)
-    statements;;
-pattern3 | pattern4)
-    statements;;
+
+## if
+
+单分支if条件语句
+
+```sh
+if [ 条件判断 ];then
+    条件成立时执行命令
+fi
+
+```
+
+* if使用fi结尾
+* [ 条件判断 ]是条件测试，中括号前后有空格
+* then在[ 条件判断 ]之后，用分号隔开，也可以换行写，就不需要分号了
+
+示例
+
+```sh
+fs=$(df -k | grep sdc | awk '{print $5}' | awk -F '%' '{print $1}')
+if [ $fs -gt 80 ];then
+    echo "fs full"
+fi
+```
+
+双分支if语句
+
+```sh
+if [ 条件判断 ];then
+    条件成立时执行命令
+else
+    条件不成立时执行命令
+fi
+
+```
+
+多分支if语句
+
+```sh
+if [ 条件判断1 ];then
+    条件成立时执行命令1
+elif [ 条件判断2 ];then
+    条件成立时执行命令
+else
+    条件成立时执行命令
+fi
+
+```
+
+## case
+
+case与多分支if语句相同。
+
+```sh
+case 变量 in
+值1)
+    如果变量等于值1则执行命令1
+    ;;
+值2)
+    如果变量等于值2则执行命令2
+    ;;
+值3)
+    如果变量等于值3则执行命令3
+    ;;
+*)
+    如果变量不等于以上任何值则执行默认命令
 esac
 
-# 跳出循环
-break       #跳出循环
-continue    #继续循环
-
-
-command | while read line
-
-do
-
-    …
-
-done
-
-如果你还记得管道的用法，这个结构应该不难理解吧。command命令的输出作为read循环的输入，这种结构常用于处理超过一行的输出，当然awk也很擅长做这种事
--->
+```
 
 

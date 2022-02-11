@@ -73,3 +73,8 @@ echo $sum
 ## until循环
 
 until与while语句正好相反，当until条件测试为假（非0）则进入循环。
+
+## 跳出循环
+
+break       #跳出循环
+continue    #继续循环
