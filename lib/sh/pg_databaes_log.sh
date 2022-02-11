@@ -31,3 +31,19 @@ function pg_database_log () {
 
   echo -e "\n"
 }
+
+#pg_database_log
+
+:<<EOF
+--统计一天内每小时的session请求数
+egrep '^2022-02-09' postgresql-02-09.csv |grep authentication |awk '{print $1 ' ' $2}' |awk -F: '{print $1 }' |sort |uniq -c
+
+--指定的一小时每分钟session请求数
+egrep '^2022-02-09 18:' postgresql-02-09.csv |grep authentication |awk '{print $1 ' ' $2}' |awk -F: '{print $1 ':' $2 }' |sort |uniq -c|sort
+
+--指定的一小时每秒session请求数
+egrep '^2022-02-09 18:30' postgresql-02-09.csv |grep authentication |awk '{print $1 ' ' $2}' |awk -F: '{print $1 ':' $2 ':' $3 }' |sort |uniq -c
+
+--指定的一小时内每IP请求数
+egrep '^2022-02-09 18:' postgresql-02-09.csv |grep authentication |awk '{print $1 ' ' $3}' |awk -F, '{print $5 }'|sed -e 's/......$//g'|sort |uniq -c|sort
+EOF
