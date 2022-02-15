@@ -111,14 +111,15 @@ alter system set max_connections=2000;
 alter system set shared_buffers = '32GB'; --建议物理内存的25%，测试改为40%
 alter system set effective_cache_size = '24GB'; --effective_cache_size = 60GB不小于shared buffer
 alter system set maintenance_work_mem = '1GB';
+alter system set autovacuum_work_mem = '2GB';   --单独配置autovacuum_work_mem而不去使用maintenance_work_mem，更好控制
 alter system set work_mem = '50MB'; --测试改为128MB，可在session级别修改
 
 --for wal
 alter system set wal_level=replica; --测试改为mimimal
 alter system set wal_log_hints='on' --开启使用pg_rewind
 alter system set wal_buffers='32MB'; --测试改为wal段大小的2倍
-alter system set max_wal_size = '50GB';
-alter system set min_wal_size = '5GB';
+alter system set max_wal_size = '10GB';
+alter system set min_wal_size = '1GB';
 alter system set wal_keep_segments = 100;
 
 alter system set checkpoint_timeout = '30min';

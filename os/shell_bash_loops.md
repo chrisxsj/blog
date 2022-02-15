@@ -74,7 +74,38 @@ echo $sum
 
 until与while语句正好相反，当until条件测试为假（非0）则进入循环。
 
-## 跳出循环
+## 循环控制
 
-break       #跳出循环
-continue    #继续循环
+* break n      #n表示跳出循环次数，n省略则跳出整个循环
+* continue n   #n表示退到第n层循环，n省略表示跳过本次循环，进入下一次循环
+* exit n  #表示退出当前shell程序，并返回n，n可省略
+* return  #用于返回一个退出值给调用的函数
+* shift   #用于将参数列表list左移指定的次数，最左端的参数会被删除，后面的参数进入循环。
+
+break示例
+
+```sh
+#! /bin/sh
+for ((i=0;i<=5;i++))
+    do
+    if [ $i -eq 3 ];then
+        break;
+    fi
+    echo $i
+    done
+echo "ok"
+```
+
+continue示例
+
+```sh
+#! /bin/sh
+for ((i=0;i<=5;i++))
+    do
+    if [ $i -eq 3 ];then
+        continue;
+    fi
+    echo $i
+    done
+echo "ok"
+```

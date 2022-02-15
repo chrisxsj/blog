@@ -83,14 +83,14 @@ WHERE c.relkind IN ('r', 'm');
 
 SELECT datname, age(datfrozenxid) FROM pg_database;
 
-age列度量从该截断 XID 到当前事务 XID 的事务数。
+**age列度量从该截断 XID 到当前事务 XID 的事务数。理论上age<autovacuum_freeze_max_age,就说明autovacuum没有延迟，配置合理，否则就需要优化autovacuum配置**
 
 **也就是说，在事务时间轴上，vacuum_freeze_min_age越小，freeze 操作就会越频繁**
 
 其他vacuum 参数
 
 * autovacuum_naptime  --默认值60s，vacuum唤醒时间
-* autovacuum_max_workers=5; --vacuum最大进程数
+* autovacuum_max_workers=5; --vacuum最大进程数,重要
 
 * autovacuum_vacuum_threshold --默认值50，影响autovacuum
 * autovacuum_vacuum_scale_factor --默认值0.2，影响autovacuum

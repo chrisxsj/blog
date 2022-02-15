@@ -44,3 +44,5 @@ case "$2" in
         echo -e "Please enter the specified color：{red|yellow|blue|green|pink}"
 esac
 }
+
+#COLOR

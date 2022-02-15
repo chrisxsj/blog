@@ -54,17 +54,6 @@ shell脚本：简单、可移植、开发容易。
 * 使用&而不是分号，shell将在后台执行前面的命令，这意味着shell不用等待前面的命令执行完成就可以执行下一个命令
 * 每一个可通过help和man得到指导
 
-## bash特性
-
-* bash-completion支持命令自动补全
-* history命令历史记录。 ref[history](./history.md)
-* alias别名功能。ref[alias](./alias.md)
-* 快捷键。ref[shell_shortcut_key](./shell_shortcut_key.md)
-* 前后台作业及脱机管理。ref[shell_task](./shell_task.md)
-* 输入输出重定向。ref[shell_stdin_stdout_stderr](./shell_stdin_stdout_stderr.md)
-* 命令排序。ref[shell_command_order](./shell_command_order.md)
-* 通配符。ref[shell_wildcard](./shell_wildcard.md)
-
 ## 编写标准
 
 * 风格规范
@@ -107,27 +96,6 @@ export dt=`date +%Y-%m-%d`
     简单if判断尽量是&&，||写成单行。如[[x>2]] && echo x
     利用/dev/null过滤不友好的信息。
     读取文件时，不要使用for loop，而使用wile read
-
-## 脚本调试
-
-ref [shell_debugging](./shell_debugging.sh)
-
-## 脚本运行
-
-linux运行程序的方法
-
-* 工作目录执行
-    ./x.sh (x.sh需要有可执行权限，否则报权限不对)
-* 绝对路径执行
-    `pwd`/x.sh
-* 调用命令解析器执行
-    bash x.sh
-    sh x.sh
-* shell环境执行
-    source x.sh
-
-sh echo.sh不会改变目录，cd外部命令，会创建子进程，在子进程中执行cd后子进程消亡，父进程没有任何改变
-source echo.sh会改变目录，source只影响脚本自身，不会创建子进程，直接在父进程执行，父进程通过cd命令改变了目录
 
 ## 国际化与本地化
 

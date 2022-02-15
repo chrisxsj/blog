@@ -7,6 +7,7 @@
 #######################################
 function checkfs () {
     fs=$(df -k | sed '1d' | awk '{print $5}' | awk -F '%' '{print $1}')
+    #fs1=$(${df -k | sed '1d' | awk '{print $1}'})
     fsname=$(df -k | awk '{print $5}' | grep -v 'Use')
     fsused=($fs)
     for i in ${fsused[*]}

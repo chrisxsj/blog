@@ -194,10 +194,10 @@ echo ${var/dir/path}    #将第一个 dir 提换为 path(/path1/dir2/dir3/my.fil
 echo ${var//dir/path}   #将全部 dir 提换为 path(/path1/path2/path3/my.file.txt)
 
 # 内容匹配删除
-echo ${var#*/}          #从前往后，最短匹配删除，模式*/表示匹配/和前面的内容，删除匹配的第1个/和前面的内容（dir1/dir2/dir3/my.file.txt）
-echo ${var##*/}         #从前往后，最长匹配删除，模式*/表示匹配/和前面的内容，删除匹配额最后1个/和前面的内容（my.file.txt）
-echo ${var%.*}          #从后往前，最短匹配删除，模式.*表示匹配.和后面的内容，删除匹配的第1个.和后面的内容（/dir1/dir2/dir3/my.file）
-echo ${var%%.*}         #从后往前，最长匹配删除，模式.*表示匹配.和后面的内容，删除匹配的最后1个.和后面的内容（/dir1/dir2/dir3/my）
+echo ${var#*/}          #从开头最短匹配删除，删除匹配的第1个/和前面的内容（dir1/dir2/dir3/my.file.txt）
+echo ${var##*/}         #从开头最长匹配删除，删除匹配额最后1个/和前面的内容（my.file.txt）
+echo ${var%.*}          #从末尾最短匹配删除，删除匹配的第1个.和后面的内容（/dir1/dir2/dir3/my.file）
+echo ${var%%.*}         #从末尾最长匹配删除，删除匹配的最后1个.和后面的内容（/dir1/dir2/dir3/my）
 
 
 #i++和++i
@@ -209,21 +209,10 @@ echo $y #3
 
 ```
 
-## 数组变量“内容”匹配
-
-```shell
-A="a b c def"   # 定义字符串
-A=(a b c def)   # 定义字符数组
-
-echo ${A[@]}    #返回数组全部元素(a b c def)
-echo ${A[*]}    #同上(a b c def)
-echo ${A[0]}    #返回数组第一个元素(a)
-echo ${#A[@]}   #返回数组元素总个数(4)
-echo ${#A[*]}   #同上(4)
-echo ${#A[3]}   #返回第四个元素的长度，即def的长度（3）
-echo A[3]=xzy   #则是将第四个组数重新定义为（ xyz）
-```
-
 ## 全局变量和局部变量
 
 全局变量在shell脚本中任何地方都能使用；局部变量仅在函数内部使用。使用local就好。
+
+## 数组变量
+
+ref[shell_array](./shell_array.md)
