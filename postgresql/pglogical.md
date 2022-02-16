@@ -20,6 +20,11 @@ ref [pglogical docs](https://www.2ndquadrant.com/en/resources/pglogical/pglogica
 
 [toc]
 
+## 介绍
+
+pglogical是2ndQuadrant开源的插件，最新版本是PGLogic 2
+PGLogic 2扩展使用发布/订阅模型为PostgreSQL提供逻辑流复制。它基于作为BDR项目一部分开发的技术(http://2ndquadrant.com/BDR).
+
 ## Installation
 
 ```sh

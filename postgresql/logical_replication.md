@@ -107,34 +107,73 @@ ALTER SUBSCRIPTION
 DROP SUBSCRIPTION.
 ```
 
-## 5冲突 Conflicts
+## 5体系结构
+
+![logical_replication_arch](../image/20220216logical_replication_arch.png)
+
+逻辑复制的过程如下
+
+1. 初始化快照
+
+* 发布表的初始数据会被快照到订阅端。初始化快照过程会创建临时复制槽使用。
+* 快照的过程是自动的，是一种类似`copy`的方式，支持多表并行。
+* 数据拷贝完成后，进入同步模式。
+
+2. 同步模式
+
+* 发布端walsender process从WAL（REDO）日志中逻辑解码，此处会加载标准逻辑解码插件 `pgoutput`，pgoutput 把从WAL中读取的更改进行转换，根据发布定义的表以及过滤条件（ INSERT\UPDATE\DELETE ）过滤数据，按事务组装复制的数据。组装的事务通过流复制协议传输到备端。
+* applyapply process 会按照事务的先后顺序应用更改到对应的表。
+
+理解逻辑解码
+
+逻辑解码是一种将对数据库表的所有持久更改抽取成一种清晰、易于理解的格式的处理方法。
+
+1. 查看逻辑解码的内容
+ref [49.1. Logical Decoding Examples](https://www.postgresql.org/docs/14/logicaldecoding-example.html)
+
+```sql
+postgres=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
+    lsn    |  xid  |                          data                           
+-----------+-------+---------------------------------------------------------
+ 0/BA5A688 | 10298 | BEGIN 10298
+ 0/BA5A6F0 | 10298 | table public.data: INSERT: id[integer]:1 data[text]:'1'
+ 0/BA5A7F8 | 10298 | table public.data: INSERT: id[integer]:2 data[text]:'2'
+ 0/BA5A8A8 | 10298 | COMMIT 10298
+(4 rows)
+
+```
+
+2. 逻辑解码使用复制槽
+
+* 在逻辑复制的环境下，一个槽表示一个更改流。逻辑解码生成的数据更改都会放在逻辑复制槽中。
+* 只有在检查点时才会持久化每一个槽的当前位置，因此如果发生崩溃，槽可能会回到一个较早的 LSN，这会导致服务器重启时再次发送最近的更改。 逻辑解码客户端负责避免多次处理同一消息导致的副作用。
+* 逻辑复制槽完全不知道接收者的状态，复制槽中的更改会一直保留，直到有客户端读取消费更改。复制槽一直保留数据会大量占用磁盘空间，且对应的数据不能被vacuum可能造成事务回卷数据库被关闭的风险，因此，不需要复制槽时，应该删除它。
+
+
+
+## 6冲突 Conflicts
 
 同步的数据违反约束逻辑复制将会停止，这叫做冲突（conflict）。发生冲突时需要人工介入可以通过更改订阅服务器上的数据, 使其不会与传入的更改冲突；也可跳过与现有数据冲突的事务。通过调用 pg_replication_origin_advance () 函数与订阅名称对应的 node_name 和位置 , 可以跳过该事务。
 
 冲突解决方法
 
 1. 通过修改订阅端的数据，解决冲突。例如 insert 违反了唯一约束时，可以删除订阅端造成唯一约束冲突的记录先 DELETE 掉。然后使用 ALTER SUBSCRIPTION name ENABLE 让订阅继续。
-2. 在订阅端调用 pg_replication_origin_advance(node_name text, pos pg_lsn) 函数跳过事务。
-
-```sql
-pg_replication_origin_advance(node_name text, lsn pg_lsn)
-
-```
-
-* node_name 就是 subscription name
-* pos 指重新开始的 LSN
+2. 在订阅端调用 pg_replication_origin_advance(node_name text, pos pg_lsn) 函数跳过事务。node_name对应订阅的名字，pos对应开始一个lsn位置。
+当前lsn位置可以在pg_replication_origin_status系统视图中查看。
 
 <!--
 The transaction can be skipped by calling the pg_replication_origin_advance() function with a node_name corresponding to the subscription name, and a position. The current position of origins can be seen in the pg_replication_origin_status system view.
--->
-
-查看当前数据的位置
 
 ```sql
 select * from pg_replication_origin_status;
+select pg_replication_origin_advance('p1_slot_sub', '0/A024830');
+
 ```
 
-## 6限制 Restrictions
+node_name是复制源的名字？
+-->
+
+## 7限制 Restrictions
 
 1. 不支持数据库模式（schema）和DDL命令。
 2. 序列数据未被复制
@@ -142,32 +181,10 @@ select * from pg_replication_origin_status;
 4. 不支持复制大型对象
 5. 只能从基表复制到基表。
 
-## 7体系架构 Architecture
-
-* 创建订阅（subscription）后,先在发布端初始化快照数据，订阅端接收完快照后，发布端会从快照的LSN开始同步数据库操作。
-* 发布端walsender process从WAL（REDO）日志中逻辑解码，此处会加载标准逻辑解码插件 `pgoutput`，pgoutput 把从WAL中读取的更改进行转换，根据发布定义的表以及过滤条件（ INSERT\UPDATE\DELETE ）过滤数据，按事务组装复制的数据。数据通过流复制协议传输到备端， applyapply process 会按照事务的先后顺序应用更改到对应的表。
-
-:warning: 注意,PostgreSQL对逻辑复制初始化同步进行了增强，支持通过wal receiver协议跑`COPY`命令（已封装在逻辑复制的内核代码中），支持多表并行。也就是说，你可以使用PostgreSQL的逻辑复制，快速的（流式、并行）将一个实例迁移到另一个实例。
-
-<!--
-发布端修改订阅表时，在事务提交时，发布端依次发送下面的消息到订阅端
-
-B(BEGIN)
-R(RELATION)
-I(INSERT)
-C(COMMIT)
-更新复制源 pg_replication_origin_status 中的 remote_lsn 和 local_lsn ，该位点对应于每个订阅表最后一次事务提交的位置。
-k(KEEPALIVE)
-k(KEEPALIVE) 2 个 keepalive 消息，会更新统计表中的位置
-发布端 pg_stat_replication:write_lsn,flush_lsn,replay_lsn
-发布端 pg_get_replication_slots():confirmed_flush_lsn
-订阅端更新 pg_stat_subscription:latest_end_lsn
--->
-
 ## 8监控 Monitoring
 
-* 逻辑复制监控信息可以访问视图 `pg_stat_subscription` .每一个订阅（subcription） 都有一条记录，一个订阅可能有多个订阅进程工作（active subscription workers ）
-* 逻辑复制使用的是流复制协议，与流复制监控类似，可查询视图`pg_stat_replication`。
+* 逻辑复制使用的是流复制协议，与流复制监控类似，在主库可查询视图`pg_stat_replication`。.每一个订阅（subcription） 都有一条记录。
+* 逻辑复制在备库可以查询视图`from pg_stat_subscription`、`pg_subscription_rel`，监控订阅信息。
 * 复制源的重放进度可以在视图`pg_replication_origin_status`中看到，使用延迟复制时，需要查询此视图监控重放进度。
 
 订阅节点执行以下语句，监控延迟。
@@ -255,26 +272,4 @@ alter system set max_replication_slots=20;
 #alter system set max_worker_processes=128;
 alter system set max_logical_replication_workers=30;
 alter system set max_sync_workers_per_subscription=10;
-```
-
-## 11维护操作
-
-1 发布中添加表、删除表
-
-```sql
-alter publication pub1 add table highgo.test_lr1;
-alter publication pub1 drop table highgo.test_lr1;
-```
-
-2 逻辑复制启动和停止
-
-```sql
-alter subscription lipei_solt_sub disable;
-alter subscription lipei_solt_sub enable;
-```
-
-3 立即同步
-
-```sql
-alter subscription sub1 refresh publication;
 ```

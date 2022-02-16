@@ -293,48 +293,6 @@ create subscription test_slot_sub connection 'host=192.168.6.141 port=5966 dbnam
 
 > 注意，删除订阅后，本地的表不会被删除，数据也不会清除，仅仅是不在接收该订阅的上游信息。删除订阅后，如果要重新使用该订阅，数据需要resync
 
-## 逻辑解码
-
-查看逻辑解码的内容
-
-```sql
--- 使用输出插件'test_decoding'创建一个名为'regression_slot'的槽
-SELECT * FROM pg_create_logical_replication_slot('regression_slot', 'test_decoding');
-SELECT slot_name, plugin, slot_type, database, active, restart_lsn, confirmed_flush_lsn FROM pg_replication_slots;
-
--- 目前还看不到更改
-SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
-
-CREATE TABLE data(id serial primary key, data text);
--- DDL 没有被复制，因此你将看到的东西只有事务
-SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
-
--- 读到更改，它们会被消费掉并且不会在一个后续调用中被发出：
-SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
-
-BEGIN;
-INSERT INTO data(data) VALUES('1');
-INSERT INTO data(data) VALUES('2');
-COMMIT;
-
-SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
-
-
-    lsn    | xid |                          data
------------+-----+---------------------------------------------------------
- 0/45C3CD8 | 802 | BEGIN 802
- 0/45C3CD8 | 802 | table public.data: INSERT: id[integer]:3 data[text]:'3'
- 0/45C3D88 | 802 | COMMIT 802
-(3 rows)
-
-
--- 当不再需要一个槽后记住销毁它以停止消耗服务器资源：
-SELECT pg_drop_replication_slot('regression_slot');
-
-```
-
-可以为逻辑解码增加更多输出方法
-
 ## 实验
 
 级联逻辑复制测试

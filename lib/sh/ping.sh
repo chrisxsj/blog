@@ -13,7 +13,7 @@ DATE=`date +'%Y-%m-%d'`
 #DATE=`date +'%F'`
 #read -p "Input ip: " ip
 # Replace $ip
-ping -c 5 $ip > /dev/null
+ping -t $ip > /dev/null
 if [ $? != 0 ];then
    echo `date` Destination Host Unreachable >> /tmp/ping$DATE.log
    count=`cat /tmp/ping$DATE.log |wc -l`
@@ -22,7 +22,7 @@ if [ $? != 0 ];then
    break
    fi
 fi
-sleep 10s
+#sleep 10s
 done
 }
 
