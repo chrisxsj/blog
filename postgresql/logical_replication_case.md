@@ -246,7 +246,7 @@ or
 select * from pg_publication_tables;
 ```
 
-## 13其他操作
+## 其他操作
 
 ### 添加同步表（ add ）
 

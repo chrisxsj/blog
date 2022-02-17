@@ -10,7 +10,7 @@ Chrisx
 
 **内容**
 
-Logical Replication
+逻辑复制 Logical Replication
 
 ref [Logical Replication](https://www.postgresql.org/docs/13/logical-replication.html)
 
@@ -148,6 +148,7 @@ postgres=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NU
 * 在逻辑复制的环境下，一个槽表示一个更改流。逻辑解码生成的数据更改都会放在逻辑复制槽中。
 * 只有在检查点时才会持久化每一个槽的当前位置，因此如果发生崩溃，槽可能会回到一个较早的 LSN，这会导致服务器重启时再次发送最近的更改。 逻辑解码客户端负责避免多次处理同一消息导致的副作用。
 * 逻辑复制槽完全不知道接收者的状态，复制槽中的更改会一直保留，直到有客户端读取消费更改。复制槽一直保留数据会大量占用磁盘空间，且对应的数据不能被vacuum可能造成事务回卷数据库被关闭的风险，因此，不需要复制槽时，应该删除它。
+* 复制槽重建后，目标端会按照新的复制槽开始数据复制，这样会导致中间有事务的缺失。
 
 
 
@@ -240,36 +241,4 @@ replay_delay     | 0 《《《《《《《《《《《表示 WAL 日志应用延
 
 ## 10配置设置 Configuration Settings
 
-在发布端
-
-```sql
-wal_level=logical
-max_replication_slots -- 至少与订阅个数相同
-max_wal_senders    -- 至少与 max_replication_slots 相同，进程来自 max_connections
-
-```
-
-在订阅端
-
-```sql
-max_replication_slots    -- 至少与订阅个数相同
-max_worker_processes    -- 系统支持的最大后台进程数，至少 max_logical_replication_workers + 1
-Sets the maximum number of background processes that the system can support. This parameter can only be set at server start. The default is 8.
-max_logical_replication_workers  -- 至少与订阅个数相同，进程来自于 max_worker_processes
-max_sync_workers_per_subscription ( integer )  -- 进程来自于 max_logical_replication_workers ，默认值是 2 ， 每个订阅的最大 并行进程数，控制订阅初始化期间或添加新表初始化时的并行量。目前每个表同步只能使用一个工作进程
-```
-
-最佳实践，建议值
-
-```sql
-pub:
-alter system set max_replication_slots=20;
-alter system set max_wal_senders=30;
-#alter system set max_worker_processes=128;
-
-sub:
-alter system set max_replication_slots=20;
-#alter system set max_worker_processes=128;
-alter system set max_logical_replication_workers=30;
-alter system set max_sync_workers_per_subscription=10;
-```
+ref [logical_replication_case](./logical_replication_case.md)

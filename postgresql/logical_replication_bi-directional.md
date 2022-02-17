@@ -24,8 +24,9 @@ ref [Replication Progress Tracking](https://www.postgresql.org/docs/14/replicati
 
 优点
 
-* 双活
-* 灵活
+* 双活对等。均可对外提供服务
+* 提高资源利用率
+* 故障切换快速，无感知。
 
 问题
 

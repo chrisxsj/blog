@@ -26,7 +26,7 @@ PostgreSQL部署上之后，经过一段时间的运行，我们比较关心那�
 ## sql优化分析
 
 * ref [explain](./explain.md)
-* ref[hg_pdr](./hg_pdr.md)
+* ref [hg_pdr](./hg_pdr.md)
 
 ## sql优化的维护操作
 
