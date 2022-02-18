@@ -32,27 +32,67 @@ sed --help
 
 常用选项
 
-* -n 静默输出
-* -e 允许多点编辑
-* -f 将sed写在配置文件中
-* -r 支持扩展正则表达式
-* -i 直接修文件内容。
+| 参数 | 描述                |
+| ---- | ------------------- |
+| -n   | 静默输出            |
+| -e   | 允许多点编辑        |
+| -f   | 将sed写在配置文件中 |
+| -r   | 支持扩展正则表达式  |
+| -i   | 直接修文件内容      |
 
 常用命令选项
 
-* a\ 新增，a后面可以接字符串，这些字符串在新一行出现
-* c\ 替换，接替换的字符串
-* d  删除，
-* i\ 插入，插入新的字符串，这些字符串在新一行出现
-* p  打印，常与sed -n一起运作
-* s  替换，直接替换，支持正则
+| 参数 | 描述                                            |
+| ---- | ----------------------------------------------- |
+| a    | 新增，a后面可以接字符串，这些字符串在新一行出现 |
+| c    | 替换，接替换的字符串                            |
+| d    | 删除                                            |
+| i    | 插入，插入新的字符串，这些字符串在新一行出现    |
+| p    | 打印，常与sed -n一起运作                        |
+| s    | 替换，直接替换，支持正则                        |
 
 高级命令选项
 
 高级命令选项与缓冲区有关
 
+| 参数 | 描述                                                |
+| ---- | --------------------------------------------------- |
+| h    | 拷贝pattern space内容到holding buffer（特殊内存）   |
+| H    | 追加pattern space内容到holding buffer（特殊内存）   |
+| g    | 获得holding buffer内容，并替换pattern space文本     |
+| G    | 获得holding buffer内容，并追加到pattern space的后面 |
+| P    | 打印pattern space的第一行（大写）                   |
+| q    | 退出sed                                             |
+| =    | 打印当前行号                                        |
+
+## 替换标志
+
+| 参数 | 描述                                              |
+| ---- | ------------------------------------------------- |
+| g    | 在行内进行全局替换                                |
+| w    | 将行写入文件                                      |
+| x    | 交换缓冲区与模式空间内容。                        |
+| y    | 将字符转换成灵异字符（不能对正则表达式使用y命令） |
 
 ## 示例
+
+替换
+
+```sh
+sed 's#要替换的字符串#新的字符串#g' # 这里#是分隔符，也可以使用!或者/。要替换的字符串可以用正则表达式
+
+sed 's#root#ROOT#' /etc/passwd      #行部分替换。替换行中遇到的第一个匹配的值
+sed 's#root#ROOT#2' /etc/passwd     #行部分替换。替换行中遇到的指定的第二个匹配的值
+sed "s#$i#$p#" /etc/passwd          #行部分替换。替换部分使用环境变量，将单引号替换为双引号
+sed "s#root#ROOT#g" /etc/passwd       #行全部替换。替换行中所有匹配的值
+sed -n "s#root#ROOT#g p" /etc/passwd      #-n + p仅将替换内容打印到屏幕
+sed -n "s#root#ROOT#g w /tmp/passwd_sed_out" /etc/passwd     # 与-n + p类似，但将替换内容打印到指定文件
+sed -i 's#ROOT#root#g' /tmp/passwd_sed_out   #直接修改源文件替换
+
+sed -r -n 's#^root#xxx#g p' /etc/passwd   #使用正则，替换以root开头的行
+sed -r -n 's#false$#xxx#g p' /etc/passwd   #使用正则，替换以false结尾的行
+sed -r -n 's#[0-9][0-9]#xxx#g p' /etc/passwd   #使用正则，替换包括两位数字的行
+```
 
 查询
 
@@ -77,31 +117,25 @@ $a,末尾
 删除
 
 ```sh
+
 sed -i '52,295d' /opt/HighGo4.3.4.7-see/etc/hgdb-see-4.3.4.7  #删除52-295行
 sed -i '1d' $PGDATA/pg_hba.conf              #删除第一行 
 sed -i '$d' $PGDATA/pg_hba.conf              #删除最后一行
 df -h |sed '1d'                              #删除第一行 
 sed -i '/reject/d' $PGDATA/pg_hba.conf  #删除包括reject的所有行
+sed -i '/^$/d' $PGDATA/pg_hba.conf      #删除空行
+
 ```
 
-替换
+## 行寻址
 
-代替一行或多行
+行寻址，可以对应所有命令，包括替换，删除，增加等
 
 ```sh
-sed -i '1c chrisx' parameter.conf                #整行替换。第一行代替为xxx
-sed -i '1,2c chrisx' parameter.conf     #多行替换。第一行到第二行代替为xxx
-sed -i 's#rainx#chrisx#g' pa.conf   #部分替换。格式：sed 's#要替换的字符串#新的字符串#g'（要替换的字符串可以用正则表达式）
-sed -i "s#$i#$p#g" pa.conf   #部分替换。替换部分使用环境变量，将单引号替换为双引号
-
+sed -n '3 s/bin/BIN/g p' /etc/passwd          #将第3行中的所有bin替换为BIN
+sed -n '3,5 s/bin/BIN/g p' /etc/passwd        #将第3-5行中的所有bin替换为BIN
+sed -n '10,$ s/bin/BIN/g p' /etc/passwd        #将第10行到结尾中的所有bin替换为BIN
 ```
 
-## 删除空行
+## 使用文本过滤器过滤行
 
-/^$/d
-/ - start of regex
-^ - start of line
-$ - end of line
-/ - end of regex
-d - delete lines which match
-所以基本上找到任何空的行(起点和终点是相同的，例如没有字符)，并删除它们。
