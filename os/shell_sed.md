@@ -74,7 +74,7 @@ sed --help
 | x    | 交换缓冲区与模式空间内容。                        |
 | y    | 将字符转换成灵异字符（不能对正则表达式使用y命令） |
 
-## 示例
+## 行替换
 
 替换
 
@@ -94,27 +94,37 @@ sed -r -n 's#false$#xxx#g p' /etc/passwd   #使用正则，替换以false结尾�
 sed -r -n 's#[0-9][0-9]#xxx#g p' /etc/passwd   #使用正则，替换包括两位数字的行
 ```
 
-查询
+### 行寻址
+
+行寻址，可以对应所有命令，包括替换，删除，增加等
 
 ```sh
-sed -n '/log/p' $PGDATA/postgresql.conf    #查询包括关键字log所在所有行
+sed -n '3 s/bin/BIN/g p' /etc/passwd          #将第3行中的所有bin替换为BIN
+sed -n '3,5 s/bin/BIN/g p' /etc/passwd        #将第3-5行中的所有bin替换为BIN
+sed -n '10,$ s/bin/BIN/g p' /etc/passwd        #将第10行到结尾中的所有bin替换为BIN
+```
+
+### 使用文本过滤器过滤行
+
+sed允许指定文本过滤出命令作用的行
+
+```sh
+/pattern1/,/pattern2/ command
+
+```
+
+* 使用/将指定文本包含起来。
+* 两个pattern之间是过滤区间，从第一个pattern1开始，到pattern2结束
+
+```sh
+sed -r -n '/root/s#bin#xxx#g p' /etc/passwd   #寻找包含root的行，并将bin替换为xxx
 sed -n '/^log/p' $PGDATA/postgresql.conf     #查询log开头的行
-
+sed -n '/log/p' $PGDATA/postgresql.conf    #查询包括关键字log所在所有行
 ```
 
-增加
+## 行删除
 
-```sh
-sed -i '$a host\tall\tall\t0.0.0.0/0\tmd5' $PGDATA/pg_hba.conf   #在文件末尾增加一行
-
--i,编辑文件
-$a,末尾
-\t,TAB的表示方式
-
-
-```
-
-删除
+使用d删除特定的行，可以使用行寻址和文本过滤
 
 ```sh
 
@@ -127,15 +137,67 @@ sed -i '/^$/d' $PGDATA/pg_hba.conf      #删除空行
 
 ```
 
-## 行寻址
+## 行插入
 
-行寻址，可以对应所有命令，包括替换，删除，增加等
+使用i和a增加文本，i在指定行前增加新行，a在是定行后增加新行。可以使用行寻址和文本过滤
 
 ```sh
-sed -n '3 s/bin/BIN/g p' /etc/passwd          #将第3行中的所有bin替换为BIN
-sed -n '3,5 s/bin/BIN/g p' /etc/passwd        #将第3-5行中的所有bin替换为BIN
-sed -n '10,$ s/bin/BIN/g p' /etc/passwd        #将第10行到结尾中的所有bin替换为BIN
+sed '[address][i|a]\newtext' file
+
+sed -i '$a host \t all \t all \t 0.0.0.0/0 \t md5' $PGDATA/pg_hba.conf   #在文件末尾增加一行,\t是制表符
+sed -n '1i\/xxx' /etc/passwd   #在文件末尾增加一行
 ```
 
-## 使用文本过滤器过滤行
+* -i,编辑文件
+* $a,末尾
+* \t,TAB的表示方式
 
+## 行修改
+
+使用命令c可将整行文本修改为新行。可以使用行寻址和文本过滤
+
+```sh
+sed '[address][c]\newtext' file
+
+sed -n '/root/ c\/root/newline' /etc/passwd   #查找包含root的行，并将整行替换为/root/newline
+sed -n '1 c\string' /etc/passwd   #将第一行替换为sting
+```
+
+## 字符转换
+
+使用y可以对文本进行逐字符转换
+
+```sh
+sed '[address]y/oldchar/newchar/'
+
+echo abcde |sed 'y/abc/ABC/'    #从a开始逐个字符替换。将abc替换为ABC
+```
+
+:warning: oldchar和newchar字符数需一致
+
+## 写入文件
+
+使用w将内容写入文件
+
+```sh
+sed '[address]w file'
+
+sed -n '1,2 w /tmp/sed_out' /etc/passwd    #将第1行到第2行写入文件/tmp/sed_out
+```
+
+## 从文件读取
+
+使用r读取文件内容，并插入到指定的行末尾。类似a
+
+```sh
+sed '[address]w file'
+
+sed -n '$ r /tmp/sed_out' /etc/passwd    #从文件/tmp/sed_out读入行，并插入到文件末尾
+```
+
+## 模式空间和保持空间
+
+
+## 使用
+
+所有文件都可以使用sed非交互修改。
