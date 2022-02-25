@@ -19,4 +19,4 @@ find $filepath -size -$filesize -exec ls -lrth {} \;
 #+$filesize 大于，-$filesize 小于
 }
 
-find_file_size
+#find_file_size
