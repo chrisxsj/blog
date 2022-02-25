@@ -58,7 +58,10 @@ function network()  {
 function cpu()  {
   echo "###### cpu"
   lscpu
-
+  echo "物理CPU的个数：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+  echo "单个CPU的物理核数：$(cat /proc/cpuinfo | grep "cpu cores" | uniq )"
+  echo "单个cpu的逻辑核数：$(cat /proc/cpuinfo | grep "processor" | wc -l)"
+  echo "CPU是否启用超线程：$(cat /proc/cpuinfo | grep -e "cpu cores"  -e "siblings" | sort | uniq)"   #如果cpu cores数量和siblings数量一致，则没有启用超线程，否则超线程被启用。
   echo -e "\n"
 }
 

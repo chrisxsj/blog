@@ -151,6 +151,7 @@ alter system set log_rotation_size = 0;
 alter system set log_truncate_on_rotation = 'on';
 alter system set log_line_prefix='%m %p %u %d'; --%m是带毫秒的时间戳，%u是用户名，%d是数据库名，%p是进程ID。
 alter system set log_min_duration_statement = '5000'; --测试改为-1
+--当把这个选项和log_statement一起使用时，已经被log_statement记录的语句文本不会在持续时间日志消息中重复。如果你没有使用syslog，我们推荐你使用log_line_prefix记录 PID 或会话 ID，这样你可以使用进程 ID 或会话 ID 把语句消息链接到后来的持续时间消息。
 alter system set log_statement = 'ddl'; --测试改为none
 alter system set log_checkpoints=on; --测试改为 off
 alter system set log_connections = 'on'; --测试改为off
