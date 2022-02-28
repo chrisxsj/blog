@@ -41,5 +41,9 @@ You can filter the view of patches to show just patches for version:
 
 辅助参考[安全客](https://www.anquanke.com/vul/id/2238291)和[vigilance](https://vigilance.fr/vulnerability/PostgreSQL-three-vulnerabilities-33897)
 
-**主板本不再受支持情况下建议升级主板本** ref [pg_vrsioning_policy](./pg_Versioning_Policy.md)
+升级建议
+
+ref [upgrading](./upgrading.md)
+
+**主板本不再受支持情况下建议升级主板本**
 **始终建议您使用可用的最新次要版本。**

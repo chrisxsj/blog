@@ -259,6 +259,10 @@ recovery_target_timeline = 'latest'
 
 ```
 
+## 恢复设置
+
+ref [恢复配置](http://www.postgres.cn/docs/11/archive-recovery-settings.html)
+
 注意：primary_conninfo需要存在（内容可以随便填）否则时间线会更改。无法追加下一次的wal日志
 
 <!--

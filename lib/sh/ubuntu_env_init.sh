@@ -10,6 +10,10 @@
 sudo apt install git -y
 echo "`date` git successfully"
 
+## 安装plocate
+
+sudo apt install plocate
+
 ## 安装docker
 
 sudo apt-get install \

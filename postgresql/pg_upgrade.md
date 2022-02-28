@@ -20,75 +20,62 @@ ref [pg_upgrade](https://www.postgresql.org/docs/13/pgupgrade.html)
 
 ## 介绍
 
-pg_upgrade（之前被称为pg_migrator） 允许存储在PostgreSQL数据文件中的数据被升级到一个较晚 的PostgreSQL主版本而无需进行主版本升级（例如从9.5.8到9.6.4或者从10.7到11.2）通常所需的数据转储/重载。 对于次版本升级（例如从9.6.2到9.6.3或者从10.1到10.2）则不需要这个程序。
+pg_upgrade（之前被称为pg_migrator） 允许允许主版本“原位”升级而无需数据转储/重载。 对于次版本升级则不需要这个程序。
 
-:warning: 可以用 pg_dump 进行数据转储/重载，但是当数据库比较大时，pg_dump/pg_restore 的方法比较费时，ref[sql_dump](./sql_dump.md)
+主 PostgreSQL 发行通常会加入新的特性，这些新特性常常会更改系统表的布局，但是内部数据存储格式很少会改变。pg_upgrade 使用这一事实来通过创建新系统表并且重用旧的用户数据文件来执行快速升级。 如果一个未来的主发行没有把数据存储格式改得让旧数据格式不可读取，这类升级就用不上pg_upgrade（社区将尝试避免这类情况）。
 
-主 PostgreSQL 发行通常会加入新的特性，这些新特性常常会更改系统表的 布局，但是内部数据存储格式很少会改变。pg_upgrade 使用这一事实来通过创建新系统表并且重用旧的用户数据文件来执行快速升级。 如果一个未来的主发行没有把数据存储格式改得让旧数据格式不可读取，这类 升级就用不上pg_upgrade（社区将尝试避免这类情况）。
-
-## 主板本升级
-
-主板本升级，pg126>pg133
-
-升级步骤
+## 升级步骤
 
 ### 移动旧集簇（可选）
 
-避免新安装的软件和数据目录覆盖旧，如需要，重命名相关目录。
+新安装的软件目录和旧软件目录重复，就需要重命名相关目录。建议使用不同的安装目录。
 
-### 对于源码安装，编译新版本
+### 安装新版本软件
 
-编辑安装前，查看旧版本信息
+用兼容旧集簇的configure标记编译新的 PostgreSQL 源码。查看旧版本信息。
 
 ```sh
-cat ~/.bash_profile #环境变量
-pg_config |grep -i config #编译信息
+pg_config |grep -i CONFIGURE #编译信息
+
+```
+
+编译安装新版本，包括二进制文件。ref [pg_installation](./pg_installation.md)。在开始升级之前，pg_upgrade 将检查pg_controldata来确保所有设置都是兼容的。
+
+### 初始化数据库
+
+使用initdb初始化新集簇。这里也要使用与旧集簇相兼容的initdb标志。
+
+```sh
 psql -c 'show server_encoding;' #数据库字符集
 
 ```
 
-按照旧版本配置信息，编译安装新版本。ref [pg_installation](./pg_installation.md)
+### 安装自定义共享库和插件
 
-安装软件
+* 把旧集簇使用的所有自定义共享对象文件或插件安装到新集簇中，例如pgcrypto.so，不管它们是来自于 contrib还是某些其他源码。
+* 不要创建模式定义 （例如CREATE EXTENSION pgcrypto），因为这些将会从旧集簇升级得到。 还有，任何自定义的全文搜索文件（词典、同义词、辞典、停用词）也必须 被复制到新集簇中。
 
-```sh
-./configure --prefix=/opt/pg13 --with-pgport=5435
-make world && make install-world
-```
-
-初始化数据库
+检查每个数据库的扩展
 
 ```sh
-/opt/pg13/bin/initdb -E UTF8 -D /opt/pg13_data --locale=C -U pg126 -W
+for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$);'`
+do
+psql -d $db --pset=pager=off -q -c 'select current_database(),* from pg_extension'
+done
+
 ```
-
-:warning: 命令使用绝对路径
-
-启动，验证是否正常
-
-```sh
-/opt/pg13/bin/pg_ctl start -D /opt/pg13_data
-```
-
-:warning: 需要修改pgport 避免端口重复;
 
 ### 调整认证
 
-pg_upgrade将会多次连接到旧服务器和新服务器，因此 你可能想要在pg_hba.conf中把认证设置成 peer或者使用一个~/.pgpass文件
+pg_upgrade将会多次连接到旧服务器和新服务器，因此使用一个~/.pgpass文件
 
-```sh
-$ cat ~/.pgpass
-#hostname:port:database:username:password
-192.168.6.11:5433:*:pg126:xxx
-192.168.6.11:5435:*:pg126:xxx
-
-```
+ref [pgpass](./pgpass.md)
 
 ### 停止两个服务器
 
 ```sh
-/opt/pg126/bin/pg_ctl -D /opt/pg126_data stop
-/opt/pg13/bin/pg_ctl -D /opt/pg13_data stop
+/opt/pg126/bin/pg_ctl -D /opt/pg126/data stop
+/opt/pg142/bin/pg_ctl -D /opt/pg142/data stop
 ```
 
 :warning: 此时涉及停机时间
