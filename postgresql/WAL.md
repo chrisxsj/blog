@@ -158,15 +158,6 @@ ref [pg_interdb](./ch9)
 
 ### wal段文件管理
 
-wal段文件空间有限，当段文件写满后，需要切换，以继续存储wal更改。
-
-出现以下情况时，段文件会发生切换
-
-* wal段已经被填满
-* 调用函数pg_switch_wal()
-* 启用了archive_mode,且已经超过archive_timeout配置的时间
-* 调用在线备份
-
 ref [wal_size](./wal_size.md)
 
 ### 持续归档与归档日志

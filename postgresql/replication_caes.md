@@ -1,4 +1,4 @@
-## replication_eg
+## replication_case
 
 **作者**
 
@@ -117,14 +117,12 @@ cp ../share/postgresql/recovery.conf.sample recovery.conf
 ```bash
 # stream replicationg
 standby_mode='on'
-primary_conninfo='user=repuser host=10.247.32.16 port=6432 application_name=pgrep1 keepalives_idle=60 keepalives_interval=10 keepalives_count=5'
+primary_conninfo='user=repuser password=repuser host=10.247.32.16 port=6432 application_name=pgrep1 keepalives_idle=60 keepalives_interval=10 keepalives_count=5'
 primary_slot_name='pslot1'
 recovery_target_timeline='latest'
 ```
 
 > 注意： primary_conninfo 明文指出了密码，建议将密码配置在密码文件中。参考[pgpass](./pgpass.md) （备库）
-
-**以上为pg12前的配置，pg12及之后版本配置如下，参考[pg12新特性-迁移recovery.conf到postgresql.conf](./pg_new_features/pg12新特性-迁移recovery.conf到postgresql.conf.md)**
 
 pg12及以上使用以上配置会报错
 
@@ -133,11 +131,15 @@ pg12及以上使用以上配置会报错
 
 ```
 
+**以上为pg12前的配置，pg12及之后版本配置如下，参考[pg12新特性-迁移recovery.conf到postgresql.conf](./pg_new_features/pg12新特性-迁移recovery.conf到postgresql.conf.md)**
+
+
+
 pg12及以上配置步骤
 
 ```sh
 touch $PGDATA/standby.signal
-touch $PGDATA/recovery.signal
+#touch $PGDATA/recovery.signal 
 
 postgresql.conf中添加以下内容
 

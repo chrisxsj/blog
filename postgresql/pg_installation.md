@@ -171,6 +171,8 @@ Before you can do anything, you must initialize a database storage area on disk.
 
 ```sh
 initdb -E UTF8 -D $PGDATA --auth-host=md5 --auth-local=trust --wal-segsize=64 --locale=C -U postgres -W
+
+initdb -E UTF8 -D $PGDATA --locale=C -U postgres -W
 ```
 
 > 如果配置了PGDATA可忽略 -D

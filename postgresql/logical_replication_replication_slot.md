@@ -58,6 +58,11 @@ drop subscription test_slot_sub ;
 
     在删除一个订阅是，远程主机不可达。在这种情况下，可以在尝试删除该订阅之前，使用ALTER SUBSCRIPTION将复制槽解除关联。如果远程数据库实例不再存在，那么不需要进一步的行动。不过，如果远程数据库实例只是不可达，那么复制槽应该被手动删除。否则它将会继续保留WAL并且最终可能会导致磁盘被填满。这种情况应该要仔细地研究。
 
+```sh
+select pg_drop_replication_slot(slot_name); --删除
+
+```
+
 ref [Replication Slot Management](https://www.postgresql.org/docs/13/logical-replication-subscription.html#LOGICAL-REPLICATION-SUBSCRIPTION-SLOT)
 ref [复制槽管理](http://www.postgres.cn/docs/13/logical-replication-subscription.html)
 

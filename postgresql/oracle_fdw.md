@@ -42,6 +42,7 @@ mkdir /opt/oracle
 chown oracle:oinstall /opt/oracle
 
 ```
+
 3. 解压3个文件,会将内容解压到一个目录中instantclient_11_2。将文件夹中的内容复制到/opt/oracle
 
 4. 设置环境变量
@@ -97,7 +98,7 @@ sqlplus system/oracle@fdw
 export ORACLE_HOME=/opt/oracle
 export SQLPATH=/opt/oracle
 export TNS_ADMIN=/opt/oracle
-export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH;
+export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH
 export PATH=$ORACLE_HOME:$PATH
 
 ```
@@ -116,7 +117,7 @@ export PATH=$PATH:/opt/HighGo5.6.5/bin
 export ORACLE_HOME=/opt/oracle
 export SQLPATH=/opt/oracle
 export TNS_ADMIN=/opt/oracle
-export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH;
+export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH
 export PATH=$ORACLE_HOME:$PATH
 
 
@@ -217,6 +218,17 @@ OPTIONS (schema 'HR',table 'PRODUCT' );     --创建外部表
 
 alter FOREIGN TABLE test_oracle_fdw
 ```
+
+<!--
+
+CREATE EXTENSION oracle_fdw;  
+
+2022-03-02 16:47:25.742 CST [13370] ERROR:  could not load library "/opt/pg1020/lib/postgresql/oracle_fdw.so": libclntsh.so.11.1: cannot open shared object file: No such file or directory
+2022-03-02 16:47:25.742 CST [13370] STATEMENT:  create extension oracle_fdw ;
+ERROR:  could not load library "/opt/pg1020/lib/postgresql/oracle_fdw.so": libclntsh.so.11.1: cannot open shared object file: No such file or directory
+
+重启一下数据库
+-->
 
 ## 管理
 

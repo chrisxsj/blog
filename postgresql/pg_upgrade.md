@@ -43,11 +43,12 @@ pg_config |grep -i CONFIGURE #编译信息
 
 ### 初始化数据库
 
-使用initdb初始化新集簇。这里也要使用与旧集簇相兼容的initdb标志。
+使用initdb初始化新集簇。这里也要使用与旧集簇相兼容的initdb标志（如，--wal-segsize=64)。
 
 ```sh
 psql -c 'show server_encoding;' #数据库字符集
-
+psql -c 'show wal_segment_size;' #数据库wal段大小
+psql -c 'show lc_collate;'  #地区语言排序方式
 ```
 
 ### 安装自定义共享库和插件
@@ -80,22 +81,32 @@ ref [pgpass](./pgpass.md)
 
 :warning: 此时涉及停机时间
 
+### 为后备服务器升级做准备
+
+如有有复制环境，在关闭主库前，确保数据是同步的。验证“Latest checkpoint location”值在所有集簇中都匹配。此外，在新的主集簇上的postgresql.conf文件中把wal_level改为replica
+
 ### 运行pg_upgrade
 
-* 总是应该运行新服务器而不是旧服务器的pg_upgrade二进制文件。
+* 总是应该运行新服务器而不是旧服务器的pg_upgrade二进制文件。pg_upgrade需要连接新旧集簇的数据（data）和可执行文件(bin)目录
 * 升级模式有多种，如果你使用链接模式，升级将会快很多（不需要文件拷贝）并且将使用 更少的磁盘空间，但是在升级后一旦启动新集簇，旧集簇就无法被访问。 链接模式也要求新旧集簇数据目录位于同一个文件系统中（表空间和 pg_wal可以在不同的文件系统中）。 克隆模式提供了相同的速度以及磁盘空间优势，但不会导致新群集启动后旧群集不可用。 克隆模式还需要新旧数据目录位于同一文件系统中。 此模式仅在某些操作系统和文件系统上可用。
-* --jobs选项允许多个 CPU 核心被用来复制/链接文件以及 并行地转储和重载数据库模式。
-* 可以使用pg_upgrade --check来只执行检查， 这种模式即使在旧服务器还在运行时也能使用。 pg_upgrade --check也将列出任何在更新后需要做的手工调整。
-* 如果你将要使用链接或克隆模式，你应该使用--link或--clone选项和--check一起来启用相关模式相关的检查。
-* 没有人可以在升级期间访问这些集簇。
 
-:warning: 如果老版本软件安装了相关插件，使用 pg_upgrade 升级前，新版本软件也需要安装相关插件。
-
-检查新旧版本是否兼容
+可以使用pg_upgrade --check来检查升级兼容性， 这种模式即使在旧服务器还在运行时也能使用。
 
 ```sh
-/opt/pg13/bin/pg_upgrade --link --jobs 1 -c -b /opt/pg126/bin -B /opt/pg13/bin -d  /opt/pg126_data  -D  /opt/pg13_data
+/opt/pg142/bin/pg_upgrade --link --jobs 2 --check -b /opt/pg126/bin -B /opt/pg142/bin -d  /opt/pg126/data.bak  -D  /opt/pg142/data
 
+# --check 表示仅检查，并不会做任何更改。
+# --jobs使用多cpu并行。
+# --link 是使用link模式
+# -b, -B 分别表示老版本 PG bin 目录，新版本 PG bin目录， 
+# -d, -D 分别表示老版本PG 数据目录，新版本 PG 数据目录， 
+
+```
+
+:warning: 如果你想要使用链接模式并且你不想让你的旧集簇在新集簇启动时被修改，考虑使用克隆模式。 如果(克隆模式)不可用，可以复制一份旧集簇并且在副本上以链接模式进行升级
+
+<!--
+[postgres@db pg142]$ /opt/pg142/bin/pg_upgrade --link --jobs 2 --check -b /opt/pg126/bin -B /opt/pg142/bin -d  /opt/pg126/data.bak  -D  /opt/pg142/data
 Performing Consistency Checks
 -----------------------------
 Checking cluster versions                                   ok
@@ -105,6 +116,8 @@ Checking for prepared transactions                          ok
 Checking for system-defined composite types in user tables  ok
 Checking for reg* data types in user tables                 ok
 Checking for contrib/isn with bigint-passing mismatch       ok
+Checking for user-defined encoding conversions              ok
+Checking for user-defined postfix operators                 ok
 Checking for presence of required libraries                 ok
 Checking database user is the install user                  ok
 Checking for prepared transactions                          ok
@@ -112,11 +125,26 @@ Checking for new cluster tablespace directories             ok
 
 *Clusters are compatible*
 
-```
+[postgres@db pg142]$ /opt/pg142/bin/pg_upgrade --clone --jobs 2 --check -b /opt/pg126/bin -B /opt/pg142/bin -d  /opt/pg126/data.bak  -D  /opt/pg142/data
+Performing Consistency Checks
+-----------------------------
+Checking cluster versions                                   ok
+Checking database user is the install user                  ok
+Checking database connection settings                       ok
+Checking for prepared transactions                          ok
+Checking for system-defined composite types in user tables  ok
+Checking for reg* data types in user tables                 ok
+Checking for contrib/isn with bigint-passing mismatch       ok
+Checking for user-defined encoding conversions              ok
+Checking for user-defined postfix operators                 ok
+Checking for presence of required libraries                 ok
 
-:warning: b, -B 分别表示老版本 PG bin 目录，新版本 PG bin目录， -d, -D 分别表示老版本PG 数据目录，新版本 PG 数据目录， -c 表示仅检查，并不会做任何更改。--link是使用link模式,--jobs使用多cpu并行。
+could not clone file between old and new data directories: Operation not supported
+Failure, exiting
 
-<!--
+or
+
+[postgres@db pg142]$
 
 [pg126@8cfba0c9a15f ~]$ /opt/pg13/bin/pg_upgrade --clone -c -b /opt/pg126/bin -B /opt/pg13/bin -d  /opt/pg126_data  -D  /opt/pg13_data
 Performing Consistency Checks
@@ -150,19 +178,27 @@ In database: postgres
 升级
 
 ```sh
-/opt/pg13/bin/pg_upgrade --link --jobs 1 -b /opt/pg126/bin -B /opt/pg13/bin -d  /opt/pg126_data  -D  /opt/pg13_data
+/opt/pg142/bin/pg_upgrade --link --jobs 2 -b /opt/pg126/bin -B /opt/pg142/bin -d  /opt/pg126/data.bak  -D  /opt/pg142/data
 
 ......
+Creating script to delete old cluster                       ok
+Checking for extension updates                              notice
+
+Your installation contains extensions that should be updated
+with the ALTER EXTENSION command.  The file
+    update_extensions.sql
+when executed by psql by the database superuser will update
+these extensions.
+
+
 Upgrade Complete
 ----------------
-Optimizer statistics are not transferred by pg_upgrade so,
-once you start the new server, consider running:
-    ./analyze_new_cluster.sh
+Optimizer statistics are not transferred by pg_upgrade.
+Once you start the new server, consider running:
+    /opt/pg142/bin/vacuumdb --all --analyze-in-stages
 
 Running this script will delete the old cluster's data files:
     ./delete_old_cluster.sh
-
-出现以上提示，即表示升级完成
 
 ```
 
@@ -170,7 +206,7 @@ Running this script will delete the old cluster's data files:
 
 理解以下的升级过程！
 
-[pg126@8cfba0c9a15f software]$ /opt/pg13/bin/pg_upgrade --link --jobs 1 -b /opt/pg126/bin -B /opt/pg13/bin -d  /opt/pg126_data  -D  /opt/pg13_data
+[postgres@db pg142]$ /opt/pg142/bin/pg_upgrade --link --jobs 2 -b /opt/pg126/bin -B /opt/pg142/bin -d  /opt/pg126/data.bak  -D  /opt/pg142/data
 Performing Consistency Checks
 -----------------------------
 Checking cluster versions                                   ok
@@ -180,6 +216,8 @@ Checking for prepared transactions                          ok
 Checking for system-defined composite types in user tables  ok
 Checking for reg* data types in user tables                 ok
 Checking for contrib/isn with bigint-passing mismatch       ok
+Checking for user-defined encoding conversions              ok
+Checking for user-defined postfix operators                 ok
 Creating dump of global objects                             ok
 Creating dump of database schemas
                                                             ok
@@ -197,6 +235,7 @@ Analyzing all rows in the new cluster                       ok
 Freezing all rows in the new cluster                        ok
 Deleting files from new pg_xact                             ok
 Copying old pg_xact to new server                           ok
+Setting oldest XID for new cluster                          ok
 Setting next transaction ID and epoch for new cluster       ok
 Deleting files from new pg_multixact/offsets                ok
 Copying old pg_multixact/offsets to new server              ok
@@ -211,7 +250,7 @@ Restoring database schemas in the new cluster
 Adding ".old" suffix to old global/pg_control               ok
 
 If you want to start the old cluster, you will need to remove
-the ".old" suffix from /opt/pg126_data/global/pg_control.old.
+the ".old" suffix from /opt/pg126/data.bak/global/pg_control.old.
 Because "link" mode was used, the old cluster cannot be safely
 started once the new cluster has been started.
 
@@ -219,53 +258,67 @@ Linking user relation files
                                                             ok
 Setting next OID for new cluster                            ok
 Sync data directory to disk                                 ok
-Creating script to analyze new cluster                      ok
 Creating script to delete old cluster                       ok
+Checking for extension updates                              notice
+
+Your installation contains extensions that should be updated
+with the ALTER EXTENSION command.  The file
+    update_extensions.sql
+when executed by psql by the database superuser will update
+these extensions.
+
 
 Upgrade Complete
 ----------------
-Optimizer statistics are not transferred by pg_upgrade so,
-once you start the new server, consider running:
-    ./analyze_new_cluster.sh
+Optimizer statistics are not transferred by pg_upgrade.
+Once you start the new server, consider running:
+    /opt/pg142/bin/vacuumdb --all --analyze-in-stages
 
 Running this script will delete the old cluster's data files:
     ./delete_old_cluster.sh
-[pg126@8cfba0c9a15f software]$
+[postgres@db pg142]$
 
 -->
 
 ### 升级流复制和日志传送后备服务器
 
-如果使用链接模式并且有流复制（见第 26.2.5 节）或者日志 传送（见第 26.2 节）后备服务器，你可以遵照下面的 步骤对它们进行快速的升级。你将不用在这些后备服务器上运行 pg_upgrade，而是在主服务器上运行rsync。 到这里还不要启动任何服务器。
+<!--(注意复制槽)-->
 
-如果你没有使用链接模式、没有或不想使用rsync或者想用一种更容易的解决方案，请跳过这一节中的过程并且在pg_upgrade完成并且新的主集簇开始运行后重建后备服务器。
+升级完主库后，可升级备库。
 
-* 在后备服务器上安装新的 PostgreSQL 二进制文件
+有后备服务器的场景中，你将不用在这些后备服务器上运行 pg_upgrade，而是在主服务器上运行rsync。 到这里还不要启动任何服务器。如果不使用此方式，需要重做后备服务器。
 
-确保新的二进制和支持文件被安装在所有后备服务器上。
+#### 在后备服务器上安装新的 PostgreSQL 二进制文件
 
-* 确保不存在新的后备机数据目录
+安装软件
 
-确保新的后备机数据目录不存在或者为空。如果 运行过initdb，请删除后备服务器的新数据目录。
+#### 确保不存在新的后备机数据目录
 
-* 安装自定义共享对象文件
+data为空
 
-在新的后备机上安装和新的主集簇中相同的自定义共享对象文件。
+#### 安装自定义共享对象文件和插件
 
-* 停止后备服务器
+与新主库一致
 
-如果后备服务器仍在运行，现在使用上述的指令停止它们。
+#### 停止后备服务器
 
-* 保存配置文件
+#### 保存配置文件
 
-从旧后备机的配置目录保存任何需要保留的配置文件，例如 postgresql.conf（以及它包含的任何文件）、 postgresql.auto.conf、pg_hba.conf， 因为这些文件在下一步中会被重写或者移除。
+postgresql.conf（以及它包含的任何文件）、 postgresql.auto.conf、pg_hba.conf
 
-* 运行rsync
+#### 运行rsync
 
-在使用链接模式时，后备服务器可以使用rsync快速升级。为了实现这一点，在主服务器上一个高于新旧数据库集簇目录的目录中为每个后备服务器运行这个命令：
+在使用链接模式时，后备服务器可以使用rsync快速升级。为了实现这一点，在主服务器上新旧数据库集簇目录的上一层目录中为每个后备服务器运行这个命令：
 
+```sh
 rsync --archive --delete --hard-links --size-only --no-inc-recursive old_cluster new_cluster remote_dir
-其中old_cluster和new_cluster是相对于主服务器上的当前目录的，而remote_dir是后备服务器上高于新旧集簇目录的一个目录。在主服务器和后备服务器上指定目录之下的目录结构必须匹配。指定远程目录的详细情况请参考rsync的手册，例如：
+
+# old_cluster主服务器旧集簇目录
+# new_cluster主服务新集簇目录
+# remote_dir后备服务器上集簇目录（）
+```
+
+其中和是相对于主服务器上的当前目录的，而remote_dir是后备服务器上高于新旧集簇目录的一个目录。在主服务器和后备服务器上指定目录之下的目录结构必须匹配。指定远程目录的详细情况请参考rsync的手册，例如：
 
 rsync --archive --delete --hard-links --size-only --no-inc-recursive /opt/PostgreSQL/9.5 \
       /opt/PostgreSQL/9.6 standby.example.com:/opt/PostgreSQL
@@ -287,6 +340,13 @@ rsync --archive --delete --hard-links --size-only --no-inc-recursive /vol1/pg_tb
 
 如果你修改了pg_hba.conf，则要将其恢复到原始的设置。 也可能需要调整新集簇中的其他配置文件来匹配旧集簇，例如 postgresql.conf（以及它包含的任何文件）和 postgresql.auto.conf。
 
+```sh
+cp -i /opt/pg126/data.bak/pg_hba.conf /opt/pg142/data
+cp -i /opt/pg126/data.bak/postgresql.conf /opt/pg142/data
+cp -i /opt/pg126/data.bak/postgresql.auto.conf /opt/pg142/data
+
+```
+
 ### 启动新服务器
 
 现在可以安全地启动新的服务器，并且可以接着启动任何 rsync过的后备服务器。
@@ -296,13 +356,14 @@ rsync --archive --delete --hard-links --size-only --no-inc-recursive /vol1/pg_tb
 ```sh
 cat ~/.bash_profile
 
-export PGDATABASE=postgres
-export PGPORT=5434
-export PGHOME=/opt/pg13
-export PGDATA=/opt/pg13_data
+export PGPORT=5435
+export PGHOME=/opt/pg142
+export PGDATA=/opt/pg142/data
 export MANPATH=$PGHOME/share/man:$MANPATH
 export LD_LIBRARY_PATH=$PGHOME/lib:$LD_LIBRARY_PATH
 export PATH=$PATH:$PGHOME/bin
+export PGDATABASE=postgres
+export PGUSER=postgres
 
 soure ~/.bash_profile
 
@@ -315,11 +376,16 @@ pg_ctl start
 
 ```
 
-此时，所有数据均存在于新集群中。
+此时，所有数据均存在于新集簇中。
 
 ### 升级后处理
 
 如果需要做任何升级后处理，pg_upgrade 将在完成后发出警告。它也将 生成必须由管理员运行的脚本文件。
+
+```sh
+psql -f ./update_extensions.sql
+
+```
 
 ### 统计信息
 
@@ -328,7 +394,7 @@ pg_ctl start
 执行分析脚本
 
 ```sh
-./analyze_new_cluster.sh
+/opt/pg142/bin/vacuumdb --all --analyze-in-stages
 
 ```
 
@@ -353,14 +419,14 @@ pg_ctl start
 
 * 如果使用了--link 选项, 数据文件可能在新旧群集之间共享:
 
-如果pg_upgrade在链接启动之前中止，旧群集没有被修改，它可以重新启动。
+    如果pg_upgrade在链接启动之前中止，旧群集没有被修改，它可以重新启动。
 
-如果你没有启动新集群，旧集群没有被修改，当链接启动时，一个.old后缀会附加到$PGDATA/global/pg_control。 如果要重用旧集群，从$PGDATA
-global/   pg_control移除.old后缀；你就可以重启旧集群。
+    如果你没有启动新集群，旧集群没有被修改，当链接启动时，一个.old后缀会附加到$PGDATA/global/pg_control。 如果要重用旧集群，从$PGDATA
+    global/   pg_control移除.old后缀；你就可以重启旧集群。
 
-如果你已经启动新群集，它已经写入了共享文件，并且使用旧群集会不安全。这种情况下，需要从备份中还原旧群集。
+    如果你已经启动新群集，它已经写入了共享文件，并且使用旧群集会不安全。这种情况下，需要从备份中还原旧群集。
 
-如果你想要使用链接模式并且你不想让你的旧集簇在新集簇启动时被修改，考虑使用克隆模式。 如果(克隆模式)不可用，可以复制一份旧集簇并且在副本上以链接模式进行升级。要创建旧集簇的一 份合法拷贝，可以在服务器运行时使用rsync创建旧集簇的 一份脏拷贝，然后关闭旧服务器并且再次运行rsync --checksum 把更改更新到该拷贝以让其一致
+如果你想要使用链接模式并且你不想让你的旧集簇在新集簇启动时被修改，考虑使用克隆模式。 如果(克隆模式)不可用，可以复制一份旧集簇并且在副本上以链接模式进行升级。要创建旧集簇的一 份合法拷贝，可以在服务器运行时使用rsync创建旧集簇的 一份脏拷贝，然后关闭旧服务器并且再次运行rsync --checksum 把更改更新到该拷贝以让其一致。
 
 <!--
 已经启动新群集情况下，启动旧集群报错
