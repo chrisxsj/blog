@@ -57,7 +57,7 @@ pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -Fp -v -f /tmp/test_dump1.d
 输出一个适合于作为pg_restore输入的自定义格式归档（customer）
 
 ```bash
-pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -t public.test_dump -Fp -v -f /tmp/test_dump2.dmp  #可导出表、view视图。其他对象使用pg_restore过滤
+pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -t public.test_dump -Fc -v -f /tmp/test_dump2.dmp  #可导出表、view视图。其他对象使用pg_restore过滤
 pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -s -t public.test_dump -Fc -v -f /tmp/test_dump2.dmp  #只导出表结构、view定义。需指定schema
 pg_dump -h 192.168.6.141 -p 5966 -d highgo -U highgo -a -t public.test_dump -n public -Fc -v -f /tmp/test_dump2.dmp  #只导出表数据,需指定schema
 pg_dump -d postgres -U pg126 -Fc -v -f /tmp/test_dump2.dmp #导出数据库
@@ -234,49 +234,18 @@ pg_restore -d htest_c -F d -j 5 -h localhost -p 5866 -U htest /home/highgo/bakte
 
 ## pg_restore过滤
 
-列出dmp内容
-
 ```bash
-pg_restore -l /tmp/testdmp.dmp -f /tmp/testdmp_list.dmp
+pg_restore -l /tmp/test.dump -f /tmp/test.list #生成list文件，列出dmp内容（可以查看版本等信息）
+pg_restore -l /tmp/test.dump | grep FUNCTION > /tmp/test_f.list #生成list文件过滤函数（文件只包含函数）
+pg_restore -l /tmp/test.dump | grep -v FUNCTION > /tmp/test_nofun_noseq.list    #生成list文件反向过滤（排除函数）
+pg_restore -l /tmp/test.dump  | grep -v -E "FUNCTION|TRIGGER|SEQUENCE|FK" > /tmp/test_nofun_notrig_noseq_nofk.list  #生成list文件反向过滤（排除函数|触发器|序列|外键)
+pg_restore -x /tmp/test_nofun_notrig_noseq_nofk.dump > /tmp/test_nofun_notrig_noseq_nofk_nogrant.list   #pg_restore自带参数-x，可在以上过滤的基础上进一步过滤掉授权语句grant
+
+pg_restore -L /tmp/test_nofun_notrig_noseq_nofk_nogrant.list /tmp/test.dump -f /tmp/test_nofun_notrig_noseq_nofk_nogrant.sql    #过滤后，-L将依据list导成sql（不指定db，会生成sql文件）
 ```
 
-过滤函数（dump文件只包含函数）产生list
-
-```bash
-pg_restore -l /tmp/test.dump | grep FUNCTION > /tmp/test_f.dump
-
-```
-
-反向过滤（排除函数）生成list
-
-```bash
-pg_restore -l /tmp/test.dump | grep -v FUNCTION > /tmp/test_nofun_noseq.dump
-```
-
-反向过滤（排除函数|触发器|序列|外键)，生成list
-
-```bash
-pg_restore -l /tmp/test.dump  | grep -v -E "FUNCTION|TRIGGER|SEQUENCE|FK" > /tmp/test_nofun_notrig_noseq_nofk.dump
-
-```
-
-> 注,去掉序列后，建表语句中可能会引用序列作为列的默认值，这种sql需要手动修改，删除语句中序列引用（DEFAULT nextval）
-
-pg_restore自带参数-x，可在以上过滤的基础上进一步过滤掉授权语句grant
-
-```bash
-pg_restore -x /tmp/test_nofun_notrig_noseq_nofk.dump > /tmp/test_nofun_notrig_noseq_nofk_nogrant.dump
-
-```
-
-过滤后，-L将依据list导成sql（不指定db，会生成sql文件）
-
-```postgresql
-pg_restore -L /tmp/test_nofun_notrig_noseq_nofk_nogrant.dump /tmp/test.dump -f /tmp/test_nofun_notrig_noseq_nofk_nogrant.sql
-
-```
-
-> 注意，-L 指定恢复元素，只恢复在list-file中列出的归档元素，并且按照它们出现在该文件中的顺序进行恢复
+:warning: 注意，-L 指定恢复元素，只恢复在list-file中列出的归档元素，并且按照它们出现在该文件中的顺序进行恢复
+:warning: 注,去掉序列后，建表语句中可能会引用序列作为列的默认值，这种sql需要手动修改，删除语句中序列引用（DEFAULT nextval）
 
 执行sql导入
 

@@ -46,9 +46,22 @@ pg_config |grep -i CONFIGURE #编译信息
 使用initdb初始化新集簇。这里也要使用与旧集簇相兼容的initdb标志（如，--wal-segsize=64)。
 
 ```sh
+#旧
 psql -c 'show server_encoding;' #数据库字符集
 psql -c 'show wal_segment_size;' #数据库wal段大小
 psql -c 'show lc_collate;'  #地区语言排序方式
+#新
+
+export PGPORT=5435
+export PGHOME=/opt/pg142
+export PGDATA=/opt/pg142/data
+export MANPATH=$PGHOME/share/man:$MANPATH
+export LD_LIBRARY_PATH=$PGHOME/lib:$LD_LIBRARY_PATH
+export PATH=$PGHOME/bin:$PATH
+export PGDATABASE=postgres
+export PGUSER=postgres
+
+initdb -E UTF8 -D $PGDATA --locale=C -U postgres -W
 ```
 
 ### 安装自定义共享库和插件
@@ -59,6 +72,7 @@ psql -c 'show lc_collate;'  #地区语言排序方式
 检查每个数据库的扩展
 
 ```sh
+#旧
 for db in `psql --pset=pager=off -qtA -c 'select datname from pg_database where datname not in ($$template0$$, $$template1$$);'`
 do
 psql -d $db --pset=pager=off -q -c 'select current_database(),* from pg_extension'
@@ -282,8 +296,6 @@ Running this script will delete the old cluster's data files:
 
 ### 升级流复制和日志传送后备服务器
 
-<!--(注意复制槽)-->
-
 升级完主库后，可升级备库。
 
 有后备服务器的场景中，你将不用在这些后备服务器上运行 pg_upgrade，而是在主服务器上运行rsync。 到这里还不要启动任何服务器。如果不使用此方式，需要重做后备服务器。
@@ -304,47 +316,83 @@ data为空
 
 #### 保存配置文件
 
-postgresql.conf（以及它包含的任何文件）、 postgresql.auto.conf、pg_hba.conf
+postgresql.conf（以及它包含的任何文件）、 postgresql.auto.conf、pg_hba.conf、standby.signal
+
+```sh
+#备
+cp -i /opt/pg126/data/pg_hba.conf ~/bak
+cp -i /opt/pg126/data/postgresql.conf ~/bak
+cp -i /opt/pg126/data/postgresql.auto.conf ~/bak
+cp -i /opt/pg126/data/standby.signal ~/bak
+```
 
 #### 运行rsync
 
 在使用链接模式时，后备服务器可以使用rsync快速升级。为了实现这一点，在主服务器上新旧数据库集簇目录的上一层目录中为每个后备服务器运行这个命令：
 
 ```sh
-rsync --archive --delete --hard-links --size-only --no-inc-recursive old_cluster new_cluster remote_dir
+rsync --archive --delete --hard-links --size-only --no-inc-recursive --dry-run old_cluster new_cluster remote_dir -v >/tmp/rsync.log
 
 # old_cluster主服务器旧集簇目录
-# new_cluster主服务新集簇目录
-# remote_dir后备服务器上集簇目录（）
+# new_cluster主服务器新集簇目录
+# remote_dir后备服务器上新旧集簇目录上一层
+# --dry-run验证该命令将做的事情
+# -v显示详细信息
+
+rsync --archive --delete --hard-links --size-only --no-inc-recursive --dry-run -v \
+    /opt/pg126 /opt/pg142 192.168.80.152:/opt
+
+rsync --archive --delete --hard-links --size-only --no-inc-recursive -v \
+    /opt/pg126 /opt/pg142 192.168.80.152:/opt >/tmp/rsync.log
 ```
-
-其中和是相对于主服务器上的当前目录的，而remote_dir是后备服务器上高于新旧集簇目录的一个目录。在主服务器和后备服务器上指定目录之下的目录结构必须匹配。指定远程目录的详细情况请参考rsync的手册，例如：
-
-rsync --archive --delete --hard-links --size-only --no-inc-recursive /opt/PostgreSQL/9.5 \
-      /opt/PostgreSQL/9.6 standby.example.com:/opt/PostgreSQL
-可以使用rsync的--dry-run选项验证该命令将做的事情。虽然在主服务器上必须为至少一台后备运行rsync，可以在一台已经升级过的后备服务器上运行rsync来升级其他的后备服务器，只要已升级的后备服务器还没有被启动。
 
 这个命令所做的事情是记录由pg_upgrade的链接模式创建的链接，它们连接主服务器上新旧集簇中的文件。该命令接下来在后备服务器的旧集簇中寻找匹配的文件并且为它们在该后备的新集簇中创建链接。主服务器上没有被链接的文件会被从主服务器拷贝到后备服务器（通常都很小）。这提供了快速的后备服务器升级。不幸地是，rsync会不必要地拷贝与临时表和不做日志表相关的文件，因为通常在后备服务器上不存在这些文件。
 
+:warning: 虽然在主服务器上必须为至少一台后备运行rsync，可以在一台已经升级过的后备服务器上运行rsync来升级其他的后备服务器，只要已升级的后备服务器还没有被启动。
+
 如果有表空间，你将需要为每个表空间目录运行一个类似的rsync命令，例如：
 
+```sh
 rsync --archive --delete --hard-links --size-only --no-inc-recursive /vol1/pg_tblsp/PG_9.5_201510051 \
       /vol1/pg_tblsp/PG_9.6_201608131 standby.example.com:/vol1/pg_tblsp
+
+```
+
 如果你已经把pg_wal放在数据目录外面，也必须在那些目录上运行rsync。
 
-* 配置流复制和日志传送后备服务器
+#### 配置流复制和日志传送后备服务器
 
-为日志传送配置服务器（不需要运行pg_start_backup() 以及pg_stop_backup()或者做文件系统备份，因为从属机 仍在与主机同步）。
+<!--(注意复制槽)-->
 
-### 恢复 pg_hba.conf
+为日志传送配置服务器（不需要运行pg_start_backup() 以及pg_stop_backup()或者做文件系统备份，因为从属机 仍在与主机同步）。升级后备库处理
+
+```sh
+
+#主库
+升级后复制槽丢失，创建复制槽
+select * from pg_create_physical_replication_slot('pslot1');
+
+#备库
+创建standby.signal空文件
+在postgresql.auto.conf写入恢复参数
+#备
+cp -i ~/bak/* /opt/pg142/data
+
+```
+
+### 恢复配置文件
+
+主备库
 
 如果你修改了pg_hba.conf，则要将其恢复到原始的设置。 也可能需要调整新集簇中的其他配置文件来匹配旧集簇，例如 postgresql.conf（以及它包含的任何文件）和 postgresql.auto.conf。
 
 ```sh
+#主
 cp -i /opt/pg126/data.bak/pg_hba.conf /opt/pg142/data
 cp -i /opt/pg126/data.bak/postgresql.conf /opt/pg142/data
 cp -i /opt/pg126/data.bak/postgresql.auto.conf /opt/pg142/data
-
+#备
+cp -i ~/bak/* /opt/pg142/data
 ```
 
 ### 启动新服务器

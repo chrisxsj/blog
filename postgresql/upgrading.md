@@ -119,7 +119,7 @@ pg_dumpall -v -p 5434 | psql -v -d postgres -p 5435
 
 ### pg_upgrade升级
 
-pg_upgrade模块允许一个安装从一个 PostgreSQL主版本“就地”升级成另一个主版本。 升级可以在数分钟内被执行，特别是使用--link模式时
+pg_upgrade模块允许一个安装从一个 PostgreSQL主版本升级成另一个主版本。不必使用转储的方式。 升级可以在数分钟内被执行，特别是使用--link模式时
 
 ref [pg_upgrade](./pg_upgrade.md)
 
